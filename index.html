@@ -7171,7 +7171,7 @@ function filterGroupVariants(searchText) {
  * ==========================================
  */
 
-// Open Create Group Modal
+// Open Create Group Modal - WITH INLINE STYLES FIX
 function openCreateGroupModal() {
   console.log('📝 Opening Create Group Modal');
   
@@ -7290,12 +7290,40 @@ function openCreateGroupModal() {
     addAttributeRow(); // Add first row
   }
   
-  // Show modal
+  // ✅ FORCE INLINE STYLES TO MAKE MODAL VISIBLE
+  modal.style.cssText = `
+    display: flex !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 999999 !important;
+    background: rgba(0,0,0,0.6) !important;
+    align-items: center !important;
+    justify-content: center !important;
+  `;
+  
+  const content = modal.querySelector('.modal-content');
+  if (content) {
+    content.style.cssText = `
+      background: white !important;
+      padding: 24px !important;
+      border-radius: 16px !important;
+      max-width: 800px !important;
+      max-height: 90vh !important;
+      overflow-y: auto !important;
+      position: relative !important;
+      z-index: 10 !important;
+    `;
+  }
+  
   modal.classList.add('active');
   document.body.style.overflow = 'hidden';
   
-  console.log('✅ Modal opened successfully');
+  console.log('✅ Modal opened successfully with inline styles');
 }
+
 
 // Close Create Group Modal
 function closeCreateGroupModal() {
@@ -8260,6 +8288,7 @@ function navigateToGroupDetail(groupId, groupName) {
 
 </body>
 </html>
+
 
 
 
