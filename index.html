@@ -3074,8 +3074,8 @@ body:has(.fullscreen-modal.active) .navbar {
   /***********************
    * CONFIG
    ***********************/
-  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxEaabq9qtqs5mjN_sBvMwIBGv949LKA4UKJR2_5lK302s7qjzcR486ClDGhKZDSsZ2/exec'; // <-- replace with your deployed URL
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxEaabq9qtqs5mjN_sBvMwIBGv949LKA4UKJR2_5lK302s7qjzcR486ClDGhKZDSsZ2/exec'
+  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw5iSCo67LDFhM1y4sF7sVDdOCwdw633kpE8iIYAhkJ59xBr5H8pGW3laW9dc5B-p0H/exec'; // <-- replace with your deployed URL
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw5iSCo67LDFhM1y4sF7sVDdOCwdw633kpE8iIYAhkJ59xBr5H8pGW3laW9dc5B-p0H/exec'
   let cachedProducts = [];
   let cachedSales = [];
 
@@ -7473,7 +7473,7 @@ function updateVariantPreview() {
  * ==========================================
  */
 
-// Handle Create Group Form Submission - WITH DEBUG LOGGING
+// Handle Create Group Form Submission - SEND AS SEPARATE PARAMETERS
 async function handleCreateGroup(event) {
   event.preventDefault();
   
@@ -7491,14 +7491,9 @@ async function handleCreateGroup(event) {
     const category = document.getElementById('groupCategory').value;
     const attributes = parseAttributesFromForm();
     
-    // ✅ DEBUG: Log collected data
     console.log('🔍 COLLECTED DATA:');
     console.log('  groupName:', groupName);
-    console.log('  description:', description);
-    console.log('  manufacturer:', manufacturer);
-    console.log('  category:', category);
     console.log('  attributes:', attributes);
-    console.log('  attributes keys:', Object.keys(attributes));
     
     if (!groupName) {
       throw new Error('Group name is required');
@@ -7508,31 +7503,26 @@ async function handleCreateGroup(event) {
       throw new Error('Please add at least one attribute');
     }
     
-    const groupData = {
-      groupName,
-      description,
-      manufacturer,
-      brand: manufacturer,
-      category,
-      attributes,
-      createdBy: userEmail
-    };
-    
-    console.log('📤 Sending groupData:', JSON.stringify(groupData, null, 2));
-    
-    const postBody = {
+    // ✅ SEND DATA AS INDIVIDUAL PARAMETERS (not as nested JSON)
+    const postBody = new URLSearchParams({
       action: 'createProductGroup',
       email: userEmail,
       hash: userHash,
-      data: JSON.stringify(groupData)
-    };
+      groupName: groupName,
+      description: description,
+      manufacturer: manufacturer,
+      brand: manufacturer,
+      category: category,
+      attributes: JSON.stringify(attributes),
+      createdBy: userEmail
+    });
     
-    console.log('📤 POST body params:', postBody);
+    console.log('📤 Sending POST body:', postBody.toString());
     
     const response = await fetch(GOOGLE_SCRIPT_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams(postBody)
+      body: postBody
     });
     
     console.log('📥 Response status:', response.status);
@@ -8272,6 +8262,7 @@ function navigateToGroupDetail(groupId, groupName) {
 
 </body>
 </html>
+
 
 
 
