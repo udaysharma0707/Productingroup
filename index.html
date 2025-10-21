@@ -7162,43 +7162,657 @@ function navigateToAllProducts() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// Navigate to Product Groups page - FIXED
+
+
+
+
+
+
+
+
+
+    
+/**
+ * ==========================================
+ * PRODUCT GROUPS - JAVASCRIPT FUNCTIONS
+ * ==========================================
+ */
+
+
+let currentGroupName = null;
+let attributeRowCounter = 0;
+
+
+/**
+ * ==========================================
+ * NAVIGATION - PRODUCT GROUPS
+ * ==========================================
+ */
+
+// Navigate to Product Groups List Page
 function navigateToProductGroups() {
   console.log('📁 Navigating to Product Groups');
   
-  currentPage = 'productGroups';
-  
-  const mainApp = document.getElementById('mainApp');
-  const allProductsPage = document.getElementById('allProductsPage');
-  const productGroupsPage = document.getElementById('productGroupsPage');
-  const groupDetailPage = document.getElementById('groupDetailPage');
-  
-  // HIDE the main dashboard
-  if (mainApp) {
-    mainApp.style.display = 'none';
-  }
-  
-  // ✅ HIDE THE BLUE NAVBAR
+  // Hide navbar
   const navbar = document.querySelector('.navbar');
-  if (navbar) {
-    navbar.style.display = 'none';
-  }
+  if (navbar) navbar.style.display = 'none';
   
-  // SHOW Product Groups page
-  if (productGroupsPage) {
-    productGroupsPage.classList.add('active');
-  }
+  // Hide main app
+  const mainApp = document.getElementById('mainApp');
+  if (mainApp) mainApp.style.display = 'none';
   
-  if (allProductsPage) allProductsPage.classList.remove('active');
-  if (groupDetailPage) groupDetailPage.classList.remove('active');
+  // Build full-screen page
+  document.body.innerHTML += `
+    <div id="productGroupsPageContainer" style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #f8f9fa; z-index: 99999; overflow-y: auto;">
+      
+      <!-- Header -->
+      <div class="modal-header-mobile">
+        <button class="btn-cancel-modal" onclick="navigateToHome()">
+          ← Back
+        </button>
+        <h3>Products in Group</h3>
+        <button class="btn-primary-bottom" onclick="openCreateGroupModal()" style="padding: 8px 16px; min-height: auto; flex: none; font-size: 14px;">
+          + Create
+        </button>
+      </div>
+      
+      <!-- Search -->
+      <div style="padding: 16px;">
+        <input 
+          type="text" 
+          id="searchGroupsInput" 
+          placeholder="🔍 Search groups..."
+          style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px;"
+          onkeyup="filterProductGroups(this.value)">
+      </div>
+      
+      <!-- Loading State -->
+      <div id="groupsLoadingState" class="loading-spinner">
+        <div class="spinner"></div>
+        <p>Loading product groups...</p>
+      </div>
+      
+      <!-- Groups List -->
+      <div id="groupsListContainer" style="display: none;">
+        <!-- Groups will be rendered here -->
+      </div>
+      
+      <!-- Empty State -->
+      <div id="groupsEmptyState" class="empty-state" style="display: none;">
+        <div class="empty-state-icon">📁</div>
+        <h3>No Product Groups Yet</h3>
+        <p>Create your first product group to manage variants</p>
+        <button class="btn-primary-bottom" onclick="openCreateGroupModal()" style="max-width: 200px; margin: 0 auto;">
+          + Create First Group
+        </button>
+      </div>
+      
+    </div>
+  `;
   
-  if (typeof syncProductGroups === 'function') {
-    syncProductGroups();
-  }
-  
-  closeSidebar();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  // Load data
+  loadProductGroups();
 }
+
+
+// Navigate to Group Variants (Detail Page)
+function navigateToGroupVariants(groupId, groupName) {
+  console.log('📦 Opening variants for:', groupName);
+  
+  currentGroupId = groupId;
+  currentGroupName = groupName;
+  
+  // Remove existing page if any
+  const existingPage = document.getElementById('groupVariantsPageContainer');
+  if (existingPage) existingPage.remove();
+  
+  // Build variants page
+  document.body.innerHTML += `
+    <div id="groupVariantsPageContainer" style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #f8f9fa; z-index: 99999; overflow-y: auto;">
+      
+      <!-- Header -->
+      <div class="modal-header-mobile">
+        <button class="btn-cancel-modal" onclick="closeGroupVariantsPage()">
+          ← Back
+        </button>
+        <h3>${groupName}</h3>
+        <div style="width: 80px;"></div>
+      </div>
+      
+      <!-- Search -->
+      <div style="padding: 16px;">
+        <input 
+          type="text" 
+          id="searchVariantsInput" 
+          placeholder="🔍 Search variants..."
+          style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px;"
+          onkeyup="filterGroupVariants(this.value)">
+      </div>
+      
+      <!-- Loading State -->
+      <div id="variantsLoadingState" class="loading-spinner">
+        <div class="spinner"></div>
+        <p>Loading variants...</p>
+      </div>
+      
+      <!-- Variants List -->
+      <div id="variantsListContainer" style="display: none;">
+        <!-- Variants will be rendered here -->
+      </div>
+      
+      <!-- Empty State -->
+      <div id="variantsEmptyState" class="empty-state" style="display: none;">
+        <div class="empty-state-icon">📦</div>
+        <h3>No Variants Yet</h3>
+        <p>This group doesn't have any variants</p>
+      </div>
+      
+    </div>
+  `;
+  
+  // Load variants
+  loadGroupVariants(groupId);
+}
+
+
+// Close Group Variants Page
+function closeGroupVariantsPage() {
+  const page = document.getElementById('groupVariantsPageContainer');
+  if (page) page.remove();
+  
+  // Refresh groups list
+  loadProductGroups();
+}
+
+
+/**
+ * ==========================================
+ * DATA LOADING FUNCTIONS
+ * ==========================================
+ */
+
+// Load Product Groups from Backend
+async function loadProductGroups() {
+  try {
+    console.log('📡 Fetching product groups...');
+    
+    const url = `${GOOGLE_SCRIPT_URL}?action=getProductGroups&email=${encodeURIComponent(userEmail)}&hash=${encodeURIComponent(userHash)}&t=${Date.now()}`;
+    
+    const response = await fetch(url);
+    const data = await response.json();
+    
+    if (data.success && data.groups) {
+      cachedProductGroups = data.groups;
+      console.log('✅ Loaded', data.groups.length, 'groups');
+      
+      // Hide loading
+      const loadingState = document.getElementById('groupsLoadingState');
+      if (loadingState) loadingState.style.display = 'none';
+      
+      // Show appropriate view
+      if (data.groups.length === 0) {
+        const emptyState = document.getElementById('groupsEmptyState');
+        if (emptyState) emptyState.style.display = 'flex';
+      } else {
+        renderProductGroups(data.groups);
+      }
+    } else {
+      throw new Error(data.error || 'Failed to load groups');
+    }
+    
+  } catch (error) {
+    console.error('❌ Error loading groups:', error);
+    
+    const loadingState = document.getElementById('groupsLoadingState');
+    if (loadingState) {
+      loadingState.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">⚠️</div>
+          <h3>Error Loading Groups</h3>
+          <p>${error.message}</p>
+          <button class="btn-primary-bottom" onclick="loadProductGroups()" style="max-width: 200px; margin: 16px auto 0;">
+            🔄 Retry
+          </button>
+        </div>
+      `;
+    }
+  }
+}
+
+
+// Load Group Variants from Backend
+async function loadGroupVariants(groupId) {
+  try {
+    console.log('📡 Fetching variants for group:', groupId);
+    
+    const url = `${GOOGLE_SCRIPT_URL}?action=getGroupVariants&groupId=${encodeURIComponent(groupId)}&email=${encodeURIComponent(userEmail)}&hash=${encodeURIComponent(userHash)}&t=${Date.now()}`;
+    
+    const response = await fetch(url);
+    const data = await response.json();
+    
+    if (data.success && data.variants) {
+      cachedGroupVariants = data.variants;
+      console.log('✅ Loaded', data.variants.length, 'variants');
+      
+      // Hide loading
+      const loadingState = document.getElementById('variantsLoadingState');
+      if (loadingState) loadingState.style.display = 'none';
+      
+      // Show appropriate view
+      if (data.variants.length === 0) {
+        const emptyState = document.getElementById('variantsEmptyState');
+        if (emptyState) emptyState.style.display = 'flex';
+      } else {
+        renderGroupVariants(data.variants);
+      }
+    } else {
+      throw new Error(data.error || 'Failed to load variants');
+    }
+    
+  } catch (error) {
+    console.error('❌ Error loading variants:', error);
+    
+    const loadingState = document.getElementById('variantsLoadingState');
+    if (loadingState) {
+      loadingState.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">⚠️</div>
+          <h3>Error Loading Variants</h3>
+          <p>${error.message}</p>
+          <button class="btn-primary-bottom" onclick="loadGroupVariants('${groupId}')" style="max-width: 200px; margin: 16px auto 0;">
+            🔄 Retry
+          </button>
+        </div>
+      `;
+    }
+  }
+}
+
+
+/**
+ * ==========================================
+ * RENDERING FUNCTIONS
+ * ==========================================
+ */
+
+// Render Product Groups List
+function renderProductGroups(groups) {
+  const container = document.getElementById('groupsListContainer');
+  if (!container) return;
+  
+  let html = '';
+  
+  groups.forEach(group => {
+    const variantText = group.totalVariants === 1 ? '1 variant' : `${group.totalVariants} variants`;
+    const categoryText = group.category || 'Uncategorized';
+    
+    html += `
+      <div class="group-card" onclick="navigateToGroupVariants('${group.groupId}', '${escapeHtml(group.groupName)}')">
+        <div class="group-icon">📁</div>
+        
+        <div class="group-info">
+          <div class="group-name">${escapeHtml(group.groupName)}</div>
+          <div class="group-description">${escapeHtml(group.description || 'No description')}</div>
+          <div class="group-meta">
+            <span class="group-meta-item">📦 ${variantText}</span>
+            <span class="group-meta-item">🏷️ ${categoryText}</span>
+          </div>
+        </div>
+        
+        <div class="group-actions" onclick="event.stopPropagation()">
+          <button class="btn-icon-small btn-delete-small" onclick="confirmDeleteGroup('${group.groupId}', '${escapeHtml(group.groupName)}')">
+            🗑️
+          </button>
+        </div>
+      </div>
+    `;
+  });
+  
+  container.innerHTML = html;
+  container.style.display = 'block';
+}
+
+
+// Render Group Variants List
+function renderGroupVariants(variants) {
+  const container = document.getElementById('variantsListContainer');
+  if (!container) return;
+  
+  let html = '';
+  
+  variants.forEach(variant => {
+    // Parse attributes
+    let attributesText = '';
+    try {
+      const attrs = typeof variant.attributes === 'string' ? JSON.parse(variant.attributes) : variant.attributes;
+      const attrArray = Object.entries(attrs).map(([key, value]) => `${key}: ${value}`);
+      attributesText = attrArray.join(' • ');
+    } catch (e) {
+      attributesText = '';
+    }
+    
+    // Stock status
+    const stockClass = variant.stock <= variant.minStock ? 'low' : 'good';
+    const stockIcon = variant.stock <= variant.minStock ? '⚠️' : '✓';
+    const stockText = `${stockIcon} ${variant.stock}`;
+    
+    // Price
+    const priceText = variant.sellingPrice > 0 ? `₹${variant.sellingPrice.toFixed(2)}` : '₹0.00';
+    
+    html += `
+      <div class="variant-card">
+        <div class="variant-icon">📦</div>
+        
+        <div class="variant-info">
+          <div class="variant-name">${escapeHtml(variant.variantName)}</div>
+          ${attributesText ? `<div class="variant-attributes">${attributesText}</div>` : ''}
+          <div class="variant-details">
+            <span class="variant-stock ${stockClass}">${stockText}</span>
+            <span class="variant-price">${priceText}</span>
+          </div>
+        </div>
+        
+        <div class="variant-actions">
+          <button class="btn-icon-small btn-edit-small" onclick="openEditVariantModal('${variant.variantId}')">
+            ✏️
+          </button>
+          <button class="btn-icon-small btn-delete-small" onclick="confirmDeleteVariant('${variant.variantId}', '${escapeHtml(variant.variantName)}')">
+            🗑️
+          </button>
+        </div>
+      </div>
+    `;
+  });
+  
+  container.innerHTML = html;
+  container.style.display = 'block';
+}
+
+
+/**
+ * ==========================================
+ * FILTER FUNCTIONS
+ * ==========================================
+ */
+
+// Filter Product Groups
+function filterProductGroups(searchText) {
+  if (!searchText || searchText.trim() === '') {
+    renderProductGroups(cachedProductGroups);
+    return;
+  }
+  
+  const filtered = cachedProductGroups.filter(group => 
+    group.groupName.toLowerCase().includes(searchText.toLowerCase()) ||
+    (group.description && group.description.toLowerCase().includes(searchText.toLowerCase())) ||
+    (group.category && group.category.toLowerCase().includes(searchText.toLowerCase()))
+  );
+  
+  renderProductGroups(filtered);
+}
+
+
+// Filter Group Variants
+function filterGroupVariants(searchText) {
+  if (!searchText || searchText.trim() === '') {
+    renderGroupVariants(cachedGroupVariants);
+    return;
+  }
+  
+  const filtered = cachedGroupVariants.filter(variant => 
+    variant.variantName.toLowerCase().includes(searchText.toLowerCase())
+  );
+  
+  renderGroupVariants(filtered);
+}
+
+
+/**
+ * ==========================================
+ * CREATE GROUP MODAL FUNCTIONS
+ * ==========================================
+ */
+
+// Open Create Group Modal
+function openCreateGroupModal() {
+  console.log('📝 Opening Create Group Modal');
+  
+  const modal = document.getElementById('createGroupModal');
+  if (!modal) {
+    console.error('❌ Create Group Modal not found');
+    return;
+  }
+  
+  // Reset form
+  document.getElementById('createGroupForm').reset();
+  document.getElementById('attributesContainer').innerHTML = '';
+  attributeRowCounter = 0;
+  
+  // Add first attribute row
+  addAttributeRow();
+  
+  // Show modal
+  modal.classList.add('active');
+  
+  // Prevent body scroll
+  document.body.style.overflow = 'hidden';
+}
+
+
+// Close Create Group Modal
+function closeCreateGroupModal() {
+  const modal = document.getElementById('createGroupModal');
+  if (modal) {
+    modal.classList.remove('active');
+  }
+  
+  // Restore body scroll
+  document.body.style.overflow = '';
+}
+
+
+// Add Attribute Row
+function addAttributeRow() {
+  attributeRowCounter++;
+  
+  const container = document.getElementById('attributesContainer');
+  if (!container) return;
+  
+  const rowHtml = `
+    <div class="attribute-row" id="attributeRow${attributeRowCounter}">
+      <div class="attribute-row-header">
+        <span class="attribute-row-title">Attribute ${attributeRowCounter}</span>
+        ${attributeRowCounter > 1 ? `<button type="button" class="btn-remove-attr" onclick="removeAttributeRow(${attributeRowCounter})">🗑️ Remove</button>` : ''}
+      </div>
+      
+      <label class="form-label">
+        Attribute Name <span class="required">*</span>
+      </label>
+      <input 
+        type="text" 
+        class="attr-name" 
+        placeholder="e.g., Size, Color, Material"
+        required
+        oninput="updateVariantPreview()">
+      
+      <label class="form-label">
+        Options <span class="required">*</span>
+        <span style="font-weight: normal; font-size: 12px; color: #666;">(comma separated)</span>
+      </label>
+      <input 
+        type="text" 
+        class="attr-options" 
+        placeholder="e.g., Small, Medium, Large"
+        required
+        oninput="updateVariantPreview()">
+    </div>
+  `;
+  
+  container.insertAdjacentHTML('beforeend', rowHtml);
+  
+  // Update preview
+  updateVariantPreview();
+}
+
+
+// Remove Attribute Row
+function removeAttributeRow(rowId) {
+  const row = document.getElementById(`attributeRow${rowId}`);
+  if (row) {
+    row.remove();
+    updateVariantPreview();
+  }
+}
+
+
+/**
+ * ==========================================
+ * VARIANT GENERATION & PREVIEW
+ * ==========================================
+ */
+
+// Parse Attributes from Form
+function parseAttributesFromForm() {
+  const attributes = {};
+  const rows = document.querySelectorAll('.attribute-row');
+  
+  rows.forEach((row) => {
+    const nameInput = row.querySelector('.attr-name');
+    const optionsInput = row.querySelector('.attr-options');
+    
+    if (nameInput && optionsInput) {
+      const attrName = nameInput.value.trim();
+      const attrOptions = optionsInput.value
+        .split(',')
+        .map(opt => opt.trim())
+        .filter(opt => opt.length > 0);
+      
+      if (attrName && attrOptions.length > 0) {
+        attributes[attrName] = attrOptions;
+      }
+    }
+  });
+  
+  return attributes;
+}
+
+
+// Generate Variant Combinations
+function generateVariantCombinations(attributes) {
+  const keys = Object.keys(attributes);
+  
+  if (keys.length === 0) {
+    return [];
+  }
+  
+  // Get all arrays of options
+  const optionArrays = keys.map(key => attributes[key]);
+  
+  // Generate cartesian product
+  function cartesianProduct(arrays) {
+    if (arrays.length === 0) return [[]];
+    if (arrays.length === 1) return arrays[0].map(item => [item]);
+    
+    const [first, ...rest] = arrays;
+    const restProduct = cartesianProduct(rest);
+    
+    const result = [];
+    for (let i = 0; i < first.length; i++) {
+      for (let j = 0; j < restProduct.length; j++) {
+        result.push([first[i], ...restProduct[j]]);
+      }
+    }
+    return result;
+  }
+  
+  const combinations = cartesianProduct(optionArrays);
+  
+  // Convert arrays to objects
+  return combinations.map(combo => {
+    const variant = {};
+    keys.forEach((key, index) => {
+      variant[key] = combo[index];
+    });
+    return variant;
+  });
+}
+
+
+// Generate Variant Name
+function generateVariantName(groupName, attributes) {
+  const values = Object.values(attributes);
+  if (values.length === 0) return groupName;
+  return `${groupName}-${values.join('-')}`;
+}
+
+
+// Update Variant Preview (Real-time)
+function updateVariantPreview() {
+  const groupName = document.getElementById('groupName').value.trim() || 'Product';
+  const attributes = parseAttributesFromForm();
+  const variants = generateVariantCombinations(attributes);
+  
+  // Update count
+  document.getElementById('variantCount').textContent = variants.length;
+  
+  // Update preview list
+  const container = document.getElementById('variantPreviewContainer');
+  if (!container) return;
+  
+  if (variants.length === 0) {
+    container.innerHTML = `
+      <div class="variant-preview-item">
+        Add attributes to see preview...
+      </div>
+    `;
+    return;
+  }
+  
+  // Show first 10 variants
+  const previewLimit = 10;
+  let html = '';
+  
+  variants.slice(0, previewLimit).forEach(attr => {
+    const variantName = generateVariantName(groupName, attr);
+    html += `
+      <div class="variant-preview-item">
+        <span class="icon">✓</span>
+        ${escapeHtml(variantName)}
+      </div>
+    `;
+  });
+  
+  // Show "and X more" if needed
+  if (variants.length > previewLimit) {
+    html += `
+      <div class="variant-preview-more">
+        ... and ${variants.length - previewLimit} more
+      </div>
+    `;
+  }
+  
+  container.innerHTML = html;
+}
+
+
+// Continue in next message...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
 
 // Navigate back to Home - FIXED
 function navigateToHome() {
@@ -7283,33 +7897,7 @@ function navigateToGroupDetail(groupId, groupName) {
 
 
 
-// Navigate to Product Groups page
-function navigateToProductGroups() {
-  currentPage = 'productGroups';
-  
-  // Show Product Groups page, hide others
-  const mainApp = document.getElementById('mainApp');
-  const allProductsPage = document.getElementById('allProductsPage');
-  const productGroupsPage = document.getElementById('productGroupsPage');
-  const groupDetailPage = document.getElementById('groupDetailPage');
-  
-  // ✅ NULL CHECKS
-  if (mainApp) mainApp.style.display = 'none';
-  if (allProductsPage) allProductsPage.classList.remove('active');
-  if (productGroupsPage) productGroupsPage.classList.add('active');
-  if (groupDetailPage) groupDetailPage.classList.remove('active');
-  
-  // Load and render product groups
-  syncProductGroups();
-  
-  // Close sidebar
-  if (typeof closeSidebar === 'function') {
-    closeSidebar();
-  }
-  
-  // Scroll to top
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
+
 
 
 
@@ -8098,6 +8686,7 @@ function showError(message) {
 
 </body>
 </html>
+
 
 
 
