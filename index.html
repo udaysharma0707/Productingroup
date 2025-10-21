@@ -3869,41 +3869,88 @@ function delay(ms) {
 // ==========================================
 // HELPER: Success Toast Notification
 // ==========================================
+// Show success toast notification
 function showSuccessToast(message) {
-  // Remove existing toast if any
-  const existingToast = document.getElementById('successToast');
-  if (existingToast) {
-    existingToast.remove();
-  }
+  showToast(message, 'success');
+}
+
+// Show error toast notification
+function showErrorToast(message) {
+  showToast(message, 'error');
+}
+
+// Universal toast function
+function showToast(message, type = 'success') {
+  // Remove existing toasts
+  const existingToasts = document.querySelectorAll('.toast-notification');
+  existingToasts.forEach(toast => toast.remove());
   
   // Create toast element
   const toast = document.createElement('div');
-  toast.id = 'successToast';
   toast.className = 'toast-notification';
-  toast.innerHTML = `
-    <div class="d-flex align-items-center">
-      <i class="bi bi-check-circle-fill text-success me-2" style="font-size: 1.5rem;"></i>
-      <div><strong>${message}</strong></div>
-    </div>
+  toast.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 16px 24px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    font-size: 16px;
+    z-index: 999999;
+    animation: slideInRight 0.3s ease-out;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    max-width: 400px;
+    ${type === 'success' ? 'background: #4caf50;' : 'background: #f44336;'}
+  `;
+  toast.textContent = message;
+  
+  // Add animation
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes slideInRight {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    @keyframes slideOutRight {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+    }
   `;
   
+  if (!document.querySelector('#toast-animations')) {
+    style.id = 'toast-animations';
+    document.head.appendChild(style);
+  }
+  
+  // Append to body
   document.body.appendChild(toast);
   
-  // Show toast with animation
+  // Auto remove after 4 seconds
   setTimeout(() => {
-    toast.classList.add('show');
-  }, 100);
+    toast.style.animation = 'slideOutRight 0.3s ease-in';
+    setTimeout(() => toast.remove(), 300);
+  }, 4000);
   
-  // Hide and remove after 3 seconds
-  setTimeout(() => {
-    toast.classList.remove('show');
-    setTimeout(() => {
-      if (toast && toast.parentNode) {
-        toast.parentNode.removeChild(toast);
-      }
-    }, 300);
-  }, 3000);
+  // Click to dismiss
+  toast.addEventListener('click', () => {
+    toast.style.animation = 'slideOutRight 0.3s ease-in';
+    setTimeout(() => toast.remove(), 300);
+  });
 }
+
 
 // ==========================================
 // HELPER: Update sync indicator
@@ -7263,15 +7310,49 @@ function openCreateGroupModal() {
 
 
 
-// Close Create Group Modal
+// Close Create Group Modal - FIXED
 function closeCreateGroupModal() {
+  console.log('🔒 Closing Create Group Modal');
+  
   const modal = document.getElementById('createGroupModal');
   if (modal) {
+    // Remove active class
     modal.classList.remove('active');
+    
+    // Hide with inline styles
+    modal.style.display = 'none';
   }
+  
+  // Restore body scroll
   document.body.style.overflow = '';
+  
+  // Reset form
+  const form = document.getElementById('createGroupForm');
+  if (form) {
+    form.reset();
+  }
+  
+  // Clear attributes container
+  const container = document.getElementById('attributesContainer');
+  if (container) {
+    container.innerHTML = '';
+  }
+  
+  // Reset attribute counter
+  attributeRowCounter = 0;
+  
+  // Reset button
+  const submitBtn = document.getElementById('btnSaveGroup');
+  if (submitBtn) {
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = '💾 Save & Generate';
+  }
+  
+  console.log('✅ Modal closed and reset');
 }
 
+
+    
 // Add Attribute Row
 function addAttributeRow() {
   attributeRowCounter++;
@@ -7473,7 +7554,7 @@ function updateVariantPreview() {
  * ==========================================
  */
 
-// Handle Create Group Form Submission - SEND AS SEPARATE PARAMETERS
+// Handle Create Group Form Submission - COMPLETE FIX
 async function handleCreateGroup(event) {
   event.preventDefault();
   
@@ -7503,7 +7584,7 @@ async function handleCreateGroup(event) {
       throw new Error('Please add at least one attribute');
     }
     
-    // ✅ SEND DATA AS INDIVIDUAL PARAMETERS (not as nested JSON)
+    // ✅ SEND DATA AS INDIVIDUAL PARAMETERS
     const postBody = new URLSearchParams({
       action: 'createProductGroup',
       email: userEmail,
@@ -7530,22 +7611,36 @@ async function handleCreateGroup(event) {
     const result = await response.json();
     console.log('📥 Response data:', result);
     
-    if (result.success) {
+    // ✅ CHECK FOR SUCCESS
+    if (result.success || result.ok) {
       console.log('✅ Group created:', result);
-      showSuccessMessage(`Created "${groupName}" with ${result.totalVariants || 'multiple'} variants!`);
+      
+      // Show success message
+      const variantCount = result.totalVariants || 'multiple';
+      showSuccessToast(`✓ Created "${groupName}" with ${variantCount} variants!`);
+      
+      // Close modal
       closeCreateGroupModal();
-      setTimeout(() => loadProductGroups(), 500);
+      
+      // Reload groups list
+      setTimeout(() => {
+        loadProductGroups();
+      }, 500);
+      
     } else {
-      throw new Error(result.error || 'Failed to create group');
+      throw new Error(result.error || result.message || 'Failed to create group');
     }
     
   } catch (error) {
     console.error('❌ Error creating group:', error);
-    alert('Error: ' + error.message);
+    showErrorToast('Error: ' + error.message);
+    
+    // ✅ RE-ENABLE BUTTON ON ERROR
     submitBtn.disabled = false;
     submitBtn.innerHTML = originalText;
   }
 }
+
 
 
 /**
@@ -8262,6 +8357,7 @@ function navigateToGroupDetail(groupId, groupName) {
 
 </body>
 </html>
+
 
 
 
