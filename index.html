@@ -3580,8 +3580,8 @@ async function syncFromGoogleSheets() {
       // Update dashboard metrics
       updateSummaryFromCache();
         // ✅ NEW: Sync product groups and variants
-  await syncProductGroups();
-  await syncAllVariants();
+  // await syncProductGroups();
+ // await syncAllVariants();
       showSyncIndicator('Synced!', 900);
       
     } else {
@@ -3594,6 +3594,7 @@ async function syncFromGoogleSheets() {
     hideSyncIndicator();
   }
 }
+
 
 
 
@@ -8164,6 +8165,7 @@ function navigateToGroupDetail(groupId, groupName) {
 
 </body>
 </html>
+
 
 
 
