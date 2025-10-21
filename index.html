@@ -2755,121 +2755,215 @@ body:has(.fullscreen-modal.active) .navbar {
   </div></div></div>
 
 <!-- ==========================================
-     CREATE PRODUCT GROUP MODAL
+     PRODUCT GROUPS - CREATE GROUP MODAL (MOBILE-OPTIMIZED)
      ========================================== -->
 
-<div class="modal fade" id="createGroupModal" tabindex="-1">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      
-      <!-- Modal Header -->
-      <div class="modal-header bg-primary text-white">
-        <h5 class="modal-title">Create Product Group</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-      </div>
-      
-      <!-- Modal Body -->
-      <div class="modal-body">
-        
-        <!-- Step 1: Group Details -->
-        <div id="groupStep1" class="group-step">
-          <h6 class="mb-3">📁 Group Information</h6>
-          
-          <div class="mb-3">
-            <label class="form-label">Group Name <span class="text-danger">*</span></label>
-            <input type="text" 
-                   class="form-control" 
-                   id="groupName" 
-                   placeholder="e.g., T-Shirts, Jeans, Ceramic Tiles" 
-                   required>
-          </div>
-          
-          <div class="mb-3">
-            <label class="form-label">Description (Optional)</label>
-            <textarea class="form-control" 
-                      id="groupDescription" 
-                      rows="2" 
-                      placeholder="Brief description of this product group"></textarea>
-          </div>
-          
-          <div class="mb-3">
-            <label class="form-label">Category</label>
-            <select id="groupCategory" class="form-select">
-              <option value="">Select Category</option>
-              <option value="Tiles">Tiles</option>
-              <option value="Sanitaryware">Sanitaryware</option>
-              <option value="Accessories">Accessories</option>
-              <option value="Custom">Custom</option>
-            </select>
-          </div>
-          
-          <div class="mb-3">
-            <label class="form-label">Brand (Optional)</label>
-            <input type="text" class="form-control" id="groupBrand" placeholder="e.g., Nike, Somany">
-          </div>
-          
-          <hr class="my-4">
-          
-          <!-- Attributes Section -->
-          <h6 class="mb-3">🏷️ Product Attributes</h6>
-          <p class="text-muted small">Add attributes like Size, Color, Material to create variants automatically</p>
-          
-          <div id="attributesContainer">
-            <!-- Attribute rows will be added here -->
-          </div>
-          
-          <button type="button" class="btn btn-outline-primary btn-sm" onclick="addAttributeRow()">
-            <i class="bi bi-plus-lg"></i> Add Attribute
-          </button>
-          
-          <hr class="my-4">
-          
-          <!-- Variant Preview -->
-          <div id="variantPreview">
-            <h6 class="mb-3">📦 Variant Preview</h6>
-            <div id="variantPreviewList" class="alert alert-info">
-              <small>Add attributes above to see variant preview</small>
-            </div>
-            <div id="variantCount" class="text-muted small">
-              Total variants: <strong>0</strong>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Step 2: Variant Details (Price/Stock) -->
-        <div id="groupStep2" class="group-step" style="display:none;">
-          <h6 class="mb-3">💰 Set Prices & Stock</h6>
-          <p class="text-muted small">Set individual prices and stock levels for each variant</p>
-          
-          <div class="mb-3">
-            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="copyPriceToAll()">
-              Copy first variant price to all
-            </button>
-          </div>
-          
-          <div id="variantDetailsContainer">
-            <!-- Variant detail forms will be added here -->
-          </div>
-        </div>
-        
-      </div>
-      
-      <!-- Modal Footer -->
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" id="groupBackBtn" class="btn btn-secondary" onclick="goToGroupStep1()" style="display:none;">
-          <i class="bi bi-arrow-left"></i> Back
-        </button>
-        <button type="button" id="groupNextBtn" class="btn btn-primary" onclick="goToGroupStep2()">
-          Next <i class="bi bi-arrow-right"></i>
-        </button>
-        <button type="button" id="groupSaveBtn" class="btn btn-success" onclick="saveProductGroup()" style="display:none;">
-          <i class="bi bi-check-lg"></i> Create Group
-        </button>
-      </div>
-      
-    </div>
+<div class="fullscreen-modal" id="createGroupModal">
+  <div class="modal-header-mobile">
+    <button class="btn-cancel-modal" onclick="closeCreateGroupModal()">
+      ✕ Cancel
+    </button>
+    <h3>New Item Group</h3>
+    <div style="width: 80px;"></div> <!-- Spacer for centering -->
   </div>
+  
+  <form id="createGroupForm" class="mobile-form" onsubmit="handleCreateGroup(event)">
+    
+    <!-- Basic Information Section -->
+    <div class="form-section">
+      <div class="section-title">Basic Information</div>
+      
+      <label class="form-label">
+        Item Group Name <span class="required">*</span>
+      </label>
+      <input 
+        type="text" 
+        id="groupName" 
+        name="groupName"
+        placeholder="e.g., T-Shirts, Tiles, Sanitaryware" 
+        required
+        autocomplete="off">
+      
+      <label class="form-label">Description</label>
+      <textarea 
+        id="groupDescription" 
+        name="groupDescription"
+        placeholder="Optional: Add a description for this group"
+        rows="3"></textarea>
+      
+      <label class="form-label">Manufacturer / Brand</label>
+      <input 
+        type="text" 
+        id="groupManufacturer" 
+        name="groupManufacturer"
+        placeholder="e.g., Nike, Somany"
+        autocomplete="off">
+      
+      <label class="form-label">Category</label>
+      <select id="groupCategory" name="groupCategory">
+        <option value="">Select Category</option>
+        <option value="Tiles">Tiles</option>
+        <option value="Sanitaryware">Sanitaryware</option>
+        <option value="Accessories">Accessories</option>
+        <option value="Apparel">Apparel</option>
+        <option value="Custom">Custom</option>
+      </select>
+    </div>
+    
+    <!-- Attributes Section -->
+    <div class="form-section">
+      <div class="section-title">Create Attributes & Options</div>
+      <div class="section-description">
+        Add attributes like Size, Color, Material, etc. Each combination will create a variant.
+      </div>
+      
+      <div id="attributesContainer">
+        <!-- Attribute rows will be added here dynamically -->
+      </div>
+      
+      <button type="button" class="btn-add-more" onclick="addAttributeRow()">
+        ➕ Add Attribute
+      </button>
+    </div>
+    
+    <!-- Variant Preview Section -->
+    <div class="form-section">
+      <div class="variant-preview-section">
+        <div class="variant-count-badge">
+          <span id="variantCount">0</span> Variants Will Be Created
+        </div>
+        <div class="variant-preview-list" id="variantPreviewContainer">
+          <div class="variant-preview-item">
+            Add attributes to see preview...
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Fixed Bottom Actions -->
+    <div class="form-actions-bottom">
+      <button type="button" class="btn-secondary-bottom" onclick="closeCreateGroupModal()">
+        Cancel
+      </button>
+      <button type="submit" class="btn-primary-bottom" id="btnSaveGroup">
+        💾 Save & Generate
+      </button>
+    </div>
+    
+  </form>
+</div>
+
+
+<!-- ==========================================
+     PRODUCT GROUPS - EDIT VARIANT MODAL (MOBILE-OPTIMIZED)
+     ========================================== -->
+
+<div class="fullscreen-modal" id="editVariantModal">
+  <div class="modal-header-mobile">
+    <button class="btn-cancel-modal" onclick="closeEditVariantModal()">
+      ✕ Cancel
+    </button>
+    <h3>Edit Variant</h3>
+    <div style="width: 80px;"></div>
+  </div>
+  
+  <form id="editVariantForm" class="mobile-form" onsubmit="handleUpdateVariant(event)">
+    <input type="hidden" id="editVariantId">
+    <input type="hidden" id="editVariantGroupId">
+    
+    <!-- Variant Info (Read-only) -->
+    <div class="form-section">
+      <div class="section-title">Variant Information</div>
+      
+      <label class="form-label">Variant Name</label>
+      <input 
+        type="text" 
+        id="editVariantName" 
+        readonly
+        style="background: #f5f5f5; color: #666;">
+      
+      <label class="form-label">Attributes</label>
+      <div id="editVariantAttributes" style="padding: 12px; background: #f5f5f5; border-radius: 8px; font-size: 14px; color: #666;">
+        <!-- Attributes will be displayed here -->
+      </div>
+    </div>
+    
+    <!-- Pricing Section -->
+    <div class="form-section">
+      <div class="section-title">Pricing</div>
+      
+      <label class="form-label">Cost Price</label>
+      <input 
+        type="number" 
+        id="editVariantCostPrice" 
+        name="costPrice"
+        placeholder="0.00"
+        step="0.01"
+        min="0">
+      
+      <label class="form-label">Selling Price <span class="required">*</span></label>
+      <input 
+        type="number" 
+        id="editVariantSellingPrice" 
+        name="sellingPrice"
+        placeholder="0.00"
+        step="0.01"
+        min="0"
+        required>
+    </div>
+    
+    <!-- Inventory Section -->
+    <div class="form-section">
+      <div class="section-title">Inventory</div>
+      
+      <label class="form-label">Stock Quantity <span class="required">*</span></label>
+      <input 
+        type="number" 
+        id="editVariantStock" 
+        name="stock"
+        placeholder="0"
+        min="0"
+        required>
+      
+      <label class="form-label">Minimum Stock Alert</label>
+      <input 
+        type="number" 
+        id="editVariantMinStock" 
+        name="minStock"
+        placeholder="0"
+        min="0">
+      
+      <label class="form-label">Unit Type</label>
+      <select id="editVariantUnitType" name="unitType">
+        <option value="Piece">Piece</option>
+        <option value="Box">Box</option>
+        <option value="SFT">SFT</option>
+        <option value="Set">Set</option>
+        <option value="Unit">Unit</option>
+      </select>
+    </div>
+    
+    <!-- Fixed Bottom Actions -->
+    <div class="form-actions-bottom">
+      <button type="button" class="btn-secondary-bottom" onclick="closeEditVariantModal()">
+        Cancel
+      </button>
+      <button type="submit" class="btn-primary-bottom">
+        💾 Save Changes
+      </button>
+    </div>
+    
+  </form>
+</div>
+
+
+<!-- ==========================================
+     SUCCESS MESSAGE OVERLAY
+     ========================================== -->
+
+<div class="success-overlay" id="successOverlay">
+  <div style="font-size: 32px; margin-bottom: 8px;">✅</div>
+  <div id="successMessage">Success!</div>
 </div>
 
   
@@ -8004,6 +8098,7 @@ function showError(message) {
 
 </body>
 </html>
+
 
 
 
