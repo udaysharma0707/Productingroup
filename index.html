@@ -8196,6 +8196,43 @@ function navigateToGroupDetail(groupId, groupName) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+function openEditVariantModal(variantId) {
+  // Remove existing modal if present
+  const old = document.getElementById('editProductModal');
+  if (old) old.remove();
+
+  // -- !! The following must fetch variantData from your app's data!! --
+  // Example variant data fetch - replace this part with your logic:
+  var variantData = getVariantById(variantId); // <-- You need to define this function! (see below)
+  if (!variantData) {
+    alert('Variant data not found for ' + variantId);
+    return;
+  }
+
+  const modalHtml = `
+    <div id="editProductModal" style="display:flex;position:fixed;top:0;left:0;width:100vw;height:100vh;align-items:center;justify-content:center;z-index:99999;background:rgba(0,0,0,0.5);">
+      <div style="background:white;padding:24px;border-radius:12px;max-width:480px;">
+        <h2>Edit Variant</h2>
+        <div><strong>Name:</strong> ${variantData.name || ''}</div>
+        <div><strong>SKU:</strong> ${variantData.sku || ''}</div>
+        <!-- ...other fields you want to display/edit -->
+        <button onclick="closeEditProductModal()">Cancel</button>
+      </div>
+    </div>
+  `;
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+}
+
+function closeEditProductModal() {
+  const m = document.getElementById('editProductModal');
+  if (m) m.remove();
+}
+
+// Utility (you must have something like this in your code already!)
+function getVariantById(id) {
+  // Replace 'variantsArray' with YOUR data array
+  return (window.variantsArray || []).find(v => v.id === id);
+}
 
 
 
@@ -8357,6 +8394,7 @@ function navigateToGroupDetail(groupId, groupName) {
 
 </body>
 </html>
+
 
 
 
