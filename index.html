@@ -7660,7 +7660,7 @@ async function handleCreateGroup(event) {
  * ==========================================
  */
 
-// Open Edit Variant Modal - VERIFIED VERSION
+// Open Edit Variant Modal - COMPLETE FIX
 function openEditVariantModal(variantId) {
   console.log('🔍 Opening edit modal for variant:', variantId);
   
@@ -7669,6 +7669,15 @@ function openEditVariantModal(variantId) {
   
   if (!variant) {
     alert('Variant not found');
+    return;
+  }
+
+  // Get the modal element
+  const modal = document.getElementById('editVariantModal');
+  
+  if (!modal) {
+    console.error('❌ editVariantModal not found in DOM!');
+    alert('Error: Edit modal not found. Please refresh the page.');
     return;
   }
 
@@ -7698,30 +7707,46 @@ function openEditVariantModal(variantId) {
     }
   }
 
-  // Show the CORRECT modal (editVariantModal, NOT productModal)
-  const modal = document.getElementById('editVariantModal');
-  if (modal) {
-    modal.classList.add('active'); // Add active class for fullscreen modal
-    modal.style.display = 'block'; // Ensure it's visible
-    document.body.style.overflow = 'hidden'; // Prevent background scrolling
-  } else {
-    console.error('❌ editVariantModal not found in DOM!');
-  }
+  // CRITICAL: Show modal with proper styles
+  modal.classList.add('active');
+  modal.style.display = 'flex'; // ✅ Use flex, not block
+  modal.style.position = 'fixed';
+  modal.style.top = '0';
+  modal.style.left = '0';
+  modal.style.width = '100%';
+  modal.style.height = '100vh';
+  modal.style.zIndex = '999999'; // ✅ Very high z-index
+  modal.style.background = '#fff';
+  modal.style.overflowY = 'auto';
+  
+  // Prevent background scrolling
+  document.body.style.overflow = 'hidden';
 
   console.log('✅ Edit variant modal opened for:', variant.variantName);
+  console.log('Modal display:', modal.style.display);
+  console.log('Modal z-index:', modal.style.zIndex);
 }
-
-
-
-// Close Edit Variant Modal
+// Close Edit Variant Modal - COMPLETE FIX
 function closeEditVariantModal() {
+  console.log('Closing edit variant modal');
+  
   const modal = document.getElementById('editVariantModal');
   if (modal) {
     modal.classList.remove('active');
+    modal.style.display = 'none'; // Hide it
+    
+    // Restore body scroll
+    document.body.style.overflow = '';
   }
-  document.body.style.overflow = '';
-}
 
+  // Reset form
+  const form = document.getElementById('editVariantForm');
+  if (form) {
+    form.reset();
+  }
+  
+  console.log('Modal closed');
+}
 
 // Handle Update Variant Form Submission
 async function handleUpdateVariant(event) {
@@ -8375,6 +8400,7 @@ function navigateToGroupDetail(groupId, groupName) {
 
 </body>
 </html>
+
 
 
 
