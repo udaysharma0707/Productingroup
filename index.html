@@ -7797,6 +7797,517 @@ function updateVariantPreview() {
 
 // Continue in next message...
 
+/**
+ * ==========================================
+ * FORM SUBMISSION HANDLERS
+ * ==========================================
+ */
+
+// Handle Create Group Form Submission
+async function handleCreateGroup(event) {
+  event.preventDefault();
+  
+  console.log('📝 Creating product group...');
+  
+  // Disable submit button
+  const submitBtn = document.getElementById('btnSaveGroup');
+  const originalText = submitBtn.innerHTML;
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = '⏳ Creating...';
+  
+  try {
+    // Collect form data
+    const groupName = document.getElementById('groupName').value.trim();
+    const description = document.getElementById('groupDescription').value.trim();
+    const manufacturer = document.getElementById('groupManufacturer').value.trim();
+    const category = document.getElementById('groupCategory').value;
+    const attributes = parseAttributesFromForm();
+    
+    // Validate
+    if (!groupName) {
+      throw new Error('Group name is required');
+    }
+    
+    if (Object.keys(attributes).length === 0) {
+      throw new Error('Please add at least one attribute');
+    }
+    
+    // Prepare data
+    const groupData = {
+      groupName: groupName,
+      description: description,
+      manufacturer: manufacturer,
+      brand: manufacturer, // Use same value for brand
+      category: category,
+      attributes: attributes,
+      createdBy: userEmail
+    };
+    
+    console.log('📤 Sending data:', groupData);
+    
+    // Send to backend
+    const response = await fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        action: 'createProductGroup',
+        email: userEmail,
+        hash: userHash,
+        data: JSON.stringify(groupData)
+      })
+    });
+    
+    const result = await response.json();
+    
+    if (result.success) {
+      console.log('✅ Group created:', result);
+      
+      // Show success message
+      showSuccessMessage(`Created "${groupName}" with ${result.totalVariants} variants!`);
+      
+      // Close modal
+      closeCreateGroupModal();
+      
+      // Refresh list
+      setTimeout(() => {
+        loadProductGroups();
+      }, 500);
+      
+    } else {
+      throw new Error(result.error || 'Failed to create group');
+    }
+    
+  } catch (error) {
+    console.error('❌ Error creating group:', error);
+    alert('Error: ' + error.message);
+    
+    // Re-enable button
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = originalText;
+  }
+}
+
+
+/**
+ * ==========================================
+ * EDIT VARIANT MODAL FUNCTIONS
+ * ==========================================
+ */
+
+// Open Edit Variant Modal
+function openEditVariantModal(variantId) {
+  console.log('✏️ Opening edit modal for variant:', variantId);
+  
+  // Find variant in cache
+  const variant = cachedGroupVariants.find(v => v.variantId === variantId);
+  
+  if (!variant) {
+    alert('Variant not found');
+    return;
+  }
+  
+  // Populate form
+  document.getElementById('editVariantId').value = variant.variantId;
+  document.getElementById('editVariantGroupId').value = variant.groupId;
+  document.getElementById('editVariantName').value = variant.variantName;
+  document.getElementById('editVariantCostPrice').value = variant.costPrice || 0;
+  document.getElementById('editVariantSellingPrice').value = variant.sellingPrice || 0;
+  document.getElementById('editVariantStock').value = variant.stock || 0;
+  document.getElementById('editVariantMinStock').value = variant.minStock || 0;
+  document.getElementById('editVariantUnitType').value = variant.unitType || 'Piece';
+  
+  // Display attributes (read-only)
+  const attributesContainer = document.getElementById('editVariantAttributes');
+  if (attributesContainer) {
+    try {
+      const attrs = typeof variant.attributes === 'string' ? JSON.parse(variant.attributes) : variant.attributes;
+      const attrHtml = Object.entries(attrs)
+        .map(([key, value]) => `<strong>${key}:</strong> ${value}`)
+        .join(' • ');
+      attributesContainer.innerHTML = attrHtml || 'No attributes';
+    } catch (e) {
+      attributesContainer.innerHTML = 'No attributes';
+    }
+  }
+  
+  // Show modal
+  const modal = document.getElementById('editVariantModal');
+  if (modal) {
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+
+// Close Edit Variant Modal
+function closeEditVariantModal() {
+  const modal = document.getElementById('editVariantModal');
+  if (modal) {
+    modal.classList.remove('active');
+  }
+  document.body.style.overflow = '';
+}
+
+
+// Handle Update Variant Form Submission
+async function handleUpdateVariant(event) {
+  event.preventDefault();
+  
+  console.log('💾 Updating variant...');
+  
+  const submitBtn = event.target.querySelector('button[type="submit"]');
+  const originalText = submitBtn.innerHTML;
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = '⏳ Saving...';
+  
+  try {
+    // Collect form data
+    const variantId = document.getElementById('editVariantId').value;
+    const costPrice = parseFloat(document.getElementById('editVariantCostPrice').value) || 0;
+    const sellingPrice = parseFloat(document.getElementById('editVariantSellingPrice').value) || 0;
+    const stock = parseInt(document.getElementById('editVariantStock').value) || 0;
+    const minStock = parseInt(document.getElementById('editVariantMinStock').value) || 0;
+    const unitType = document.getElementById('editVariantUnitType').value;
+    
+    // Validate
+    if (sellingPrice < 0 || stock < 0 || minStock < 0) {
+      throw new Error('Values cannot be negative');
+    }
+    
+    // Prepare update data
+    const updateData = {
+      variantId: variantId,
+      costPrice: costPrice,
+      sellingPrice: sellingPrice,
+      stock: stock,
+      minStock: minStock,
+      unitType: unitType
+    };
+    
+    console.log('📤 Sending update:', updateData);
+    
+    // Send to backend
+    const response = await fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        action: 'updateGroupVariant',
+        email: userEmail,
+        hash: userHash,
+        data: JSON.stringify(updateData)
+      })
+    });
+    
+    const result = await response.json();
+    
+    if (result.success) {
+      console.log('✅ Variant updated');
+      
+      // Show success message
+      showSuccessMessage('Variant updated successfully!');
+      
+      // Close modal
+      closeEditVariantModal();
+      
+      // Refresh variants list
+      setTimeout(() => {
+        loadGroupVariants(currentGroupId);
+      }, 500);
+      
+    } else {
+      throw new Error(result.error || 'Failed to update variant');
+    }
+    
+  } catch (error) {
+    console.error('❌ Error updating variant:', error);
+    alert('Error: ' + error.message);
+    
+    // Re-enable button
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = originalText;
+  }
+}
+
+
+/**
+ * ==========================================
+ * DELETE FUNCTIONS
+ * ==========================================
+ */
+
+// Confirm Delete Group
+function confirmDeleteGroup(groupId, groupName) {
+  const confirmed = confirm(
+    `⚠️ Delete "${groupName}"?\n\n` +
+    `This will also delete ALL VARIANTS in this group.\n\n` +
+    `This action cannot be undone!`
+  );
+  
+  if (confirmed) {
+    deleteProductGroup(groupId, groupName);
+  }
+}
+
+
+// Delete Product Group
+async function deleteProductGroup(groupId, groupName) {
+  console.log('🗑️ Deleting group:', groupId);
+  
+  try {
+    // Show loading overlay
+    showLoadingOverlay('Deleting group...');
+    
+    // Send delete request
+    const response = await fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        action: 'deleteProductGroup',
+        email: userEmail,
+        hash: userHash,
+        data: JSON.stringify({ groupId: groupId })
+      })
+    });
+    
+    const result = await response.json();
+    
+    hideLoadingOverlay();
+    
+    if (result.success) {
+      console.log('✅ Group deleted');
+      
+      // Show success message
+      showSuccessMessage(`Deleted "${groupName}" and all its variants`);
+      
+      // Refresh list
+      setTimeout(() => {
+        loadProductGroups();
+      }, 500);
+      
+    } else {
+      throw new Error(result.error || 'Failed to delete group');
+    }
+    
+  } catch (error) {
+    hideLoadingOverlay();
+    console.error('❌ Error deleting group:', error);
+    alert('Error: ' + error.message);
+  }
+}
+
+
+// Confirm Delete Variant
+function confirmDeleteVariant(variantId, variantName) {
+  const confirmed = confirm(
+    `⚠️ Delete "${variantName}"?\n\n` +
+    `This action cannot be undone!`
+  );
+  
+  if (confirmed) {
+    deleteVariant(variantId, variantName);
+  }
+}
+
+
+// Delete Variant
+async function deleteVariant(variantId, variantName) {
+  console.log('🗑️ Deleting variant:', variantId);
+  
+  try {
+    // Show loading overlay
+    showLoadingOverlay('Deleting variant...');
+    
+    // Send delete request
+    const response = await fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        action: 'deleteGroupVariant',
+        email: userEmail,
+        hash: userHash,
+        data: JSON.stringify({ variantId: variantId })
+      })
+    });
+    
+    const result = await response.json();
+    
+    hideLoadingOverlay();
+    
+    if (result.success) {
+      console.log('✅ Variant deleted');
+      
+      // Show success message
+      showSuccessMessage(`Deleted "${variantName}"`);
+      
+      // Refresh variants list
+      setTimeout(() => {
+        loadGroupVariants(currentGroupId);
+      }, 500);
+      
+    } else {
+      throw new Error(result.error || 'Failed to delete variant');
+    }
+    
+  } catch (error) {
+    hideLoadingOverlay();
+    console.error('❌ Error deleting variant:', error);
+    alert('Error: ' + error.message);
+  }
+}
+
+
+/**
+ * ==========================================
+ * UI HELPER FUNCTIONS
+ * ==========================================
+ */
+
+// Show Success Message Overlay
+function showSuccessMessage(message) {
+  const overlay = document.getElementById('successOverlay');
+  const messageEl = document.getElementById('successMessage');
+  
+  if (overlay && messageEl) {
+    messageEl.textContent = message;
+    overlay.classList.add('show');
+    
+    // Auto-hide after 2 seconds
+    setTimeout(() => {
+      overlay.classList.remove('show');
+    }, 2000);
+  }
+}
+
+
+// Show Loading Overlay
+function showLoadingOverlay(message = 'Loading...') {
+  // Remove existing overlay if any
+  let overlay = document.getElementById('loadingOverlayCustom');
+  if (overlay) overlay.remove();
+  
+  // Create new overlay
+  overlay = document.createElement('div');
+  overlay.id = 'loadingOverlayCustom';
+  overlay.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  `;
+  
+  overlay.innerHTML = `
+    <div style="background: white; padding: 32px; border-radius: 12px; text-align: center;">
+      <div class="spinner"></div>
+      <p style="margin-top: 16px; font-size: 16px; color: #333;">${message}</p>
+    </div>
+  `;
+  
+  document.body.appendChild(overlay);
+}
+
+
+// Hide Loading Overlay
+function hideLoadingOverlay() {
+  const overlay = document.getElementById('loadingOverlayCustom');
+  if (overlay) {
+    overlay.remove();
+  }
+}
+
+
+// Escape HTML to prevent XSS
+function escapeHtml(text) {
+  if (!text) return '';
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+
+/**
+ * ==========================================
+ * INITIALIZE ON PAGE LOAD
+ * ==========================================
+ */
+
+// Add event listeners when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('🎨 Product Groups UI initialized');
+  
+  // Add event listener for group name input (real-time preview)
+  const groupNameInput = document.getElementById('groupName');
+  if (groupNameInput) {
+    groupNameInput.addEventListener('input', updateVariantPreview);
+  }
+  
+  // Close modals on ESC key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      const createModal = document.getElementById('createGroupModal');
+      const editModal = document.getElementById('editVariantModal');
+      
+      if (createModal && createModal.classList.contains('active')) {
+        closeCreateGroupModal();
+      }
+      
+      if (editModal && editModal.classList.contains('active')) {
+        closeEditVariantModal();
+      }
+    }
+  });
+});
+
+
+/**
+ * ==========================================
+ * UTILITY: Navigate to Home (Override if needed)
+ * ==========================================
+ */
+
+// Update navigateToHome to handle product groups page
+function navigateToHome() {
+  console.log('🏠 Navigating to Home');
+  
+  // Remove product groups pages if they exist
+  const groupsPage = document.getElementById('productGroupsPageContainer');
+  const variantsPage = document.getElementById('groupVariantsPageContainer');
+  
+  if (groupsPage) groupsPage.remove();
+  if (variantsPage) variantsPage.remove();
+  
+  // Show navbar
+  const navbar = document.querySelector('.navbar');
+  if (navbar) navbar.style.display = 'block';
+  
+  // Show main app
+  const mainApp = document.getElementById('mainApp');
+  if (mainApp) mainApp.style.display = 'block';
+  
+  // Close sidebar
+  if (typeof closeSidebar === 'function') {
+    closeSidebar();
+  }
+  
+  // Scroll to top
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+
+console.log('✅ Product Groups module loaded successfully');
 
 
 
@@ -8686,6 +9197,7 @@ function showError(message) {
 
 </body>
 </html>
+
 
 
 
