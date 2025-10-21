@@ -7382,42 +7382,8 @@ function generateVariantCombinations(attributes) {
   // Get all arrays of options
   const optionArrays = keys.map(key => attributes[key]);
   
-  // Generate cartesian product
-  function cartesianProduct(arrays) {
-    if (arrays.length === 0) return [[]];
-    if (arrays.length === 1) return arrays[0].map(item => [item]);
-    
-    const [first, ...rest] = arrays;
-    const restProduct = cartesianProduct(rest);
-    
-    const result = [];
-    for (let i = 0; i < first.length; i++) {
-      for (let j = 0; j < restProduct.length; j++) {
-        result.push([first[i], ...restProduct[j]]);
-      }
-    }
-    return result;
-  }
-  
-  const combinations = cartesianProduct(optionArrays);
-  
-  // Convert arrays to objects
-  return combinations.map(combo => {
-    const variant = {};
-    keys.forEach((key, index) => {
-      variant[key] = combo[index];
-    });
-    return variant;
-  });
-}
+ 
 
-
-// Generate Variant Name
-function generateVariantName(groupName, attributes) {
-  const values = Object.values(attributes);
-  if (values.length === 0) return groupName;
-  return `${groupName}-${values.join('-')}`;
-}
 
 
 // Update variant preview
@@ -7431,6 +7397,11 @@ function updateVariantPreview() {
   
   if (attributeKeys.length === 0) {
     previewContainer.innerHTML = '<p style="color: #999;">Add attributes to see variant preview</p>';
+    
+    // Update button text
+    const previewBtn = document.querySelector('.btn-preview');
+    if (previewBtn) previewBtn.textContent = '0 Variants Will Be Created';
+    
     return;
   }
   
@@ -7444,26 +7415,58 @@ function updateVariantPreview() {
   const groupName = document.getElementById('groupName')?.value.trim() || 'Product';
   const previewList = [];
   
-  // Show first attribute options as examples
-  if (attributeKeys.length > 0) {
-    const firstAttr = attributeKeys[0];
-    attributes[firstAttr].slice(0, 3).forEach(opt => {
-      previewList.push(`${groupName}-${opt}`);
-    });
+  // Generate first few variant names
+  if (totalVariants <= 10) {
+    // Show all if 10 or fewer
+    const allVariants = generateAllVariantNames(groupName, attributes);
+    previewList.push(...allVariants);
+  } else {
+    // Show first 5
+    const allVariants = generateAllVariantNames(groupName, attributes);
+    previewList.push(...allVariants.slice(0, 5));
   }
   
   previewContainer.innerHTML = `
-    <div style="background: #e3f2fd; padding: 12px; border-radius: 8px;">
-      <div style="font-weight: 600; color: #1976d2; margin-bottom: 8px;">
-        ${totalVariants} Variants Will Be Created
+    <div style="background: #e3f2fd; padding: 16px; border-radius: 8px; border: 2px solid #2196f3;">
+      <div style="font-weight: 600; color: #1976d2; margin-bottom: 12px; font-size: 16px;">
+        ✓ ${totalVariants} Variant${totalVariants > 1 ? 's' : ''} Will Be Created
       </div>
-      ${previewList.map(name => `<div style="padding: 4px 0;">✓ ${name}</div>`).join('')}
-      ${totalVariants > 3 ? `<div style="padding: 4px 0; color: #666;">... and ${totalVariants - 3} more</div>` : ''}
+      <div style="max-height: 200px; overflow-y: auto;">
+        ${previewList.map(name => `<div style="padding: 4px 0; color: #333;">• ${name}</div>`).join('')}
+        ${totalVariants > 10 ? `<div style="padding: 4px 0; color: #666; font-style: italic;">... and ${totalVariants - 5} more variants</div>` : ''}
+      </div>
     </div>
   `;
+  
+  // Update button text
+  const previewBtn = document.querySelector('.btn-preview');
+  if (previewBtn) {
+    previewBtn.textContent = `${totalVariants} Variant${totalVariants > 1 ? 's' : ''} Will Be Created`;
+  }
 }
 
 
+    // Helper function to generate all variant names
+function generateAllVariantNames(baseName, attributes) {
+  const keys = Object.keys(attributes);
+  if (keys.length === 0) return [];
+
+   // Generate cartesian product
+  function cartesian(arrays) {
+    if (arrays.length === 0) return [[]];
+    const [first, ...rest] = arrays;
+    const restProduct = cartesian(rest);
+    return first.flatMap(item => restProduct.map(combo => [item, ...combo]));
+  }
+  
+  const optionArrays = keys.map(key => attributes[key]);
+  const combinations = cartesian(optionArrays);
+  
+  return combinations.map(combo => {
+    const suffix = combo.join('-');
+    return `${baseName}-${suffix}`;
+  });
+}
 
 // Continue in next message...
 
@@ -8262,6 +8265,7 @@ function navigateToGroupDetail(groupId, groupName) {
 
 </body>
 </html>
+
 
 
 
