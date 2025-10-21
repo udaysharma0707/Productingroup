@@ -7364,50 +7364,62 @@ function closeCreateGroupModal() {
 
 
     
-// Add Attribute Row
+// Add Attribute Row - MOBILE OPTIMIZED
 function addAttributeRow() {
-  attributeRowCounter++;
-  
   const container = document.getElementById('attributesContainer');
-  if (!container) {
-    console.error('❌ Attributes container not found');
-    return;
-  }
+  if (!container) return;
   
-  const rowHtml = `
-    <div class="attribute-row" id="attributeRow${attributeRowCounter}" style="background: white; padding: 16px; border-radius: 8px; margin-bottom: 12px; border: 2px solid #e0e0e0;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-        <span style="font-weight: 600; color: #333;">Attribute ${attributeRowCounter}</span>
-        ${attributeRowCounter > 1 ? `<button type="button" onclick="removeAttributeRow(${attributeRowCounter})" style="background: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 13px;">🗑️ Remove</button>` : ''}
-      </div>
-      
-      <label style="display: block; font-size: 14px; font-weight: 600; color: #333; margin-bottom: 8px;">
-        Attribute Name <span style="color: #dc3545;">*</span>
-      </label>
-      <input 
-        type="text" 
-        class="attr-name" 
-        placeholder="e.g., Size, Color"
-        style="width: 100%; padding: 12px; font-size: 16px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 12px;"
-        oninput="updateVariantPreview()">
-      
-      <label style="display: block; font-size: 14px; font-weight: 600; color: #333; margin-bottom: 8px;">
-        Options <span style="color: #dc3545;">*</span> 
-        <span style="font-weight: normal; font-size: 12px; color: #666;">(comma separated)</span>
-      </label>
-      <input 
-        type="text" 
-        class="attr-options" 
-        placeholder="e.g., Small, Medium, Large"
-        style="width: 100%; padding: 12px; font-size: 16px; border: 1px solid #ddd; border-radius: 8px;"
-        oninput="updateVariantPreview()">
-    </div>
+  const rowId = `attributeRow${Date.now()}`;
+  
+  const row = document.createElement('div');
+  row.className = 'attribute-row';
+  row.id = rowId;
+  row.style.cssText = 'display: flex; gap: 8px; margin-bottom: 12px; align-items: center;';
+  
+  row.innerHTML = `
+    <input 
+      type="text" 
+      class="attr-name" 
+      placeholder="Attribute (e.g., Size)" 
+      style="flex: 1; padding: 12px; font-size: 16px; border: 1px solid #ddd; border-radius: 8px;"
+      autocomplete="off"
+      autocorrect="off"
+      autocapitalize="words"
+      oninput="updateVariantPreview()"
+    >
+    <input 
+      type="text" 
+      class="attr-options" 
+      placeholder="Options (e.g., Small, Large)" 
+      style="flex: 2; padding: 12px; font-size: 16px; border: 1px solid #ddd; border-radius: 8px;"
+      autocomplete="off"
+      autocorrect="off"
+      autocapitalize="words"
+      oninput="updateVariantPreview()"
+    >
+    <button 
+      type="button" 
+      onclick="removeAttributeRow('${rowId}')" 
+      style="padding: 10px 12px; background: #dc3545; color: #fff; border: none; border-radius: 8px; font-size: 18px;"
+      aria-label="Remove attribute"
+    >
+      ×
+    </button>
   `;
   
-  container.insertAdjacentHTML('beforeend', rowHtml);
+  container.appendChild(row);
+  
+  // Focus on the attribute name input (mobile-friendly)
+  setTimeout(() => {
+    const nameInput = row.querySelector('.attr-name');
+    if (nameInput) {
+      nameInput.focus();
+    }
+  }, 100);
+  
   updateVariantPreview();
   
-  console.log('✅ Added attribute row', attributeRowCounter);
+  console.log(`✅ Added attribute row: ${rowId}`);
 }
 
 // Remove Attribute Row
@@ -7434,30 +7446,62 @@ function removeAttributeRow(rowId) {
  * VARIANT GENERATION & PREVIEW
  * ==========================================
  */
-// Parse Attributes from Form
+// Parse Attributes from Form - MOBILE OPTIMIZED
 function parseAttributesFromForm() {
+  console.log('🔍 Parsing attributes from form...');
+  
   const attributes = {};
   const rows = document.querySelectorAll('.attribute-row');
   
-  rows.forEach((row) => {
-    const nameInput = row.querySelector('.attr-name');
-    const optionsInput = row.querySelector('.attr-options');
+  console.log(`Found ${rows.length} attribute rows`);
+  
+  rows.forEach((row, index) => {
+    // Try multiple selector strategies for mobile compatibility
+    const nameInput = row.querySelector('.attr-name') || 
+                     row.querySelector('input[placeholder*="Size"]') ||
+                     row.querySelector('input[type="text"]:first-child');
+    
+    const optionsInput = row.querySelector('.attr-options') || 
+                        row.querySelector('input[placeholder*="Small"]') ||
+                        row.querySelector('input[type="text"]:last-child');
     
     if (nameInput && optionsInput) {
-      const attrName = nameInput.value.trim();
-      const attrOptions = optionsInput.value
-        .split(',')
-        .map(opt => opt.trim())
-        .filter(opt => opt.length > 0);
+      // Get values with fallback for mobile
+      const attrName = (nameInput.value || '').trim();
+      const optionsText = (optionsInput.value || '').trim();
       
-      if (attrName && attrOptions.length > 0) {
-        attributes[attrName] = attrOptions;
+      console.log(`Row ${index + 1}:`, {
+        name: attrName,
+        options: optionsText
+      });
+      
+      if (attrName && optionsText) {
+        // Parse options - handle multiple separators
+        const attrOptions = optionsText
+          .split(/[,;|]/) // Split by comma, semicolon, or pipe
+          .map(opt => opt.trim())
+          .filter(opt => opt.length > 0);
+        
+        if (attrOptions.length > 0) {
+          attributes[attrName] = attrOptions;
+          console.log(`✅ Added attribute: ${attrName} = [${attrOptions.join(', ')}]`);
+        } else {
+          console.warn(`⚠️ No valid options for attribute: ${attrName}`);
+        }
+      } else {
+        console.warn(`⚠️ Row ${index + 1} - Empty name or options`);
       }
+    } else {
+      console.error(`❌ Row ${index + 1} - Could not find inputs`);
     }
   });
   
+  console.log('📦 Final parsed attributes:', attributes);
+  console.log('📊 Total attributes:', Object.keys(attributes).length);
+  
   return attributes;
 }
+
 
 
 // Generate Variant Combinations
@@ -7565,37 +7609,67 @@ function updateVariantPreview() {
  * ==========================================
  */
 
-// Handle Create Group Form Submission - COMPLETE FIX
+// Handle Create Group Form Submission - MOBILE FIX
 async function handleCreateGroup(event) {
   event.preventDefault();
-  
   console.log('📝 Creating product group...');
   
   const submitBtn = document.getElementById('btnSaveGroup');
   const originalText = submitBtn.innerHTML;
+  
+  // Prevent double submission
+  if (submitBtn.disabled) {
+    console.log('⚠️ Already submitting...');
+    return;
+  }
+  
   submitBtn.disabled = true;
   submitBtn.innerHTML = '⏳ Creating...';
   
   try {
+    // Collect form data
     const groupName = document.getElementById('groupName').value.trim();
     const description = document.getElementById('groupDescription').value.trim();
     const manufacturer = document.getElementById('groupManufacturer').value.trim();
     const category = document.getElementById('groupCategory').value;
+    
+    console.log('📋 Form data:', {
+      groupName,
+      description,
+      manufacturer,
+      category
+    });
+    
+    // Parse attributes with detailed logging
     const attributes = parseAttributesFromForm();
     
-    console.log('🔍 COLLECTED DATA:');
-    console.log('  groupName:', groupName);
-    console.log('  attributes:', attributes);
-    
+    // ENHANCED VALIDATION with specific error messages
     if (!groupName) {
-      throw new Error('Group name is required');
+      throw new Error('❌ Group name is required');
+    }
+    
+    if (groupName.length < 2) {
+      throw new Error('❌ Group name must be at least 2 characters');
     }
     
     if (Object.keys(attributes).length === 0) {
-      throw new Error('Please add at least one attribute');
+      throw new Error('❌ Please add at least one attribute with options.\n\nExample:\nAttribute: Size\nOptions: Small, Large');
     }
     
-    // ✅ SEND DATA AS INDIVIDUAL PARAMETERS
+    // Validate each attribute has options
+    for (const [attrName, attrOptions] of Object.entries(attributes)) {
+      if (attrOptions.length === 0) {
+        throw new Error(`❌ Attribute "${attrName}" has no options.\n\nPlease enter options separated by commas.\n\nExample: Small, Medium, Large`);
+      }
+    }
+    
+    console.log('✅ Validation passed!');
+    
+    // Calculate expected variant count
+    const variantCount = Object.values(attributes).reduce((total, options) => total * options.length, 1);
+    console.log(`📊 Will create ${variantCount} variants`);
+    
+    // Send data as individual parameters (mobile-friendly)
     const postBody = new URLSearchParams({
       action: 'createProductGroup',
       email: userEmail,
@@ -7609,26 +7683,29 @@ async function handleCreateGroup(event) {
       createdBy: userEmail
     });
     
-    console.log('📤 Sending POST body:', postBody.toString());
+    console.log('📤 Sending request...');
     
     const response = await fetch(GOOGLE_SCRIPT_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
       body: postBody
     });
     
     console.log('📥 Response status:', response.status);
     
     const result = await response.json();
-    console.log('📥 Response data:', result);
+    console.log('📦 Response data:', result);
     
-    // ✅ CHECK FOR SUCCESS
+    // Check for success
     if (result.success || result.ok) {
-      console.log('✅ Group created:', result);
+      console.log('✅ Group created successfully!');
+      
+      const createdCount = result.totalVariants || variantCount;
       
       // Show success message
-      const variantCount = result.totalVariants || 'multiple';
-      showSuccessToast(`✓ Created "${groupName}" with ${variantCount} variants!`);
+      showSuccessToast(`✅ Created "${groupName}" with ${createdCount} variants!`);
       
       // Close modal
       closeCreateGroupModal();
@@ -7639,18 +7716,21 @@ async function handleCreateGroup(event) {
       }, 500);
       
     } else {
-      throw new Error(result.error || result.message || 'Failed to create group');
+      throw new Error(result.error || result.message || 'Failed to create product group');
     }
     
   } catch (error) {
-    console.error('❌ Error creating group:', error);
-    showErrorToast('Error: ' + error.message);
+    console.error('❌ Error creating product group:', error);
     
-    // ✅ RE-ENABLE BUTTON ON ERROR
+    // Show user-friendly error
+    alert(`Error: ${error.message}`);
+    
+    // Re-enable button
     submitBtn.disabled = false;
     submitBtn.innerHTML = originalText;
   }
 }
+
 
 
 
@@ -8400,6 +8480,7 @@ function navigateToGroupDetail(groupId, groupName) {
 
 </body>
 </html>
+
 
 
 
