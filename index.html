@@ -7118,36 +7118,48 @@ function renderProductGroups(groups) {
 }
 
 
-// Render Group Variants List
+// Render Group Variants List - FIXED
 function renderGroupVariants(variants) {
   const container = document.getElementById('variantsListContainer');
   if (!container) return;
-  
+
+  if (!variants || variants.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">📦</div>
+        <h3>No Variants Yet</h3>
+        <p>This group doesn't have any variants</p>
+      </div>
+    `;
+    return;
+  }
+
   let html = '';
   
   variants.forEach(variant => {
     // Parse attributes
     let attributesText = '';
     try {
-      const attrs = typeof variant.attributes === 'string' ? JSON.parse(variant.attributes) : variant.attributes;
+      const attrs = typeof variant.attributes === 'string' 
+        ? JSON.parse(variant.attributes) 
+        : variant.attributes;
       const attrArray = Object.entries(attrs).map(([key, value]) => `${key}: ${value}`);
       attributesText = attrArray.join(' • ');
     } catch (e) {
       attributesText = '';
     }
-    
+
     // Stock status
     const stockClass = variant.stock <= variant.minStock ? 'low' : 'good';
-    const stockIcon = variant.stock <= variant.minStock ? '⚠️' : '✓';
+    const stockIcon = variant.stock <= variant.minStock ? '⚠️' : '✅';
     const stockText = `${stockIcon} ${variant.stock}`;
-    
+
     // Price
     const priceText = variant.sellingPrice > 0 ? `₹${variant.sellingPrice.toFixed(2)}` : '₹0.00';
-    
+
     html += `
       <div class="variant-card">
         <div class="variant-icon">📦</div>
-        
         <div class="variant-info">
           <div class="variant-name">${escapeHtml(variant.variantName)}</div>
           ${attributesText ? `<div class="variant-attributes">${attributesText}</div>` : ''}
@@ -7156,19 +7168,18 @@ function renderGroupVariants(variants) {
             <span class="variant-price">${priceText}</span>
           </div>
         </div>
-        
         <div class="variant-actions">
           <button class="btn-icon-small btn-edit-small" onclick="openEditVariantModal('${variant.variantId}')">
-            ✏️
+            <i class="bi bi-pencil"></i>
           </button>
           <button class="btn-icon-small btn-delete-small" onclick="confirmDeleteVariant('${variant.variantId}', '${escapeHtml(variant.variantName)}')">
-            🗑️
+            <i class="bi bi-trash"></i>
           </button>
         </div>
       </div>
     `;
   });
-  
+
   container.innerHTML = html;
   container.style.display = 'block';
 }
@@ -7649,9 +7660,9 @@ async function handleCreateGroup(event) {
  * ==========================================
  */
 
-// Open Edit Variant Modal
+// Open Edit Variant Modal - VERIFIED VERSION
 function openEditVariantModal(variantId) {
-  console.log('✏️ Opening edit modal for variant:', variantId);
+  console.log('🔍 Opening edit modal for variant:', variantId);
   
   // Find variant in cache
   const variant = cachedGroupVariants.find(v => v.variantId === variantId);
@@ -7660,8 +7671,8 @@ function openEditVariantModal(variantId) {
     alert('Variant not found');
     return;
   }
-  
-  // Populate form
+
+  // Populate form fields
   document.getElementById('editVariantId').value = variant.variantId;
   document.getElementById('editVariantGroupId').value = variant.groupId;
   document.getElementById('editVariantName').value = variant.variantName;
@@ -7670,12 +7681,14 @@ function openEditVariantModal(variantId) {
   document.getElementById('editVariantStock').value = variant.stock || 0;
   document.getElementById('editVariantMinStock').value = variant.minStock || 0;
   document.getElementById('editVariantUnitType').value = variant.unitType || 'Piece';
-  
+
   // Display attributes (read-only)
   const attributesContainer = document.getElementById('editVariantAttributes');
   if (attributesContainer) {
     try {
-      const attrs = typeof variant.attributes === 'string' ? JSON.parse(variant.attributes) : variant.attributes;
+      const attrs = typeof variant.attributes === 'string' 
+        ? JSON.parse(variant.attributes) 
+        : variant.attributes;
       const attrHtml = Object.entries(attrs)
         .map(([key, value]) => `<strong>${key}:</strong> ${value}`)
         .join(' • ');
@@ -7684,14 +7697,20 @@ function openEditVariantModal(variantId) {
       attributesContainer.innerHTML = 'No attributes';
     }
   }
-  
-  // Show modal
+
+  // Show the CORRECT modal (editVariantModal, NOT productModal)
   const modal = document.getElementById('editVariantModal');
   if (modal) {
-    modal.classList.add('active');
-    document.body.style.overflow = 'hidden';
+    modal.classList.add('active'); // Add active class for fullscreen modal
+    modal.style.display = 'block'; // Ensure it's visible
+    document.body.style.overflow = 'hidden'; // Prevent background scrolling
+  } else {
+    console.error('❌ editVariantModal not found in DOM!');
   }
+
+  console.log('✅ Edit variant modal opened for:', variant.variantName);
 }
+
 
 
 // Close Edit Variant Modal
@@ -8356,6 +8375,7 @@ function navigateToGroupDetail(groupId, groupName) {
 
 </body>
 </html>
+
 
 
 
