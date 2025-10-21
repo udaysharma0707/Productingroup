@@ -7985,7 +7985,36 @@ function navigateToHome() {
 
 console.log('✅ Product Groups module loaded successfully');
 
+async function createProductGroup(groupData) {
+  try {                                                                          // [attached_file:29]
+    const btn = document.getElementById('btnSaveGroup');                         // [attached_file:29]
+    if (btn) { btn.disabled = true; btn.innerHTML = '⏳ Creating...'; }          // [attached_file:29]
 
+    const body = new URLSearchParams({                                           // [attached_file:29]
+      action: 'createProductGroup',                                              // [attached_file:29]
+      email: userEmail,                                                          // [attached_file:29]
+      hash: userHash,                                                            // [attached_file:29]
+      data: JSON.stringify(groupData)                                            // [attached_file:29]
+    });                                                                          // [attached_file:29]
+
+    const response = await fetch(GOOGLESCRIPTURL, { method: 'POST', body });     // [attached_file:29]
+    const result = await response.json();                                        // [attached_file:29]
+
+    if (result.success || result.ok) {                                           // [attached_file:29]
+      alert(`Success! Group "${groupData.groupName}" created.`);                 // [attached_file:29]
+      closeCreateGroupModal();                                                   // [attached_file:29]
+      setTimeout(() => loadProductGroups(), 500);                                // [attached_file:29]
+    } else {
+      throw new Error(result.error || 'Failed to create product group');         // [attached_file:29]
+    }
+  } catch (error) {
+    console.error('❌ Error creating product group:', error);                    // [attached_file:29]
+    alert('Error: ' + error.message);                                            // [attached_file:29]
+  } finally {
+    const btn = document.getElementById('btnSaveGroup');                         // [attached_file:29]
+    if (btn) { btn.disabled = false; btn.innerHTML = '💾 Save & Generate'; }     // [attached_file:29]
+  }
+}
 
 
 
@@ -8243,6 +8272,7 @@ function navigateToGroupDetail(groupId, groupName) {
 
 </body>
 </html>
+
 
 
 
