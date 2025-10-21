@@ -7342,34 +7342,31 @@ function removeAttributeRow(rowId) {
  * VARIANT GENERATION & PREVIEW
  * ==========================================
  */
-
+// Parse Attributes from Form
 function parseAttributesFromForm() {
-  const attributeRows = document.querySelectorAll('.attribute-row');
   const attributes = {};
+  const rows = document.querySelectorAll('.attribute-row');
   
-  attributeRows.forEach(row => {
+  rows.forEach((row) => {
     const nameInput = row.querySelector('.attr-name');
     const optionsInput = row.querySelector('.attr-options');
     
     if (nameInput && optionsInput) {
-      const name = nameInput.value.trim();
-      const optionsText = optionsInput.value.trim();
+      const attrName = nameInput.value.trim();
+      const attrOptions = optionsInput.value
+        .split(',')
+        .map(opt => opt.trim())
+        .filter(opt => opt.length > 0);
       
-      if (name && optionsText) {
-        const options = optionsText
-          .split(',')
-          .map(opt => opt.trim())
-          .filter(opt => opt.length > 0);
-        
-        if (options.length > 0) {
-          attributes[name] = options;
-        }
+      if (attrName && attrOptions.length > 0) {
+        attributes[attrName] = attrOptions;
       }
     }
   });
   
   return attributes;
 }
+
 
 // Generate Variant Combinations
 function generateVariantCombinations(attributes) {
@@ -7419,90 +7416,55 @@ function generateVariantName(groupName, attributes) {
   return `${groupName}-${values.join('-')}`;
 }
 
-// Update variant preview
+
+// Update Variant Preview (Real-time)
 function updateVariantPreview() {
+  const groupName = document.getElementById('groupName').value.trim() || 'Product';
   const attributes = parseAttributesFromForm();
-  const previewContainer = document.getElementById('variantPreview');
+  const variants = generateVariantCombinations(attributes);
   
-  if (!previewContainer) return;
+  // Update count
+  document.getElementById('variantCount').textContent = variants.length;
   
-  const attributeKeys = Object.keys(attributes);
+  // Update preview list
+  const container = document.getElementById('variantPreviewContainer');
+  if (!container) return;
   
-  if (attributeKeys.length === 0) {
-    previewContainer.innerHTML = '<p style="color: #999;">Add attributes to see variant preview</p>';
-    
-    // Update button text
-    const previewBtn = document.querySelector('.btn-preview');
-    if (previewBtn) previewBtn.textContent = '0 Variants Will Be Created';
-    
+  if (variants.length === 0) {
+    container.innerHTML = `
+      <div class="variant-preview-item">
+        Add attributes to see preview...
+      </div>
+    `;
     return;
   }
   
-  // Calculate total variants (cartesian product)
-  let totalVariants = 1;
-  attributeKeys.forEach(key => {
-    totalVariants *= attributes[key].length;
+  // Show first 10 variants
+  const previewLimit = 10;
+  let html = '';
+  
+  variants.slice(0, previewLimit).forEach(attr => {
+    const variantName = generateVariantName(groupName, attr);
+    html += `
+      <div class="variant-preview-item">
+        <span class="icon">✓</span>
+        ${escapeHtml(variantName)}
+      </div>
+    `;
   });
   
-  // Generate preview (show first few)
-  const groupName = document.getElementById('groupName')?.value.trim() || 'Product';
-  const previewList = [];
-  
-  // Generate first few variant names
-  if (totalVariants <= 10) {
-    // Show all if 10 or fewer
-    const allVariants = generateAllVariantNames(groupName, attributes);
-    previewList.push(...allVariants);
-  } else {
-    // Show first 5
-    const allVariants = generateAllVariantNames(groupName, attributes);
-    previewList.push(...allVariants.slice(0, 5));
+  // Show "and X more" if needed
+  if (variants.length > previewLimit) {
+    html += `
+      <div class="variant-preview-more">
+        ... and ${variants.length - previewLimit} more
+      </div>
+    `;
   }
   
-  previewContainer.innerHTML = `
-    <div style="background: #e3f2fd; padding: 16px; border-radius: 8px; border: 2px solid #2196f3;">
-      <div style="font-weight: 600; color: #1976d2; margin-bottom: 12px; font-size: 16px;">
-        ✓ ${totalVariants} Variant${totalVariants > 1 ? 's' : ''} Will Be Created
-      </div>
-      <div style="max-height: 200px; overflow-y: auto;">
-        ${previewList.map(name => `<div style="padding: 4px 0; color: #333;">• ${name}</div>`).join('')}
-        ${totalVariants > 10 ? `<div style="padding: 4px 0; color: #666; font-style: italic;">... and ${totalVariants - 5} more variants</div>` : ''}
-      </div>
-    </div>
-  `;
-  
-  // Update button text
-  const previewBtn = document.querySelector('.btn-preview');
-  if (previewBtn) {
-    previewBtn.textContent = `${totalVariants} Variant${totalVariants > 1 ? 's' : ''} Will Be Created`;
-  }
+  container.innerHTML = html;
 }
 
-// Helper function to generate all variant names
-function generateAllVariantNames(baseName, attributes) {
-  const keys = Object.keys(attributes);
-  if (keys.length === 0) return [];
-  
-  // Generate cartesian product
-  function cartesian(arrays) {
-    if (arrays.length === 0) return [[]];
-    const [first, ...rest] = arrays;
-    const restProduct = cartesian(rest);
-    return first.flatMap(item => restProduct.map(combo => [item, ...combo]));
-  }
-  
-  const optionArrays = keys.map(key => attributes[key]);
-  const combinations = cartesian(optionArrays);
-  
-  return combinations.map(combo => {
-    const suffix = combo.join('-');
-    return `${baseName}-${suffix}`;
-  });
-}
-
-
-
-// Continue in next message...
 
 
 /**
@@ -8300,6 +8262,7 @@ function navigateToGroupDetail(groupId, groupName) {
 
 </body>
 </html>
+
 
 
 
