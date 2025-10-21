@@ -53,7 +53,7 @@
 
 /* Make sure the blue box (action buttons) only shows on homepage */
 #mainApp .action-buttons {
-  /* Your existing styles */
+  /* Your  */
 }
 
 /* Hide action buttons when NOT on home */
@@ -1187,6 +1187,649 @@ body:has(.page-view.active) .action-buttons {
   }
 }
 
+/**
+ * ==========================================
+ * PRODUCT GROUPS - MOBILE-FIRST STYLES
+ * ==========================================
+ */
+
+/* Full-screen modal for mobile */
+.fullscreen-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: #ffffff;
+  z-index: 99999;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.fullscreen-modal.active {
+  display: block;
+  animation: slideInRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* Mobile header with back button */
+.modal-header-mobile {
+  position: sticky;
+  top: 0;
+  background: #ffffff;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 100;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.modal-header-mobile h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1a1a;
+  flex: 1;
+  text-align: center;
+}
+
+.btn-cancel-modal {
+  background: transparent;
+  color: #dc3545;
+  border: none;
+  padding: 8px 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Mobile form styles */
+.mobile-form {
+  padding: 16px;
+  padding-bottom: 100px; /* Space for fixed bottom buttons */
+}
+
+.form-section {
+  margin-bottom: 24px;
+  background: #f8f9fa;
+  padding: 16px;
+  border-radius: 12px;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 8px 0;
+}
+
+.section-description {
+  font-size: 13px;
+  color: #666;
+  margin: 0 0 16px 0;
+}
+
+.form-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+  margin-top: 16px;
+}
+
+.form-label:first-child {
+  margin-top: 0;
+}
+
+.form-label .required {
+  color: #dc3545;
+  margin-left: 2px;
+}
+
+/* Mobile-optimized inputs */
+input[type="text"],
+input[type="number"],
+input[type="email"],
+textarea,
+select {
+  width: 100%;
+  padding: 14px;
+  font-size: 16px; /* Prevents zoom on iOS */
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: white;
+  min-height: 48px;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  font-family: inherit;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+}
+
+textarea {
+  min-height: 100px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+}
+
+/* Attribute row card */
+.attribute-row {
+  background: white;
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  border: 2px solid #e0e0e0;
+  position: relative;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.attribute-row.highlight {
+  border-color: #007bff;
+  background: #f0f7ff;
+}
+
+.attribute-row-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.attribute-row-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
+}
+
+.btn-remove-attr {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 32px;
+}
+
+.btn-remove-attr:active {
+  background: #bd2130;
+}
+
+/* Add more button */
+.btn-add-more {
+  width: 100%;
+  padding: 14px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+}
+
+.btn-add-more:active {
+  background: #0056b3;
+}
+
+/* Variant preview */
+.variant-preview-section {
+  background: white;
+  padding: 16px;
+  border-radius: 12px;
+  border: 2px solid #e3f2fd;
+}
+
+.variant-count-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.variant-preview-list {
+  max-height: 250px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.variant-preview-item {
+  padding: 10px 12px;
+  background: #e3f2fd;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #1976d2;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.variant-preview-item:last-child {
+  margin-bottom: 0;
+}
+
+.variant-preview-item .icon {
+  font-size: 16px;
+}
+
+.variant-preview-more {
+  padding: 10px 12px;
+  background: #f5f5f5;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 13px;
+  color: #666;
+  font-style: italic;
+}
+
+/* Fixed bottom action buttons */
+.form-actions-bottom {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  padding: 12px 16px;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+  display: flex;
+  gap: 12px;
+  z-index: 1000;
+}
+
+.btn-secondary-bottom {
+  flex: 1;
+  padding: 14px;
+  background: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 48px;
+}
+
+.btn-secondary-bottom:active {
+  background: #5a6268;
+}
+
+.btn-primary-bottom {
+  flex: 2;
+  padding: 14px;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-primary-bottom:active {
+  background: #218838;
+}
+
+.btn-primary-bottom:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+/* Group card in list */
+.group-card {
+  background: white;
+  margin: 0 16px 12px 16px;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.group-card:active {
+  transform: scale(0.98);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+}
+
+.group-icon {
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  flex-shrink: 0;
+}
+
+.group-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.group-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.group-description {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.group-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.group-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #999;
+  background: #f5f5f5;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.group-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.btn-icon-small {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn-icon-small:active {
+  transform: scale(0.95);
+}
+
+.btn-edit-small {
+  background: #007bff;
+  color: white;
+}
+
+.btn-delete-small {
+  background: #dc3545;
+  color: white;
+}
+
+/* Variant card */
+.variant-card {
+  background: white;
+  margin: 0 16px 12px 16px;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.variant-icon {
+  width: 56px;
+  height: 56px;
+  background: #f0f0f0;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  flex-shrink: 0;
+}
+
+.variant-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.variant-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.variant-attributes {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 6px;
+}
+
+.variant-details {
+  display: flex;
+  gap: 12px;
+  font-size: 13px;
+}
+
+.variant-stock {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.variant-stock.low {
+  color: #dc3545;
+  font-weight: 600;
+}
+
+.variant-stock.good {
+  color: #28a745;
+  font-weight: 600;
+}
+
+.variant-price {
+  color: #007bff;
+  font-weight: 600;
+}
+
+.variant-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* Loading spinner */
+.loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: #666;
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #007bff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Empty state */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  color: #999;
+}
+
+.empty-state-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.empty-state h3 {
+  font-size: 18px;
+  color: #666;
+  margin: 0 0 8px 0;
+}
+
+.empty-state p {
+  font-size: 14px;
+  color: #999;
+  margin: 0 0 24px 0;
+}
+
+/* Success message overlay */
+.success-overlay {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(40, 167, 69, 0.95);
+  color: white;
+  padding: 20px 32px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  z-index: 100000;
+  display: none;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.success-overlay.show {
+  display: block;
+  animation: successPop 0.3s ease-out;
+}
+
+@keyframes successPop {
+  0% {
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Responsive adjustments */
+@media (min-width: 768px) {
+  .group-card {
+    margin: 0 auto 12px auto;
+    max-width: 600px;
+  }
+  
+  .variant-card {
+    margin: 0 auto 12px auto;
+    max-width: 600px;
+  }
+  
+  .mobile-form {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+}
+
+/* iOS specific fixes */
+@supports (-webkit-touch-callout: none) {
+  input[type="text"],
+  input[type="number"],
+  textarea,
+  select {
+    font-size: 16px; /* Prevent zoom on focus */
+  }
+}
+
+/* Hide navbar on fullscreen modals */
+body:has(.fullscreen-modal.active) .navbar {
+  display: none !important;
+}
 
     
   </style>
@@ -1228,7 +1871,7 @@ body:has(.page-view.active) .action-buttons {
     <span>Add Users</span>
   </div>
   
-// NEW (with safety check):
+
 <div class="sidebar-item" onclick="if(typeof navigateToAllProducts === 'function') navigateToAllProducts()">
   <i class="bi bi-box"></i>
   <span>All Products</span>
@@ -2406,6 +3049,223 @@ body:has(.page-view.active) .action-buttons {
   </div>
 </div>
 
+
+<!-- ==========================================
+     PRODUCT GROUPS - CREATE GROUP MODAL (MOBILE-OPTIMIZED)
+     ========================================== -->
+
+<div class="fullscreen-modal" id="createGroupModal">
+  <div class="modal-header-mobile">
+    <button class="btn-cancel-modal" onclick="closeCreateGroupModal()">
+      ✕ Cancel
+    </button>
+    <h3>New Item Group</h3>
+    <div style="width: 80px;"></div> <!-- Spacer for centering -->
+  </div>
+  
+  <form id="createGroupForm" class="mobile-form" onsubmit="handleCreateGroup(event)">
+    
+    <!-- Basic Information Section -->
+    <div class="form-section">
+      <div class="section-title">Basic Information</div>
+      
+      <label class="form-label">
+        Item Group Name <span class="required">*</span>
+      </label>
+      <input 
+        type="text" 
+        id="groupName" 
+        name="groupName"
+        placeholder="e.g., T-Shirts, Tiles, Sanitaryware" 
+        required
+        autocomplete="off">
+      
+      <label class="form-label">Description</label>
+      <textarea 
+        id="groupDescription" 
+        name="groupDescription"
+        placeholder="Optional: Add a description for this group"
+        rows="3"></textarea>
+      
+      <label class="form-label">Manufacturer / Brand</label>
+      <input 
+        type="text" 
+        id="groupManufacturer" 
+        name="groupManufacturer"
+        placeholder="e.g., Nike, Somany"
+        autocomplete="off">
+      
+      <label class="form-label">Category</label>
+      <select id="groupCategory" name="groupCategory">
+        <option value="">Select Category</option>
+        <option value="Tiles">Tiles</option>
+        <option value="Sanitaryware">Sanitaryware</option>
+        <option value="Accessories">Accessories</option>
+        <option value="Apparel">Apparel</option>
+        <option value="Custom">Custom</option>
+      </select>
+    </div>
+    
+    <!-- Attributes Section -->
+    <div class="form-section">
+      <div class="section-title">Create Attributes & Options</div>
+      <div class="section-description">
+        Add attributes like Size, Color, Material, etc. Each combination will create a variant.
+      </div>
+      
+      <div id="attributesContainer">
+        <!-- Attribute rows will be added here dynamically -->
+      </div>
+      
+      <button type="button" class="btn-add-more" onclick="addAttributeRow()">
+        ➕ Add Attribute
+      </button>
+    </div>
+    
+    <!-- Variant Preview Section -->
+    <div class="form-section">
+      <div class="variant-preview-section">
+        <div class="variant-count-badge">
+          <span id="variantCount">0</span> Variants Will Be Created
+        </div>
+        <div class="variant-preview-list" id="variantPreviewContainer">
+          <div class="variant-preview-item">
+            Add attributes to see preview...
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Fixed Bottom Actions -->
+    <div class="form-actions-bottom">
+      <button type="button" class="btn-secondary-bottom" onclick="closeCreateGroupModal()">
+        Cancel
+      </button>
+      <button type="submit" class="btn-primary-bottom" id="btnSaveGroup">
+        💾 Save & Generate
+      </button>
+    </div>
+    
+  </form>
+</div>
+
+
+<!-- ==========================================
+     PRODUCT GROUPS - EDIT VARIANT MODAL (MOBILE-OPTIMIZED)
+     ========================================== -->
+
+<div class="fullscreen-modal" id="editVariantModal">
+  <div class="modal-header-mobile">
+    <button class="btn-cancel-modal" onclick="closeEditVariantModal()">
+      ✕ Cancel
+    </button>
+    <h3>Edit Variant</h3>
+    <div style="width: 80px;"></div>
+  </div>
+  
+  <form id="editVariantForm" class="mobile-form" onsubmit="handleUpdateVariant(event)">
+    <input type="hidden" id="editVariantId">
+    <input type="hidden" id="editVariantGroupId">
+    
+    <!-- Variant Info (Read-only) -->
+    <div class="form-section">
+      <div class="section-title">Variant Information</div>
+      
+      <label class="form-label">Variant Name</label>
+      <input 
+        type="text" 
+        id="editVariantName" 
+        readonly
+        style="background: #f5f5f5; color: #666;">
+      
+      <label class="form-label">Attributes</label>
+      <div id="editVariantAttributes" style="padding: 12px; background: #f5f5f5; border-radius: 8px; font-size: 14px; color: #666;">
+        <!-- Attributes will be displayed here -->
+      </div>
+    </div>
+    
+    <!-- Pricing Section -->
+    <div class="form-section">
+      <div class="section-title">Pricing</div>
+      
+      <label class="form-label">Cost Price</label>
+      <input 
+        type="number" 
+        id="editVariantCostPrice" 
+        name="costPrice"
+        placeholder="0.00"
+        step="0.01"
+        min="0">
+      
+      <label class="form-label">Selling Price <span class="required">*</span></label>
+      <input 
+        type="number" 
+        id="editVariantSellingPrice" 
+        name="sellingPrice"
+        placeholder="0.00"
+        step="0.01"
+        min="0"
+        required>
+    </div>
+    
+    <!-- Inventory Section -->
+    <div class="form-section">
+      <div class="section-title">Inventory</div>
+      
+      <label class="form-label">Stock Quantity <span class="required">*</span></label>
+      <input 
+        type="number" 
+        id="editVariantStock" 
+        name="stock"
+        placeholder="0"
+        min="0"
+        required>
+      
+      <label class="form-label">Minimum Stock Alert</label>
+      <input 
+        type="number" 
+        id="editVariantMinStock" 
+        name="minStock"
+        placeholder="0"
+        min="0">
+      
+      <label class="form-label">Unit Type</label>
+      <select id="editVariantUnitType" name="unitType">
+        <option value="Piece">Piece</option>
+        <option value="Box">Box</option>
+        <option value="SFT">SFT</option>
+        <option value="Set">Set</option>
+        <option value="Unit">Unit</option>
+      </select>
+    </div>
+    
+    <!-- Fixed Bottom Actions -->
+    <div class="form-actions-bottom">
+      <button type="button" class="btn-secondary-bottom" onclick="closeEditVariantModal()">
+        Cancel
+      </button>
+      <button type="submit" class="btn-primary-bottom">
+        💾 Save Changes
+      </button>
+    </div>
+    
+  </form>
+</div>
+
+
+<!-- ==========================================
+     SUCCESS MESSAGE OVERLAY
+     ========================================== -->
+
+<div class="success-overlay" id="successOverlay">
+  <div style="font-size: 32px; margin-bottom: 8px;">✅</div>
+  <div id="successMessage">Success!</div>
+</div>
+
+
+
+
+    
   
 
   <!-- Hidden file input for import -->
@@ -7538,6 +8398,7 @@ function showError(message) {
 
 </body>
 </html>
+
 
 
 
