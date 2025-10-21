@@ -1652,197 +1652,6 @@ body:has(.fullscreen-modal.active) .navbar {
   display: none !important;
 }
 
-/* ============================================
-   MODAL STYLES - ADD THIS TO YOUR CSS
-   ============================================ */
-
-.modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 10000;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.modal.active {
-  display: flex !important;
-  opacity: 1;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 1;
-}
-
-.modal-content {
-  position: relative;
-  background: white;
-  border-radius: 16px;
-  width: 90%;
-  max-width: 800px;
-  max-height: 90vh;
-  overflow-y: auto;
-  z-index: 2;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  animation: slideUp 0.3s ease-out;
-}
-
-@keyframes slideUp {
-  from {
-    transform: translateY(50px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 24px;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-.modal-header h2 {
-  margin: 0;
-  font-size: 24px;
-  color: #333;
-}
-
-.modal-close {
-  background: none;
-  border: none;
-  font-size: 28px;
-  color: #999;
-  cursor: pointer;
-  padding: 0;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  transition: all 0.2s;
-}
-
-.modal-close:hover {
-  background: #f5f5f5;
-  color: #333;
-}
-
-.modal-body {
-  padding: 24px;
-}
-
-.modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  padding: 20px 24px;
-  border-top: 1px solid #e0e0e0;
-  background: #f9f9f9;
-  border-bottom-left-radius: 16px;
-  border-bottom-right-radius: 16px;
-}
-
-.form-section {
-  margin-bottom: 32px;
-}
-
-.form-section h3 {
-  font-size: 18px;
-  margin: 0 0 16px 0;
-  color: #333;
-  font-weight: 600;
-}
-
-.form-label {
-  display: block;
-  font-size: 14px;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 8px;
-  margin-top: 16px;
-}
-
-.form-label:first-of-type {
-  margin-top: 0;
-}
-
-.required {
-  color: #dc3545;
-}
-
-.form-input {
-  width: 100%;
-  padding: 12px 16px;
-  font-size: 16px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  transition: all 0.2s;
-  font-family: inherit;
-}
-
-.form-input:focus {
-  outline: none;
-  border-color: #2196f3;
-  box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
-}
-
-.btn-primary {
-  background: #4caf50;
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  font-size: 16px;
-  font-weight: 600;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.btn-primary:hover {
-  background: #45a049;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
-}
-
-.btn-primary:disabled {
-  background: #ccc;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.btn-secondary {
-  background: #f5f5f5;
-  color: #333;
-  border: 1px solid #ddd;
-  padding: 12px 24px;
-  font-size: 16px;
-  font-weight: 600;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.btn-secondary:hover {
-  background: #e0e0e0;
-  border-color: #ccc;
-}
 
 
     
@@ -7356,235 +7165,37 @@ function filterGroupVariants(searchText) {
 }
 
 
-// ============================================
-// HELPER FUNCTIONS (ADD THESE FIRST)
-// ============================================
-
-// Parse attributes from form
-function parseAttributesFromForm() {
-  const attributeRows = document.querySelectorAll('.attribute-row');
-  const attributes = {};
-  
-  attributeRows.forEach(row => {
-    const nameInput = row.querySelector('.attr-name');
-    const optionsInput = row.querySelector('.attr-options');
-    
-    if (nameInput && optionsInput) {
-      const name = nameInput.value.trim();
-      const optionsText = optionsInput.value.trim();
-      
-      if (name && optionsText) {
-        const options = optionsText
-          .split(',')
-          .map(opt => opt.trim())
-          .filter(opt => opt.length > 0);
-        
-        if (options.length > 0) {
-          attributes[name] = options;
-        }
-      }
-    }
-  });
-  
-  return attributes;
-}
-
-// Update variant preview
-function updateVariantPreview() {
-  const attributes = parseAttributesFromForm();
-  const previewContainer = document.getElementById('variantPreview');
-  
-  if (!previewContainer) return;
-  
-  const attributeKeys = Object.keys(attributes);
-  
-  if (attributeKeys.length === 0) {
-    previewContainer.innerHTML = '<p style="color: #999;">Add attributes to see variant preview</p>';
-    return;
-  }
-  
-  // Calculate total variants (cartesian product)
-  let totalVariants = 1;
-  attributeKeys.forEach(key => {
-    totalVariants *= attributes[key].length;
-  });
-  
-  // Generate preview (show first few)
-  const groupName = document.getElementById('groupName')?.value.trim() || 'Product';
-  const previewList = [];
-  
-  // Show first attribute options as examples
-  if (attributeKeys.length > 0) {
-    const firstAttr = attributeKeys[0];
-    attributes[firstAttr].slice(0, 3).forEach(opt => {
-      previewList.push(`${groupName}-${opt}`);
-    });
-  }
-  
-  previewContainer.innerHTML = `
-    <div style="background: #e3f2fd; padding: 12px; border-radius: 8px;">
-      <div style="font-weight: 600; color: #1976d2; margin-bottom: 8px;">
-        ${totalVariants} Variants Will Be Created
-      </div>
-      ${previewList.map(name => `<div style="padding: 4px 0;">✓ ${name}</div>`).join('')}
-      ${totalVariants > 3 ? `<div style="padding: 4px 0; color: #666;">... and ${totalVariants - 3} more</div>` : ''}
-    </div>
-  `;
-}
-
-// Show success message
-function showSuccessMessage(message) {
-  const toast = document.createElement('div');
-  toast.style.cssText = `
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: #4caf50;
-    color: white;
-    padding: 16px 24px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    z-index: 10000;
-    animation: slideIn 0.3s ease-out;
-  `;
-  toast.textContent = message;
-  document.body.appendChild(toast);
-  
-  setTimeout(() => {
-    toast.style.animation = 'slideOut 0.3s ease-out';
-    setTimeout(() => toast.remove(), 300);
-  }, 3000);
-}
-
-// ============================================
-// MODAL FUNCTIONS (REPLACE YOUR VERSIONS)
-// ============================================
+/**
+ * ==========================================
+ * CREATE GROUP MODAL FUNCTIONS
+ * ==========================================
+ */
 
 // Open Create Group Modal
 function openCreateGroupModal() {
   console.log('📝 Opening Create Group Modal');
   
-  // Check if modal already exists
-  let modal = document.getElementById('createGroupModal');
-  
-  // If not, create it
+  const modal = document.getElementById('createGroupModal');
   if (!modal) {
-    console.log('🔨 Creating modal HTML...');
-    
-    const modalHTML = `
-      <div id="createGroupModal" class="modal">
-        <div class="modal-overlay" onclick="closeCreateGroupModal()"></div>
-        <div class="modal-content" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
-          <div class="modal-header">
-            <h2>📦 Create New Product Group</h2>
-            <button class="modal-close" onclick="closeCreateGroupModal()">✕</button>
-          </div>
-          
-          <form id="createGroupForm" onsubmit="handleCreateGroup(event)">
-            <div class="modal-body">
-              
-              <!-- Basic Information -->
-              <div class="form-section">
-                <h3>Basic Information</h3>
-                
-                <label class="form-label">
-                  Item Group Name <span class="required">*</span>
-                </label>
-                <input 
-                  type="text" 
-                  id="groupName" 
-                  class="form-input" 
-                  placeholder="e.g., T-Shirts, Tiles"
-                  required
-                  oninput="updateVariantPreview()">
-                
-                <label class="form-label">Description</label>
-                <textarea 
-                  id="groupDescription" 
-                  class="form-input" 
-                  rows="3"
-                  placeholder="Optional description"></textarea>
-                
-                <label class="form-label">Manufacturer/Brand</label>
-                <input 
-                  type="text" 
-                  id="groupManufacturer" 
-                  class="form-input" 
-                  placeholder="e.g., Somany">
-                
-                <label class="form-label">Category</label>
-                <select id="groupCategory" class="form-input">
-                  <option value="">Select Category</option>
-                  <option value="Tiles">Tiles</option>
-                  <option value="Sanitaryware">Sanitaryware</option>
-                  <option value="Bath Fittings">Bath Fittings</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-              
-              <!-- Attributes Section -->
-              <div class="form-section">
-                <h3>Create Attributes</h3>
-                <p style="color: #666; font-size: 14px; margin-bottom: 16px;">
-                  Add attributes like Size, Color, Material
-                </p>
-                
-                <div id="attributesContainer"></div>
-                
-                <button 
-                  type="button" 
-                  class="btn-secondary" 
-                  style="width: 100%; margin-top: 12px;"
-                  onclick="addAttributeRow()">
-                  ➕ Add Attribute
-                </button>
-              </div>
-              
-              <!-- Preview Section -->
-              <div class="form-section">
-                <h3>Variant Preview</h3>
-                <div id="variantPreview">
-                  <p style="color: #999;">Add attributes to see variant preview</p>
-                </div>
-              </div>
-              
-            </div>
-            
-            <div class="modal-footer">
-              <button type="button" class="btn-secondary" onclick="closeCreateGroupModal()">
-                Cancel
-              </button>
-              <button type="submit" id="btnSaveGroup" class="btn-primary">
-                💾 Save & Generate
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    `;
-    
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
-    modal = document.getElementById('createGroupModal');
+    console.error('❌ Create Group Modal not found');
+    return;
   }
   
   // Reset form
-  const form = document.getElementById('createGroupForm');
-  if (form) form.reset();
+  document.getElementById('createGroupForm').reset();
+  document.getElementById('attributesContainer').innerHTML = '';
+  attributeRowCounter = 0;
   
-  // Clear and reset attributes
-  const container = document.getElementById('attributesContainer');
-  if (container) {
-    container.innerHTML = '';
-    attributeRowCounter = 0;
-    addAttributeRow(); // Add first row
-  }
+  // Add first attribute row
+  addAttributeRow();
   
   // Show modal
   modal.classList.add('active');
-  document.body.style.overflow = 'hidden';
   
-  console.log('✅ Modal opened successfully');
+  // Prevent body scroll
+  document.body.style.overflow = 'hidden';
 }
+
 
 // Close Create Group Modal
 function closeCreateGroupModal() {
@@ -7592,54 +7203,55 @@ function closeCreateGroupModal() {
   if (modal) {
     modal.classList.remove('active');
   }
+  
+  // Restore body scroll
   document.body.style.overflow = '';
 }
+
 
 // Add Attribute Row
 function addAttributeRow() {
   attributeRowCounter++;
   
   const container = document.getElementById('attributesContainer');
-  if (!container) {
-    console.error('❌ Attributes container not found');
-    return;
-  }
+  if (!container) return;
   
   const rowHtml = `
-    <div class="attribute-row" id="attributeRow${attributeRowCounter}" style="background: white; padding: 16px; border-radius: 8px; margin-bottom: 12px; border: 2px solid #e0e0e0;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-        <span style="font-weight: 600; color: #333;">Attribute ${attributeRowCounter}</span>
-        ${attributeRowCounter > 1 ? `<button type="button" onclick="removeAttributeRow(${attributeRowCounter})" style="background: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 13px;">🗑️ Remove</button>` : ''}
+    <div class="attribute-row" id="attributeRow${attributeRowCounter}">
+      <div class="attribute-row-header">
+        <span class="attribute-row-title">Attribute ${attributeRowCounter}</span>
+        ${attributeRowCounter > 1 ? `<button type="button" class="btn-remove-attr" onclick="removeAttributeRow(${attributeRowCounter})">🗑️ Remove</button>` : ''}
       </div>
       
-      <label style="display: block; font-size: 14px; font-weight: 600; color: #333; margin-bottom: 8px;">
-        Attribute Name <span style="color: #dc3545;">*</span>
+      <label class="form-label">
+        Attribute Name <span class="required">*</span>
       </label>
       <input 
         type="text" 
         class="attr-name" 
-        placeholder="e.g., Size, Color"
-        style="width: 100%; padding: 12px; font-size: 16px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 12px;"
+        placeholder="e.g., Size, Color, Material"
+        required
         oninput="updateVariantPreview()">
       
-      <label style="display: block; font-size: 14px; font-weight: 600; color: #333; margin-bottom: 8px;">
-        Options <span style="color: #dc3545;">*</span> 
+      <label class="form-label">
+        Options <span class="required">*</span>
         <span style="font-weight: normal; font-size: 12px; color: #666;">(comma separated)</span>
       </label>
       <input 
         type="text" 
         class="attr-options" 
         placeholder="e.g., Small, Medium, Large"
-        style="width: 100%; padding: 12px; font-size: 16px; border: 1px solid #ddd; border-radius: 8px;"
+        required
         oninput="updateVariantPreview()">
     </div>
   `;
   
   container.insertAdjacentHTML('beforeend', rowHtml);
-  updateVariantPreview();
   
-  console.log('✅ Added attribute row', attributeRowCounter);
+  // Update preview
+  updateVariantPreview();
 }
+
 
 // Remove Attribute Row
 function removeAttributeRow(rowId) {
@@ -7650,72 +7262,36 @@ function removeAttributeRow(rowId) {
   }
 }
 
-// Handle Create Group Form Submission
-async function handleCreateGroup(event) {
-  event.preventDefault();
+
+/**
+ * ==========================================
+ * VARIANT GENERATION & PREVIEW
+ * ==========================================
+ */
+
+// Parse Attributes from Form
+function parseAttributesFromForm() {
+  const attributes = {};
+  const rows = document.querySelectorAll('.attribute-row');
   
-  console.log('📝 Creating product group...');
+  rows.forEach((row) => {
+    const nameInput = row.querySelector('.attr-name');
+    const optionsInput = row.querySelector('.attr-options');
+    
+    if (nameInput && optionsInput) {
+      const attrName = nameInput.value.trim();
+      const attrOptions = optionsInput.value
+        .split(',')
+        .map(opt => opt.trim())
+        .filter(opt => opt.length > 0);
+      
+      if (attrName && attrOptions.length > 0) {
+        attributes[attrName] = attrOptions;
+      }
+    }
+  });
   
-  const submitBtn = document.getElementById('btnSaveGroup');
-  const originalText = submitBtn.innerHTML;
-  submitBtn.disabled = true;
-  submitBtn.innerHTML = '⏳ Creating...';
-  
-  try {
-    const groupName = document.getElementById('groupName').value.trim();
-    const description = document.getElementById('groupDescription').value.trim();
-    const manufacturer = document.getElementById('groupManufacturer').value.trim();
-    const category = document.getElementById('groupCategory').value;
-    const attributes = parseAttributesFromForm();
-    
-    if (!groupName) {
-      throw new Error('Group name is required');
-    }
-    
-    if (Object.keys(attributes).length === 0) {
-      throw new Error('Please add at least one attribute');
-    }
-    
-    const groupData = {
-      groupName,
-      description,
-      manufacturer,
-      brand: manufacturer,
-      category,
-      attributes,
-      createdBy: userEmail
-    };
-    
-    console.log('📤 Sending data:', groupData);
-    
-    const response = await fetch(GOOGLE_SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({
-        action: 'createProductGroup',
-        email: userEmail,
-        hash: userHash,
-        data: JSON.stringify(groupData)
-      })
-    });
-    
-    const result = await response.json();
-    
-    if (result.success) {
-      console.log('✅ Group created:', result);
-      showSuccessMessage(`Created "${groupName}" with ${result.totalVariants || 'multiple'} variants!`);
-      closeCreateGroupModal();
-      setTimeout(() => loadProductGroups(), 500);
-    } else {
-      throw new Error(result.error || 'Failed to create group');
-    }
-    
-  } catch (error) {
-    console.error('❌ Error creating group:', error);
-    alert('Error: ' + error.message);
-    submitBtn.disabled = false;
-    submitBtn.innerHTML = originalText;
-  }
+  return attributes;
 }
 
 
@@ -8589,7 +8165,6 @@ function navigateToGroupDetail(groupId, groupName) {
 
 </body>
 </html>
-
 
 
 
