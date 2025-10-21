@@ -7473,7 +7473,7 @@ function updateVariantPreview() {
  * ==========================================
  */
 
-// Handle Create Group Form Submission
+// Handle Create Group Form Submission - WITH DEBUG LOGGING
 async function handleCreateGroup(event) {
   event.preventDefault();
   
@@ -7490,6 +7490,15 @@ async function handleCreateGroup(event) {
     const manufacturer = document.getElementById('groupManufacturer').value.trim();
     const category = document.getElementById('groupCategory').value;
     const attributes = parseAttributesFromForm();
+    
+    // ✅ DEBUG: Log collected data
+    console.log('🔍 COLLECTED DATA:');
+    console.log('  groupName:', groupName);
+    console.log('  description:', description);
+    console.log('  manufacturer:', manufacturer);
+    console.log('  category:', category);
+    console.log('  attributes:', attributes);
+    console.log('  attributes keys:', Object.keys(attributes));
     
     if (!groupName) {
       throw new Error('Group name is required');
@@ -7509,20 +7518,27 @@ async function handleCreateGroup(event) {
       createdBy: userEmail
     };
     
-    console.log('📤 Sending data:', groupData);
+    console.log('📤 Sending groupData:', JSON.stringify(groupData, null, 2));
+    
+    const postBody = {
+      action: 'createProductGroup',
+      email: userEmail,
+      hash: userHash,
+      data: JSON.stringify(groupData)
+    };
+    
+    console.log('📤 POST body params:', postBody);
     
     const response = await fetch(GOOGLE_SCRIPT_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({
-        action: 'createProductGroup',
-        email: userEmail,
-        hash: userHash,
-        data: JSON.stringify(groupData)
-      })
+      body: new URLSearchParams(postBody)
     });
     
+    console.log('📥 Response status:', response.status);
+    
     const result = await response.json();
+    console.log('📥 Response data:', result);
     
     if (result.success) {
       console.log('✅ Group created:', result);
@@ -7540,6 +7556,7 @@ async function handleCreateGroup(event) {
     submitBtn.innerHTML = originalText;
   }
 }
+
 
 /**
  * ==========================================
@@ -8226,6 +8243,7 @@ function navigateToGroupDetail(groupId, groupName) {
 
 </body>
 </html>
+
 
 
 
