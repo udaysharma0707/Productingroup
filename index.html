@@ -8880,111 +8880,54 @@ document.addEventListener('DOMContentLoaded', function() {
  * ==========================================
  */
 
-// Navigate back to Home - FORCE REMOVE VERSION
+// Navigate back to Home - SIMPLE WORKING VERSION
 function navigateToHome() {
   console.log('🏠 Navigating to Home');
   
-  // ✅ FORCE REMOVE: Try multiple selection methods
-  let groupsContainer = document.getElementById('productGroupsPageContainer');
-  
-  // If not found by ID, try querySelector
-  if (!groupsContainer) {
-    groupsContainer = document.querySelector('#productGroupsPageContainer');
-  }
-  
-  // If still not found, try finding by class or attribute
-  if (!groupsContainer) {
-    groupsContainer = document.querySelector('[id="productGroupsPageContainer"]');
-  }
-  
-  if (groupsContainer) {
-    console.log('✅ Found productGroupsPageContainer, removing...');
-    console.log('Container parent:', groupsContainer.parentElement);
-    console.log('Container z-index:', window.getComputedStyle(groupsContainer).zIndex);
-    
-    // Force remove
-    groupsContainer.remove();
-    console.log('✅ Container removed');
+  // ✅ DIRECT REMOVAL (Same as console test that worked)
+  const container = document.getElementById('productGroupsPageContainer');
+  if (container) {
+    console.log('✅ Container found, removing...');
+    container.remove();
+    console.log('✅ Container removed successfully');
   } else {
-    console.warn('⚠️ productGroupsPageContainer not found');
+    console.log('⚠️ Container not found');
   }
   
-  // Remove variants container too
+  // Also remove variants container if exists
   const variantsContainer = document.getElementById('groupVariantsPageContainer');
   if (variantsContainer) {
-    console.log('✅ Removing groupVariantsPageContainer');
     variantsContainer.remove();
+    console.log('✅ Variants container removed');
   }
   
-  // ✅ SHOW MAIN CONTENT - Try different selectors
-  let mainApp = document.getElementById('mainApp');
-  
-  if (!mainApp) {
-    mainApp = document.querySelector('#mainApp');
-  }
-  
-  if (!mainApp) {
-    mainApp = document.querySelector('main');
-  }
-  
+  // Show main app (if it was hidden)
+  const mainApp = document.getElementById('mainApp');
   if (mainApp) {
     mainApp.style.display = 'block';
-    mainApp.style.visibility = 'visible';
-    mainApp.style.opacity = '1';
-    mainApp.style.zIndex = '1';
-    console.log('✅ mainApp shown:', mainApp);
-  } else {
-    console.error('❌ mainApp not found - trying to show body children');
-    // Last resort: show all direct body children except the container
-    Array.from(document.body.children).forEach(child => {
-      if (!child.id.includes('productGroups') && !child.id.includes('groupVariants')) {
-        child.style.display = 'block';
-        child.style.visibility = 'visible';
-      }
-    });
   }
   
-  // ✅ SHOW NAVBAR
+  // Show navbar (if it was hidden)
   const navbar = document.querySelector('.navbar');
   if (navbar) {
     navbar.style.display = 'block';
-    navbar.style.visibility = 'visible';
-    navbar.style.zIndex = '1000';
-    console.log('✅ navbar shown');
   }
   
-  // ✅ HIDE ALL PAGE VIEWS
-  const pageViews = document.querySelectorAll('.page-view');
-  pageViews.forEach(page => {
-    page.classList.remove('active');
-    page.style.display = 'none';
-  });
-  
-  // ✅ RESET BODY STYLES
+  // Restore body scroll
   document.body.style.overflow = '';
-  document.body.style.position = '';
   
-  // ✅ CLOSE SIDEBAR
+  // Close sidebar if open
   const sidebar = document.getElementById('sidebarMenu');
   const overlay = document.getElementById('sidebarOverlay');
   if (sidebar) sidebar.classList.remove('open');
   if (overlay) overlay.classList.remove('show');
   
-  // ✅ SCROLL TO TOP
+  // Scroll to top
   window.scrollTo({ top: 0, behavior: 'smooth' });
   
-  console.log('✅ Home navigation complete');
-  
-  // Debug check
-  setTimeout(() => {
-    console.log('🔍 Final state:', {
-      groupsPage: !!document.getElementById('productGroupsPageContainer'),
-      mainApp: !!document.getElementById('mainApp'),
-      navbar: !!document.querySelector('.navbar'),
-      bodyChildren: document.body.children.length
-    });
-  }, 500);
+  console.log('✅ Navigation complete - Homepage visible');
 }
+
 
 
 async function createProductGroup(groupData) {
@@ -9273,6 +9216,7 @@ function navigateToGroupDetail(groupId, groupName) {
 
 </body>
 </html>
+
 
 
 
