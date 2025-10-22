@@ -8884,59 +8884,61 @@ document.addEventListener('DOMContentLoaded', function() {
 function navigateToHome() {
   console.log('🏠 Navigating to Home');
   
-  // ✅ REMOVE ALL PRODUCT GROUP RELATED PAGES
-  const groupsPage = document.getElementById('productGroupsPageContainer');
-  const variantsPage = document.getElementById('groupVariantsPageContainer');
+  // ✅ METHOD 1: Remove dynamically created page containers
+  const groupsPageContainer = document.getElementById('productGroupsPageContainer');
+  const variantsPageContainer = document.getElementById('groupVariantsPageContainer');
   
-  if (groupsPage) {
+  if (groupsPageContainer) {
     console.log('✅ Removing productGroupsPageContainer');
-    groupsPage.remove();
+    groupsPageContainer.remove();
   }
   
-  if (variantsPage) {
+  if (variantsPageContainer) {
     console.log('✅ Removing groupVariantsPageContainer');
-    variantsPage.remove();
+    variantsPageContainer.remove();
   }
   
-  // ✅ SHOW MAIN APP AND NAVBAR
+  // ✅ METHOD 2: Reset page state
+  currentPage = 'home';
+  currentGroupId = null;
+  currentGroupName = null;
+  
+  // ✅ METHOD 3: Show main app and navbar
   const mainApp = document.getElementById('mainApp');
   if (mainApp) {
     mainApp.style.display = 'block';
+    mainApp.style.visibility = 'visible';
+    mainApp.style.opacity = '1';
     console.log('✅ mainApp shown');
   }
   
   const navbar = document.querySelector('.navbar');
   if (navbar) {
     navbar.style.display = 'block';
+    navbar.style.visibility = 'visible';
+    navbar.style.opacity = '1';
     console.log('✅ navbar shown');
   }
   
-  // ✅ HIDE OTHER PAGE VIEWS
-  const allProductsPage = document.getElementById('allProductsPage');
-  const productGroupsPage = document.getElementById('productGroupsPage');
-  const groupDetailPage = document.getElementById('groupDetailPage');
+  // ✅ METHOD 4: Remove any page-view active classes
+  const allPageViews = document.querySelectorAll('.page-view');
+  allPageViews.forEach(page => {
+    page.classList.remove('active');
+    page.style.display = 'none';
+  });
   
-  if (allProductsPage) allProductsPage.classList.remove('active');
-  if (productGroupsPage) productGroupsPage.classList.remove('active');
-  if (groupDetailPage) groupDetailPage.classList.remove('active');
-  
-  // ✅ CLOSE SIDEBAR
+  // ✅ METHOD 5: Close sidebar if open
   if (typeof closeSidebar === 'function') {
     closeSidebar();
   }
   
-  // ✅ SCROLL TO TOP
+  // ✅ METHOD 6: Restore body scroll
+  document.body.style.overflow = '';
+  
+  // ✅ METHOD 7: Scroll to top
   window.scrollTo({ top: 0, behavior: 'smooth' });
   
-  // ✅ CHECK IF PHOTO VIEW IS ACTIVE AND RESTORE
-  const btnPhotoView = document.getElementById('btnPhotoView');
-  if (btnPhotoView && btnPhotoView.classList.contains('active')) {
-    if (typeof showAllProducts === 'function') {
-      showAllProducts();
-    }
-  }
-  
-  console.log('✅ Home navigation complete');
+  console.log('✅ Home navigation complete - All containers removed');
 }
 
 async function createProductGroup(groupData) {
@@ -9225,6 +9227,7 @@ function navigateToGroupDetail(groupId, groupName) {
 
 </body>
 </html>
+
 
 
 
