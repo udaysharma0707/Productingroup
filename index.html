@@ -7243,76 +7243,35 @@ let attributeRowCounter = 0;
  * NAVIGATION - PRODUCT GROUPS
  * ==========================================
  */
-// Navigate to Product Groups - FIXED VERSION
+// Navigate to Product Groups - FIXED TO MATCH ALL PRODUCTS PATTERN
 function navigateToProductGroups() {
   console.log('📁 Navigating to Product Groups');
   
-  // Remove any existing container first
-  const existing = document.getElementById('productGroupsPageContainer');
-  if (existing) {
-    existing.remove();
-  }
-  
-  // Hide main app and navbar
+  // Same pattern as navigateToAllProducts
   const mainApp = document.getElementById('mainApp');
-  const navbar = document.querySelector('.navbar');
+  const allProductsPage = document.getElementById('allProductsPage');
+  const productGroupsPage = document.getElementById('productGroupsPage');
+  const groupDetailPage = document.getElementById('groupDetailPage');
+  
+  // HIDE the main dashboard
   if (mainApp) mainApp.style.display = 'none';
+  
+  // HIDE THE BLUE NAVBAR
+  const navbar = document.querySelector('.navbar');
   if (navbar) navbar.style.display = 'none';
   
-  // ✅ CREATE CONTAINER PROPERLY
-  const container = document.createElement('div');
-  container.id = 'productGroupsPageContainer';
-  container.style.cssText = `
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh;
-    background: #f8f9fa;
-    z-index: 99999;
-    overflow-y: auto;
-  `;
-  
-  // Add HTML content
-  container.innerHTML = `
-    <div class="modal-header-mobile">
-      <button class="btn-cancel-modal" onclick="navigateToHome()">← Back</button>
-      <h3>Products in Group</h3>
-      <button class="btn-primary-bottom" onclick="openCreateGroupModal()" style="padding:8px 16px;min-height:auto;flex:none;font-size:14px;">+ Create</button>
-    </div>
-    
-    <div style="padding:16px;">
-      <input 
-        type="text" 
-        id="searchGroupsInput" 
-        placeholder="Search groups..." 
-        style="width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;font-size:16px;" 
-        onkeyup="filterProductGroups(this.value)"
-      >
-    </div>
-    
-    <div id="groupsLoadingState" class="loading-spinner">
-      <div class="spinner"></div>
-      <p>Loading product groups...</p>
-    </div>
-    
-    <div id="groupsListContainer" style="display:none;"></div>
-    
-    <div id="groupsEmptyState" class="empty-state" style="display:none;">
-      <div class="empty-state-icon">📦</div>
-      <h3>No Product Groups Yet</h3>
-      <p>Create your first product group to manage variants</p>
-      <button class="btn-primary-bottom" onclick="openCreateGroupModal()" style="max-width:200px;margin:16px auto 0;">Create First Group</button>
-    </div>
-  `;
-  
-  // ✅ APPEND TO BODY (THIS IS CRITICAL!)
-  document.body.appendChild(container);
-  
-  console.log('✅ Product Groups page created');
+  // SHOW Product Groups page
+  if (productGroupsPage) productGroupsPage.classList.add('active');
+  if (allProductsPage) allProductsPage.classList.remove('active');
+  if (groupDetailPage) groupDetailPage.classList.remove('active');
   
   // Load groups
-  loadProductGroups();
+  if (typeof loadProductGroups === 'function') {
+    loadProductGroups();
+  }
+  
+  closeSidebar();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 
@@ -8885,28 +8844,37 @@ document.addEventListener('DOMContentLoaded', function() {
  * UTILITY: Navigate to Home (Override if needed)
  * ==========================================
  */
+// Navigate back to Home - FIXED TO MATCH ALL PRODUCTS PATTERN
 function navigateToHome() {
-  console.log('🏠 Force navigating to Home');
+  console.log('🏠 Navigating to Home');
   
-  // Nuclear option: Remove ALL dynamically created elements
-  const allDynamicContainers = document.querySelectorAll('[id*="PageContainer"], [id*="pageContainer"]');
-  allDynamicContainers.forEach(el => {
-    console.log('Removing:', el.id);
-    el.remove();
-  });
+  const mainApp = document.getElementById('mainApp');
+  const allProductsPage = document.getElementById('allProductsPage');
+  const productGroupsPage = document.getElementById('productGroupsPage');
+  const groupDetailPage = document.getElementById('groupDetailPage');
   
-  // Force show everything
-  document.getElementById('mainApp').style.cssText = 'display:block !important; visibility:visible !important; opacity:1 !important;';
-  document.querySelector('.navbar').style.cssText = 'display:block !important; visibility:visible !important;';
+  // SHOW main app
+  if (mainApp) {
+    mainApp.style.display = 'block';
+    console.log('✅ mainApp shown');
+  }
   
-  // Reset body
-  document.body.style.overflow = '';
-  document.body.style.position = '';
+  // SHOW THE BLUE NAVBAR AGAIN
+  const navbar = document.querySelector('.navbar');
+  if (navbar) {
+    navbar.style.display = 'block';
+    console.log('✅ navbar shown');
+  }
   
-  // Scroll to top
-  window.scrollTo(0, 0);
+  // Hide all page views
+  if (allProductsPage) allProductsPage.classList.remove('active');
+  if (productGroupsPage) productGroupsPage.classList.remove('active');
+  if (groupDetailPage) groupDetailPage.classList.remove('active');
   
-  console.log('✅ Forced home navigation complete');
+  closeSidebar();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  
+  console.log('✅ Home visible!');
 }
 
 
@@ -9196,6 +9164,7 @@ function navigateToGroupDetail(groupId, groupName) {
 
 </body>
 </html>
+
 
 
 
