@@ -8880,36 +8880,64 @@ document.addEventListener('DOMContentLoaded', function() {
  * ==========================================
  */
 
-// Update navigateToHome to handle product groups page
+// Navigate back to Home - COMPLETE FIX
 function navigateToHome() {
   console.log('🏠 Navigating to Home');
   
-  // Remove product groups pages if they exist
+  // ✅ REMOVE ALL PRODUCT GROUP RELATED PAGES
   const groupsPage = document.getElementById('productGroupsPageContainer');
   const variantsPage = document.getElementById('groupVariantsPageContainer');
   
-  if (groupsPage) groupsPage.remove();
-  if (variantsPage) variantsPage.remove();
+  if (groupsPage) {
+    console.log('✅ Removing productGroupsPageContainer');
+    groupsPage.remove();
+  }
   
-  // Show navbar
-  const navbar = document.querySelector('.navbar');
-  if (navbar) navbar.style.display = 'block';
+  if (variantsPage) {
+    console.log('✅ Removing groupVariantsPageContainer');
+    variantsPage.remove();
+  }
   
-  // Show main app
+  // ✅ SHOW MAIN APP AND NAVBAR
   const mainApp = document.getElementById('mainApp');
-  if (mainApp) mainApp.style.display = 'block';
+  if (mainApp) {
+    mainApp.style.display = 'block';
+    console.log('✅ mainApp shown');
+  }
   
-  // Close sidebar
+  const navbar = document.querySelector('.navbar');
+  if (navbar) {
+    navbar.style.display = 'block';
+    console.log('✅ navbar shown');
+  }
+  
+  // ✅ HIDE OTHER PAGE VIEWS
+  const allProductsPage = document.getElementById('allProductsPage');
+  const productGroupsPage = document.getElementById('productGroupsPage');
+  const groupDetailPage = document.getElementById('groupDetailPage');
+  
+  if (allProductsPage) allProductsPage.classList.remove('active');
+  if (productGroupsPage) productGroupsPage.classList.remove('active');
+  if (groupDetailPage) groupDetailPage.classList.remove('active');
+  
+  // ✅ CLOSE SIDEBAR
   if (typeof closeSidebar === 'function') {
     closeSidebar();
   }
   
-  // Scroll to top
+  // ✅ SCROLL TO TOP
   window.scrollTo({ top: 0, behavior: 'smooth' });
+  
+  // ✅ CHECK IF PHOTO VIEW IS ACTIVE AND RESTORE
+  const btnPhotoView = document.getElementById('btnPhotoView');
+  if (btnPhotoView && btnPhotoView.classList.contains('active')) {
+    if (typeof showAllProducts === 'function') {
+      showAllProducts();
+    }
+  }
+  
+  console.log('✅ Home navigation complete');
 }
-
-
-console.log('✅ Product Groups module loaded successfully');
 
 async function createProductGroup(groupData) {
   try {                                                                          // [attached_file:29]
@@ -9197,6 +9225,7 @@ function navigateToGroupDetail(groupId, groupName) {
 
 </body>
 </html>
+
 
 
 
