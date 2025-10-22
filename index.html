@@ -2612,7 +2612,8 @@ body.modal-open {
   <div class="modal fade" id="productModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content">
     <div class="modal-header bg-primary text-white"><h5 id="modalTitle" class="modal-title">Add New Product</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
     <div class="modal-body">
-      <form id="productForm">
+      <form id="productForm" onsubmit="saveProduct(event); return false;">
+
         <input type="hidden" id="productId">
         <div class="row mb-3">
           <div class="col-md-8"><label class="form-label">Product Name *</label><input id="productName" class="form-control" required/></div>
@@ -2634,7 +2635,8 @@ body.modal-open {
         </div>
       </form>
     </div>
-    <div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary" onclick="saveProduct()">Save Product</button></div>
+    <div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary" form="productForm">Save Product</button>
+</div>
   </div></div></div>
 
   <!-- SALES MODAL (grid) - top buttons removed, kept within body below grid -->
@@ -4326,6 +4328,17 @@ async function deleteProductFromSheet(id) {
   }
 
  async function saveProduct() {
+  // ✅ CHECK IF THIS IS A VARIANT EDIT
+  const form = document.getElementById('productForm');
+  const isVariant = form.dataset.isVariant === 'true';
+  
+  if (isVariant) {
+    // Handle variant save
+    await saveVariantData();
+    return;
+  }
+  
+  // ✅ EXISTING PRODUCT SAVE LOGIC (UNCHANGED)
   const name = document.getElementById('productName').value.trim();
   const category = document.getElementById('category').value;
   const brand = document.getElementById('brand').value.trim();
@@ -4354,7 +4367,7 @@ async function deleteProductFromSheet(id) {
     price: price,
     stock: stock,
     minStock: minStock,
-    imageUrl: window.editingProductImageUrl || ''  // âœ… PRESERVE IMAGE URL
+    imageUrl: window.editingProductImageUrl || ''  // ✅ PRESERVE IMAGE URL
   };
   
   const idx = cachedProducts.findIndex(p => p.id === product.id);
@@ -4395,6 +4408,131 @@ async function deleteProductFromSheet(id) {
   // Clear the temporary imageUrl variable
   window.editingProductImageUrl = '';
 }
+
+// ✅ NEW FUNCTION: Save Variant Data
+async function saveVariantData() {
+  console.log('💾 Saving variant...');
+  
+  const submitBtn = document.querySelector('#productModal .btn-primary');
+  const originalText = submitBtn ? submitBtn.innerHTML : 'Save Product';
+  
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '⏳ Saving...';
+  }
+  
+  try {
+    const form = document.getElementById('productForm');
+    const variantId = document.getElementById('productId').value;
+    const groupId = form.dataset.groupId;
+    const sellingPrice = parseFloat(document.getElementById('price').value) || 0;
+    const stock = parseInt(document.getElementById('stock').value) || 0;
+    const minStock = parseInt(document.getElementById('minStock').value) || 0;
+    const unitType = document.getElementById('unitType').value || 'Piece';
+    
+    // Validation
+    if (!variantId || !groupId) {
+      throw new Error('Variant ID or Group ID missing');
+    }
+    
+    if (isNaN(sellingPrice) || sellingPrice < 0) {
+      throw new Error('Invalid selling price');
+    }
+    
+    if (isNaN(stock) || stock < 0) {
+      throw new Error('Invalid stock value');
+    }
+    
+    console.log('📤 Sending variant update:', {
+      variantId,
+      groupId,
+      sellingPrice,
+      stock,
+      minStock,
+      unitType
+    });
+    
+    // Send update request
+    const postBody = new URLSearchParams({
+      action: 'updateGroupVariant',
+      email: userEmail,
+      hash: userHash,
+      variantId: variantId,
+      groupId: groupId,
+      costPrice: 0, // You can add cost price field if needed
+      sellingPrice: sellingPrice,
+      stock: stock,
+      minStock: minStock,
+      unitType: unitType
+    });
+    
+    const response = await fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: postBody
+    });
+    
+    const result = await response.json();
+    console.log('📥 Backend response:', result);
+    
+    if (result.success || result.ok) {
+      console.log('✅ Variant updated successfully');
+      
+      // Update local cache
+      const variantIndex = cachedGroupVariants.findIndex(v => v.variantId === variantId);
+      if (variantIndex !== -1) {
+        cachedGroupVariants[variantIndex] = {
+          ...cachedGroupVariants[variantIndex],
+          sellingPrice,
+          stock,
+          minStock,
+          unitType
+        };
+      }
+      
+      // Show success message
+      showSuccessToast('✅ Variant updated successfully!');
+      
+      // Close modal
+      const modal = bootstrap.Modal.getInstance(document.getElementById('productModal'));
+      if (modal) modal.hide();
+      
+      // Clear the variant flag and reset fields
+      form.dataset.isVariant = 'false';
+      form.dataset.groupId = '';
+      
+      // Reset readonly fields
+      document.getElementById('productName').readOnly = false;
+      document.getElementById('productName').style.background = '';
+      document.getElementById('productName').style.color = '';
+      document.getElementById('brand').readOnly = false;
+      document.getElementById('brand').style.background = '';
+      document.getElementById('size').readOnly = false;
+      document.getElementById('size').style.background = '';
+      
+      // Refresh variants list
+      setTimeout(() => {
+        loadGroupVariants(groupId);
+      }, 500);
+      
+    } else {
+      throw new Error(result.error || result.message || 'Failed to update variant');
+    }
+    
+  } catch (error) {
+    console.error('❌ Error updating variant:', error);
+    alert(`Error: ${error.message}`);
+  } finally {
+    // Re-enable button
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = originalText;
+    }
+  }
+}
+
 
   
 
@@ -7922,7 +8060,7 @@ async function handleCreateGroup(event) {
  * ==========================================
  */
 
-// Open Edit Variant Modal - COMPLETE FIX
+// Open Edit Variant Modal - REUSE BOOTSTRAP MODAL
 function openEditVariantModal(variantId) {
   console.log('🔍 Opening edit modal for variant:', variantId);
   
@@ -7934,47 +8072,66 @@ function openEditVariantModal(variantId) {
     return;
   }
 
-  // Get the modal element
-  const modal = document.getElementById('editVariantModal');
+  // Use the existing Bootstrap product modal
+  const modal = document.getElementById('productModal');
   
   if (!modal) {
-    console.error('❌ editVariantModal not found in DOM!');
+    console.error('❌ productModal not found in DOM!');
     alert('Error: Edit modal not found. Please refresh the page.');
     return;
   }
 
-  // Populate form fields
-  document.getElementById('editVariantId').value = variant.variantId;
-  document.getElementById('editVariantGroupId').value = variant.groupId;
-  document.getElementById('editVariantName').value = variant.variantName;
-  document.getElementById('editVariantCostPrice').value = variant.costPrice || 0;
-  document.getElementById('editVariantSellingPrice').value = variant.sellingPrice || 0;
-  document.getElementById('editVariantStock').value = variant.stock || 0;
-  document.getElementById('editVariantMinStock').value = variant.minStock || 0;
-  document.getElementById('editVariantUnitType').value = variant.unitType || 'Piece';
-
-  // Display attributes (read-only)
-  const attributesContainer = document.getElementById('editVariantAttributes');
-  if (attributesContainer) {
-    try {
-      const attrs = typeof variant.attributes === 'string' 
-        ? JSON.parse(variant.attributes) 
-        : variant.attributes;
-      const attrHtml = Object.entries(attrs)
-        .map(([key, value]) => `<strong>${key}:</strong> ${value}`)
-        .join(' • ');
-      attributesContainer.innerHTML = attrHtml || 'No attributes';
-    } catch (e) {
-      attributesContainer.innerHTML = 'No attributes';
-    }
+  // Set modal title
+  const modalTitle = document.getElementById('productModalLabel');
+  if (modalTitle) {
+    modalTitle.textContent = 'Edit Variant';
   }
 
-  // Show modal and lock body scroll
-  modal.classList.add('active');
-  document.body.classList.add('modal-open');
-  document.body.style.overflow = 'hidden';
+  // Populate form fields (mapping variant fields to product fields)
+  document.getElementById('productId').value = variant.variantId; // Use variantId as productId
+  document.getElementById('productName').value = variant.variantName;
+  document.getElementById('brand').value = variant.manufacturer || variant.brand || '';
+  document.getElementById('size').value = extractAttributeValue(variant.attributes, 'Size') || '';
+  document.getElementById('category').value = variant.category || 'Tiles';
+  document.getElementById('unitType').value = variant.unitType || 'Piece';
+  document.getElementById('piecesPerBox').value = 0; // Variants don't use this
+  document.getElementById('sftPerBox').value = 0; // Variants don't use this
+  document.getElementById('pricePerUnit').value = variant.sellingPrice || 0;
+  document.getElementById('currentStock').value = variant.stock || 0;
+  document.getElementById('minStock').value = variant.minStock || 0;
 
-  console.log('✅ Edit variant modal opened for:', variant.variantName);
+  // Store that this is a variant edit (for save function)
+  document.getElementById('productForm').dataset.isVariant = 'true';
+  document.getElementById('productForm').dataset.groupId = variant.groupId;
+
+  // Disable name field (variants can't change names)
+  document.getElementById('productName').readOnly = true;
+  document.getElementById('productName').style.background = '#f8f9fa';
+  document.getElementById('productName').style.color = '#6c757d';
+
+  // Disable brand/size fields (variant attributes are fixed)
+  document.getElementById('brand').readOnly = true;
+  document.getElementById('brand').style.background = '#f8f9fa';
+  document.getElementById('size').readOnly = true;
+  document.getElementById('size').style.background = '#f8f9fa';
+
+  // Show the Bootstrap modal
+  const bootstrapModal = new bootstrap.Modal(modal);
+  bootstrapModal.show();
+
+  console.log('✅ Edit variant modal opened (using productModal) for:', variant.variantName);
+}
+
+// Helper function to extract attribute value from JSON
+function extractAttributeValue(attributes, key) {
+  try {
+    const attrs = typeof attributes === 'string' 
+      ? JSON.parse(attributes) 
+      : attributes;
+    return attrs[key] || '';
+  } catch (e) {
+    return '';
+  }
 }
 
 // Close Edit Variant Modal
@@ -8434,6 +8591,52 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
+
+    // ✅ PASTE THIS NEW CODE HERE - Reset productModal when closed
+  const productModalElement = document.getElementById('productModal');
+  if (productModalElement) {
+    productModalElement.addEventListener('hidden.bs.modal', function () {
+      const form = document.getElementById('productForm');
+      
+      // Reset variant flags
+      if (form) {
+        form.dataset.isVariant = 'false';
+        form.dataset.groupId = '';
+      }
+      
+      // Reset modal title
+      const modalTitle = document.getElementById('productModalLabel');
+      if (modalTitle) {
+        modalTitle.textContent = 'Edit Product';
+      }
+      
+      // Re-enable all readonly fields
+      const productNameField = document.getElementById('productName');
+      const brandField = document.getElementById('brand');
+      const sizeField = document.getElementById('size');
+      
+      if (productNameField) {
+        productNameField.readOnly = false;
+        productNameField.style.background = '';
+        productNameField.style.color = '';
+      }
+      
+      if (brandField) {
+        brandField.readOnly = false;
+        brandField.style.background = '';
+      }
+      
+      if (sizeField) {
+        sizeField.readOnly = false;
+        sizeField.style.background = '';
+      }
+      
+      console.log('✅ productModal reset complete');
+    });
+  }
+  // ✅ END OF NEW CODE
+});
+
 /**
  * ==========================================
  * UTILITY: Navigate to Home (Override if needed)
@@ -8757,6 +8960,7 @@ function navigateToGroupDetail(groupId, groupName) {
 
 </body>
 </html>
+
 
 
 
