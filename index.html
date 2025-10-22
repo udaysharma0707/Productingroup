@@ -4462,7 +4462,7 @@ async function deleteProductFromSheet(id) {
   window.editingProductImageUrl = '';
 }
 
-// ✅ NEW FUNCTION: Save Variant Data
+// ✅ NEW FUNCTION: Save Variant Data - FIXED VERSION
 async function saveVariantData() {
   console.log('💾 Saving variant...');
   
@@ -4476,18 +4476,55 @@ async function saveVariantData() {
   
   try {
     const form = document.getElementById('productForm');
-    const variantId = document.getElementById('productId').value;
-    const groupId = form.dataset.groupId;
-    const sellingPrice = parseFloat(document.getElementById('price').value) || 0;
-    const stock = parseInt(document.getElementById('stock').value) || 0;
-    const minStock = parseInt(document.getElementById('minStock').value) || 0;
-    const unitType = document.getElementById('unitType').value || 'Piece';
     
-    // Validation
-    if (!variantId || !groupId) {
-      throw new Error('Variant ID or Group ID missing');
+    // ✅ GET VARIANT ID FROM MULTIPLE SOURCES
+    let variantId = document.getElementById('productId')?.value;
+    
+    // Fallback: try to get from form dataset
+    if (!variantId || variantId === '') {
+      variantId = form.dataset.variantId;
     }
     
+    // Fallback: try to get from hidden input with different name
+    if (!variantId || variantId === '') {
+      const hiddenInput = form.querySelector('input[type="hidden"]');
+      if (hiddenInput) {
+        variantId = hiddenInput.value;
+      }
+    }
+    
+    const groupId = form.dataset.groupId;
+    
+    // ✅ DETAILED LOGGING
+    console.log('🔍 Debug info:', {
+      variantId: variantId,
+      groupId: groupId,
+      formDataset: form.dataset,
+      productIdField: document.getElementById('productId'),
+      productIdValue: document.getElementById('productId')?.value
+    });
+    
+    // ✅ ENHANCED VALIDATION
+    if (!variantId || variantId === '' || variantId === 'undefined') {
+      throw new Error('Variant ID is missing. Please close and reopen the edit form.');
+    }
+    
+    if (!groupId || groupId === '' || groupId === 'undefined') {
+      throw new Error('Group ID is missing. Please close and reopen the edit form.');
+    }
+    
+    // Get other field values with fallbacks
+    const getFieldValue = (id, defaultValue = 0) => {
+      const field = document.getElementById(id);
+      return field ? (field.value || defaultValue) : defaultValue;
+    };
+    
+    const sellingPrice = parseFloat(getFieldValue('price', 0));
+    const stock = parseInt(getFieldValue('stock', 0));
+    const minStock = parseInt(getFieldValue('minStock', 0));
+    const unitType = getFieldValue('unitType', 'Piece');
+    
+    // Validation
     if (isNaN(sellingPrice) || sellingPrice < 0) {
       throw new Error('Invalid selling price');
     }
@@ -4512,7 +4549,7 @@ async function saveVariantData() {
       hash: userHash,
       variantId: variantId,
       groupId: groupId,
-      costPrice: 0, // You can add cost price field if needed
+      costPrice: 0,
       sellingPrice: sellingPrice,
       stock: stock,
       minStock: minStock,
@@ -4555,19 +4592,27 @@ async function saveVariantData() {
       // Clear the variant flag and reset fields
       form.dataset.isVariant = 'false';
       form.dataset.groupId = '';
+      form.dataset.variantId = '';
       
       // Reset readonly fields
-      document.getElementById('productName').readOnly = false;
-      document.getElementById('productName').style.background = '';
-      document.getElementById('productName').style.color = '';
-      document.getElementById('brand').readOnly = false;
-      document.getElementById('brand').style.background = '';
-      document.getElementById('size').readOnly = false;
-      document.getElementById('size').style.background = '';
+      const resetField = (id) => {
+        const field = document.getElementById(id);
+        if (field) {
+          field.readOnly = false;
+          field.style.background = '';
+          field.style.color = '';
+        }
+      };
+      
+      resetField('productName');
+      resetField('brand');
+      resetField('size');
       
       // Refresh variants list
       setTimeout(() => {
-        loadGroupVariants(groupId);
+        if (typeof loadGroupVariants === 'function') {
+          loadGroupVariants(groupId);
+        }
       }, 500);
       
     } else {
@@ -4585,7 +4630,6 @@ async function saveVariantData() {
     }
   }
 }
-
 
   
 
@@ -8164,11 +8208,12 @@ function openEditVariantModal(variantId) {
   setFieldValue('stock', variant.stock || 0);
   setFieldValue('minStock', variant.minStock || 0);
 
-  // Store that this is a variant edit
+  // ✅✅✅ UPDATED SECTION - Store that this is a variant edit
   const form = document.getElementById('productForm');
   if (form) {
     form.dataset.isVariant = 'true';
     form.dataset.groupId = variant.groupId;
+    form.dataset.variantId = variant.variantId; // ✅ ADDED THIS LINE
   }
 
   // Make fields readonly
@@ -8281,6 +8326,7 @@ function openEditVariantModal(variantId) {
 
   console.log('✅ Edit variant modal opened for:', variant.variantName);
 }
+
 
 // Helper function to extract attribute value from JSON
 function extractAttributeValue(attributes, key) {
@@ -9158,6 +9204,7 @@ function navigateToGroupDetail(groupId, groupName) {
 
 </body>
 </html>
+
 
 
 
