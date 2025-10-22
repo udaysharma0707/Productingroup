@@ -1834,59 +1834,6 @@ body.modal-open {
     transform: translateX(-50%);
   }
 }
-/* ==========================================
-   FORCE PRODUCT MODAL TO SHOW (OVERRIDE ALL)
-   ========================================== */
-
-#productModal.show {
-  display: block !important;
-  z-index: 999999 !important;
-  background: rgba(0, 0, 0, 0.5) !important;
-}
-
-#productModal .modal-dialog {
-  z-index: 1000000 !important;
-  position: relative;
-  margin: 1.75rem auto;
-  max-width: 500px;
-}
-
-#productModal .modal-content {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  pointer-events: auto;
-  background-color: #fff !important;
-  background-clip: padding-box;
-  border: 1px solid rgba(0,0,0,.2);
-  border-radius: 0.3rem;
-  outline: 0;
-  box-shadow: 0 5px 15px rgba(0,0,0,.5) !important;
-}
-
-/* Ensure backdrop appears */
-.modal-backdrop.show {
-  opacity: 0.5 !important;
-  z-index: 999998 !important;
-}
-
-/* Override any conflicting page view styles */
-body:has(#productModal.show) .page-view {
-  z-index: 1 !important;
-}
-
-/* Make sure modal appears above everything */
-#productModal {
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  overflow-x: hidden !important;
-  overflow-y: auto !important;
-  outline: 0 !important;
-}
 
 
     
@@ -2298,12 +2245,6 @@ body:has(#productModal.show) .page-view {
       <i class="bi bi-plus-lg"></i> Add
     </button>
   </div>
-
-
-
-
-
-
   
   <!-- Search Bar -->
   <div class="mb-3">
@@ -2671,8 +2612,7 @@ body:has(#productModal.show) .page-view {
   <div class="modal fade" id="productModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content">
     <div class="modal-header bg-primary text-white"><h5 id="modalTitle" class="modal-title">Add New Product</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
     <div class="modal-body">
-      <form id="productForm" onsubmit="saveProduct(event); return false;">
-
+      <form id="productForm">
         <input type="hidden" id="productId">
         <div class="row mb-3">
           <div class="col-md-8"><label class="form-label">Product Name *</label><input id="productName" class="form-control" required/></div>
@@ -2694,8 +2634,7 @@ body:has(#productModal.show) .page-view {
         </div>
       </form>
     </div>
-    <div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary" form="productForm">Save Product</button>
-</div>
+    <div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary" onclick="saveProduct()">Save Product</button></div>
   </div></div></div>
 
   <!-- SALES MODAL (grid) - top buttons removed, kept within body below grid -->
@@ -4387,17 +4326,6 @@ async function deleteProductFromSheet(id) {
   }
 
  async function saveProduct() {
-  // ✅ CHECK IF THIS IS A VARIANT EDIT
-  const form = document.getElementById('productForm');
-  const isVariant = form.dataset.isVariant === 'true';
-  
-  if (isVariant) {
-    // Handle variant save
-    await saveVariantData();
-    return;
-  }
-  
-  // ✅ EXISTING PRODUCT SAVE LOGIC (UNCHANGED)
   const name = document.getElementById('productName').value.trim();
   const category = document.getElementById('category').value;
   const brand = document.getElementById('brand').value.trim();
@@ -4426,7 +4354,7 @@ async function deleteProductFromSheet(id) {
     price: price,
     stock: stock,
     minStock: minStock,
-    imageUrl: window.editingProductImageUrl || ''  // ✅ PRESERVE IMAGE URL
+    imageUrl: window.editingProductImageUrl || ''  // âœ… PRESERVE IMAGE URL
   };
   
   const idx = cachedProducts.findIndex(p => p.id === product.id);
@@ -4467,168 +4395,6 @@ async function deleteProductFromSheet(id) {
   // Clear the temporary imageUrl variable
   window.editingProductImageUrl = '';
 }
-
-// ✅ COMPLETE FIX: Save Variant Data - Backend Compatible Version
-async function saveVariantData() {
-  console.log('💾 Saving variant...');
-  
-  const submitBtn = document.querySelector('#productModal .btn-primary');
-  const originalText = submitBtn ? submitBtn.innerHTML : 'Save Product';
-  
-  if (submitBtn) {
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '⏳ Saving...';
-  }
-  
-  try {
-    const form = document.getElementById('productForm');
-    
-    // Get variant ID from multiple sources
-    let variantId = document.getElementById('productId')?.value;
-    if (!variantId || variantId === '') {
-      variantId = form.dataset.variantId;
-    }
-    
-    const groupId = form.dataset.groupId;
-    
-    console.log('🔍 Debug info:', {
-      variantId: variantId,
-      groupId: groupId,
-      formDataset: form.dataset,
-      productIdField: document.getElementById('productId'),
-      productIdValue: document.getElementById('productId')?.value
-    });
-    
-    // Validation
-    if (!variantId || variantId === '' || variantId === 'undefined') {
-      throw new Error('Variant ID is missing. Please close and reopen the edit form.');
-    }
-    
-    if (!groupId || groupId === '' || groupId === 'undefined') {
-      throw new Error('Group ID is missing. Please close and reopen the edit form.');
-    }
-    
-    // Get field values
-    const getFieldValue = (id, defaultValue = 0) => {
-      const field = document.getElementById(id);
-      return field ? (field.value || defaultValue) : defaultValue;
-    };
-    
-    const sellingPrice = parseFloat(getFieldValue('price', 0));
-    const stock = parseInt(getFieldValue('stock', 0));
-    const minStock = parseInt(getFieldValue('minStock', 0));
-    const unitType = getFieldValue('unitType', 'Piece');
-    
-    if (isNaN(sellingPrice) || sellingPrice < 0) {
-      throw new Error('Invalid selling price');
-    }
-    
-    if (isNaN(stock) || stock < 0) {
-      throw new Error('Invalid stock value');
-    }
-    
-    // ✅ PREPARE DATA - Format matching backend expectations
-    const updateData = {
-      action: 'updateGroupVariant',
-      email: userEmail,
-      hash: userHash,
-      variantId: variantId,
-      groupId: groupId,
-      costPrice: '0',
-      sellingPrice: sellingPrice.toString(),
-      stock: stock.toString(),
-      minStock: minStock.toString(),
-      unitType: unitType
-    };
-    
-    console.log('📤 Sending variant update:', updateData);
-    
-    // ✅ METHOD 1: Try URLSearchParams (proper encoding)
-    const formData = new URLSearchParams();
-    Object.keys(updateData).forEach(key => {
-      formData.append(key, updateData[key]);
-    });
-    
-    console.log('📦 FormData string:', formData.toString());
-    
-    const response = await fetch(GOOGLE_SCRIPT_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: formData.toString()
-    });
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    
-    const result = await response.json();
-    console.log('📥 Backend response:', result);
-    
-    if (result.success || result.ok) {
-      console.log('✅ Variant updated successfully');
-      
-      // Update local cache
-      const variantIndex = cachedGroupVariants.findIndex(v => v.variantId === variantId);
-      if (variantIndex !== -1) {
-        cachedGroupVariants[variantIndex] = {
-          ...cachedGroupVariants[variantIndex],
-          sellingPrice,
-          stock,
-          minStock,
-          unitType
-        };
-      }
-      
-      // Show success message
-      showSuccessToast('✅ Variant updated successfully!');
-      
-      // Close modal
-      const modal = bootstrap.Modal.getInstance(document.getElementById('productModal'));
-      if (modal) modal.hide();
-      
-      // Clear flags
-      form.dataset.isVariant = 'false';
-      form.dataset.groupId = '';
-      form.dataset.variantId = '';
-      
-      // Reset readonly fields
-      const resetField = (id) => {
-        const field = document.getElementById(id);
-        if (field) {
-          field.readOnly = false;
-          field.style.background = '';
-          field.style.color = '';
-        }
-      };
-      
-      resetField('productName');
-      resetField('brand');
-      resetField('size');
-      
-      // Refresh variants list
-      setTimeout(() => {
-        if (typeof loadGroupVariants === 'function') {
-          loadGroupVariants(groupId);
-        }
-      }, 500);
-      
-    } else {
-      throw new Error(result.error || result.message || 'Failed to update variant');
-    }
-    
-  } catch (error) {
-    console.error('❌ Error updating variant:', error);
-    alert(`Error: ${error.message}\n\nPlease check the console for details.`);
-  } finally {
-    if (submitBtn) {
-      submitBtn.disabled = false;
-      submitBtn.innerHTML = originalText;
-    }
-  }
-}
-
 
   
 
@@ -7249,7 +7015,8 @@ let attributeRowCounter = 0;
  * NAVIGATION - PRODUCT GROUPS
  * ==========================================
  */
-// Navigate to Product Groups List Page - FIXED
+
+// Navigate to Product Groups List Page
 function navigateToProductGroups() {
   console.log('📁 Navigating to Product Groups');
   
@@ -7261,63 +7028,57 @@ function navigateToProductGroups() {
   const mainApp = document.getElementById('mainApp');
   if (mainApp) mainApp.style.display = 'none';
   
-  // ✅ REMOVE EXISTING CONTAINER FIRST (if any)
-  const existingContainer = document.getElementById('productGroupsPageContainer');
-  if (existingContainer) {
-    existingContainer.remove();
-  }
-  
-  // ✅ CREATE NEW CONTAINER (proper method)
-  const pageContainer = document.createElement('div');
-  pageContainer.id = 'productGroupsPageContainer';
-  pageContainer.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100vh;background:#f8f9fa;z-index:99999;overflow-y:auto;';
-  
-  pageContainer.innerHTML = `
-    <!-- Header -->
-    <div class="modal-header-mobile">
-      <button class="btn-cancel-modal" onclick="navigateToHome()">← Back</button>
-      <h3>Products in Group</h3>
-      <button class="btn-primary-bottom" onclick="openCreateGroupModal()" style="padding:8px 16px;min-height:auto;flex:none;font-size:14px;">+ Create</button>
-    </div>
-    
-    <!-- Search -->
-    <div style="padding:16px;">
-      <input 
-        type="text" 
-        id="searchGroupsInput" 
-        placeholder="Search groups..." 
-        style="width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;font-size:16px;" 
-        onkeyup="filterProductGroups(this.value)"
-      >
-    </div>
-    
-    <!-- Loading State -->
-    <div id="groupsLoadingState" class="loading-spinner">
-      <div class="spinner"></div>
-      <p>Loading product groups...</p>
-    </div>
-    
-    <!-- Groups List -->
-    <div id="groupsListContainer" style="display:none;">
-      <!-- Groups will be rendered here -->
-    </div>
-    
-    <!-- Empty State -->
-    <div id="groupsEmptyState" class="empty-state" style="display:none;">
-      <div class="empty-state-icon">📦</div>
-      <h3>No Product Groups Yet</h3>
-      <p>Create your first product group to manage variants</p>
-      <button class="btn-primary-bottom" onclick="openCreateGroupModal()" style="max-width:200px;margin:16px auto 0;">Create First Group</button>
+  // Build full-screen page
+  document.body.innerHTML += `
+    <div id="productGroupsPageContainer" style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #f8f9fa; z-index: 99999; overflow-y: auto;">
+      
+      <!-- Header -->
+      <div class="modal-header-mobile">
+        <button class="btn-cancel-modal" onclick="navigateToHome()">
+          ← Back
+        </button>
+        <h3>Products in Group</h3>
+        <button class="btn-primary-bottom" onclick="openCreateGroupModal()" style="padding: 8px 16px; min-height: auto; flex: none; font-size: 14px;">
+          + Create
+        </button>
+      </div>
+      
+      <!-- Search -->
+      <div style="padding: 16px;">
+        <input 
+          type="text" 
+          id="searchGroupsInput" 
+          placeholder="🔍 Search groups..."
+          style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px;"
+          onkeyup="filterProductGroups(this.value)">
+      </div>
+      
+      <!-- Loading State -->
+      <div id="groupsLoadingState" class="loading-spinner">
+        <div class="spinner"></div>
+        <p>Loading product groups...</p>
+      </div>
+      
+      <!-- Groups List -->
+      <div id="groupsListContainer" style="display: none;">
+        <!-- Groups will be rendered here -->
+      </div>
+      
+      <!-- Empty State -->
+      <div id="groupsEmptyState" class="empty-state" style="display: none;">
+        <div class="empty-state-icon">📁</div>
+        <h3>No Product Groups Yet</h3>
+        <p>Create your first product group to manage variants</p>
+        <button class="btn-primary-bottom" onclick="openCreateGroupModal()" style="max-width: 200px; margin: 0 auto;">
+          + Create First Group
+        </button>
+      </div>
+      
     </div>
   `;
   
-  // ✅ APPEND TO BODY (proper method)
-  document.body.appendChild(pageContainer);
-  
   // Load data
   loadProductGroups();
-  
-  console.log('✅ Product Groups page created');
 }
 
 
@@ -8160,7 +7921,8 @@ async function handleCreateGroup(event) {
  * EDIT VARIANT MODAL FUNCTIONS
  * ==========================================
  */
-// Open Edit Variant Modal - AGGRESSIVE FORCE SHOW VERSION
+
+// Open Edit Variant Modal - COMPLETE FIX
 function openEditVariantModal(variantId) {
   console.log('🔍 Opening edit modal for variant:', variantId);
   
@@ -8172,323 +7934,60 @@ function openEditVariantModal(variantId) {
     return;
   }
 
-  // Use the existing Bootstrap product modal
-  const modal = document.getElementById('productModal');
+  // Get the modal element
+  const modal = document.getElementById('editVariantModal');
   
   if (!modal) {
-    console.error('❌ productModal not found in DOM!');
+    console.error('❌ editVariantModal not found in DOM!');
     alert('Error: Edit modal not found. Please refresh the page.');
     return;
   }
 
-  // Set modal title
-  const modalTitle = document.getElementById('productModalLabel');
-  if (modalTitle) {
-    modalTitle.textContent = 'Edit Variant';
-  }
-
-  // ✅ SAFE FIELD POPULATION
-  const setFieldValue = (id, value) => {
-    const field = document.getElementById(id);
-    if (field) {
-      field.value = value;
-      return true;
-    } else {
-      console.warn(`⚠️ Field not found: ${id}`);
-      return false;
-    }
-  };
-
   // Populate form fields
-  setFieldValue('productId', variant.variantId);
-  setFieldValue('productName', variant.variantName);
-  setFieldValue('brand', variant.manufacturer || variant.brand || '');
-  setFieldValue('size', extractAttributeValue(variant.attributes, 'Size') || '');
-  setFieldValue('category', variant.category || 'Tiles');
-  setFieldValue('unitType', variant.unitType || 'Piece');
-  setFieldValue('piecesPerBox', 0);
-  setFieldValue('sftPerBox', 0);
-  setFieldValue('price', variant.sellingPrice || 0);
-  setFieldValue('stock', variant.stock || 0);
-  setFieldValue('minStock', variant.minStock || 0);
+  document.getElementById('editVariantId').value = variant.variantId;
+  document.getElementById('editVariantGroupId').value = variant.groupId;
+  document.getElementById('editVariantName').value = variant.variantName;
+  document.getElementById('editVariantCostPrice').value = variant.costPrice || 0;
+  document.getElementById('editVariantSellingPrice').value = variant.sellingPrice || 0;
+  document.getElementById('editVariantStock').value = variant.stock || 0;
+  document.getElementById('editVariantMinStock').value = variant.minStock || 0;
+  document.getElementById('editVariantUnitType').value = variant.unitType || 'Piece';
 
-  // ✅✅✅ UPDATED SECTION - Store that this is a variant edit
-  const form = document.getElementById('productForm');
-  if (form) {
-    form.dataset.isVariant = 'true';
-    form.dataset.groupId = variant.groupId;
-    form.dataset.variantId = variant.variantId; // ✅ ADDED THIS LINE
+  // Display attributes (read-only)
+  const attributesContainer = document.getElementById('editVariantAttributes');
+  if (attributesContainer) {
+    try {
+      const attrs = typeof variant.attributes === 'string' 
+        ? JSON.parse(variant.attributes) 
+        : variant.attributes;
+      const attrHtml = Object.entries(attrs)
+        .map(([key, value]) => `<strong>${key}:</strong> ${value}`)
+        .join(' • ');
+      attributesContainer.innerHTML = attrHtml || 'No attributes';
+    } catch (e) {
+      attributesContainer.innerHTML = 'No attributes';
+    }
   }
 
-  // Make fields readonly
-  const makeReadonly = (id) => {
-    const field = document.getElementById(id);
-    if (field) {
-      field.readOnly = true;
-      field.style.background = '#f8f9fa';
-      field.style.color = '#6c757d';
-    }
-  };
-
-  makeReadonly('productName');
-  makeReadonly('brand');
-  makeReadonly('size');
-
-  // ✅ FORCE SHOW MODAL - Multiple methods
-  console.log('Attempting to show modal...');
+  // CRITICAL: Show modal with proper styles
+  modal.classList.add('active');
+  modal.style.display = 'flex'; // ✅ Use flex, not block
+  modal.style.position = 'fixed';
+  modal.style.top = '0';
+  modal.style.left = '0';
+  modal.style.width = '100%';
+  modal.style.height = '100vh';
+  modal.style.zIndex = '999999'; // ✅ Very high z-index
+  modal.style.background = '#fff';
+  modal.style.overflowY = 'auto';
   
-  // Method 1: Try Bootstrap 5 Modal API
-  try {
-    let bootstrapModal = bootstrap.Modal.getInstance(modal);
-    if (!bootstrapModal) {
-      bootstrapModal = new bootstrap.Modal(modal);
-    }
-    bootstrapModal.show();
-    console.log('✅ Bootstrap modal.show() called');
-  } catch (e) {
-    console.error('❌ Bootstrap Modal failed:', e);
-    
-    // Method 2: Manual show with jQuery (fallback)
-    if (typeof $ !== 'undefined' && $.fn.modal) {
-      $(modal).modal('show');
-      console.log('✅ jQuery modal.show() called');
-    } else {
-      // Method 3: Direct CSS manipulation (last resort)
-      modal.classList.add('show');
-      modal.style.display = 'block';
-      modal.setAttribute('aria-modal', 'true');
-      modal.removeAttribute('aria-hidden');
-      document.body.classList.add('modal-open');
-      
-      // Add backdrop manually
-      const backdrop = document.createElement('div');
-      backdrop.className = 'modal-backdrop fade show';
-      backdrop.id = 'variantModalBackdrop';
-      document.body.appendChild(backdrop);
-      
-      console.log('✅ Manual modal display applied');
-    }
-  }
-
-  // ✅ AGGRESSIVE FORCE TO FOREGROUND (Works regardless of Bootstrap method)
-  setTimeout(() => {
-    // Force modal container
-    modal.style.cssText = `
-      display: block !important;
-      z-index: 999999 !important;
-      position: fixed !important;
-      top: 0 !important;
-      left: 0 !important;
-      width: 100% !important;
-      height: 100% !important;
-      overflow-y: auto !important;
-      background: rgba(0, 0, 0, 0.5) !important;
-    `;
-    
-    // Force modal dialog
-    const modalDialog = modal.querySelector('.modal-dialog');
-    if (modalDialog) {
-      modalDialog.style.cssText = `
-        z-index: 1000000 !important;
-        position: relative !important;
-        margin: 1.75rem auto !important;
-        max-width: 500px !important;
-        pointer-events: auto !important;
-      `;
-    }
-    
-    // Force modal content
-    const modalContent = modal.querySelector('.modal-content');
-    if (modalContent) {
-      modalContent.style.cssText = `
-        background: white !important;
-        border-radius: 8px !important;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
-        position: relative !important;
-        display: flex !important;
-        flex-direction: column !important;
-      `;
-    }
-    
-    // Force backdrop if exists
-    const backdrop = document.querySelector('.modal-backdrop');
-    if (backdrop) {
-      backdrop.style.cssText = `
-        z-index: 999998 !important;
-        opacity: 0.5 !important;
-      `;
-    }
-    
-    // Lower z-index of page views
-    const pageViews = document.querySelectorAll('.page-view');
-    pageViews.forEach(view => {
-      view.style.zIndex = '1';
-    });
-    
-    console.log('✅ Modal FORCED to foreground with inline styles');
-  }, 100);
+  // Prevent background scrolling
+  document.body.style.overflow = 'hidden';
 
   console.log('✅ Edit variant modal opened for:', variant.variantName);
+  console.log('Modal display:', modal.style.display);
+  console.log('Modal z-index:', modal.style.zIndex);
 }
-
-
-// Helper function to extract attribute value from JSON
-function extractAttributeValue(attributes, key) {
-  try {
-    const attrs = typeof attributes === 'string' 
-      ? JSON.parse(attributes) 
-      : attributes;
-    return attrs[key] || '';
-  } catch (e) {
-    return '';
-  }
-}
-
-
-// Helper function to extract attribute value from JSON
-function extractAttributeValue(attributes, key) {
-  try {
-    const attrs = typeof attributes === 'string' 
-      ? JSON.parse(attributes) 
-      : attributes;
-    return attrs[key] || '';
-  } catch (e) {
-    return '';
-  }
-}
-
-
-// Helper function to extract attribute value from JSON
-function extractAttributeValue(attributes, key) {
-  try {
-    const attrs = typeof attributes === 'string' 
-      ? JSON.parse(attributes) 
-      : attributes;
-    return attrs[key] || '';
-  } catch (e) {
-    return '';
-  }
-}
-
-
-// Helper function to extract attribute value from JSON
-function extractAttributeValue(attributes, key) {
-  try {
-    const attrs = typeof attributes === 'string' 
-      ? JSON.parse(attributes) 
-      : attributes;
-    return attrs[key] || '';
-  } catch (e) {
-    return '';
-  }
-}
-
-// Close Edit Variant Modal
-function closeEditVariantModal() {
-  console.log('Closing edit variant modal');
-  
-  const modal = document.getElementById('editVariantModal');
-  if (modal) {
-    modal.classList.remove('active');
-  }
-  
-  // Unlock body scroll
-  document.body.classList.remove('modal-open');
-  document.body.style.overflow = '';
-
-  // Reset form
-  const form = document.getElementById('editVariantForm');
-  if (form) {
-    form.reset();
-  }
-  
-  console.log('Modal closed');
-}
-
-// Handle Edit Variant Form Submission
-async function handleEditVariant(event) {
-  event.preventDefault();
-  console.log('💾 Saving variant changes...');
-  
-  const submitBtn = document.getElementById('btnSaveVariant');
-  const originalText = submitBtn.innerHTML;
-  
-  submitBtn.disabled = true;
-  submitBtn.innerHTML = '⏳ Saving...';
-  
-  try {
-    const variantId = document.getElementById('editVariantId').value;
-    const groupId = document.getElementById('editVariantGroupId').value;
-    const costPrice = parseFloat(document.getElementById('editVariantCostPrice').value) || 0;
-    const sellingPrice = parseFloat(document.getElementById('editVariantSellingPrice').value) || 0;
-    const stock = parseInt(document.getElementById('editVariantStock').value) || 0;
-    const minStock = parseInt(document.getElementById('editVariantMinStock').value) || 0;
-    const unitType = document.getElementById('editVariantUnitType').value;
-    
-    // Send update request
-    const postBody = new URLSearchParams({
-      action: 'updateGroupVariant',
-      email: userEmail,
-      hash: userHash,
-      variantId: variantId,
-      groupId: groupId,
-      costPrice: costPrice,
-      sellingPrice: sellingPrice,
-      stock: stock,
-      minStock: minStock,
-      unitType: unitType
-    });
-    
-    const response = await fetch(GOOGLE_SCRIPT_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: postBody
-    });
-    
-    const result = await response.json();
-    
-    if (result.success || result.ok) {
-      console.log('✅ Variant updated successfully');
-      
-      // Update local cache
-      const variantIndex = cachedGroupVariants.findIndex(v => v.variantId === variantId);
-      if (variantIndex !== -1) {
-        cachedGroupVariants[variantIndex] = {
-          ...cachedGroupVariants[variantIndex],
-          costPrice,
-          sellingPrice,
-          stock,
-          minStock,
-          unitType
-        };
-      }
-      
-      // Show success message
-      showSuccessToast('✅ Variant updated successfully!');
-      
-      // Close modal
-      closeEditVariantModal();
-      
-      // Refresh variants list
-      setTimeout(() => {
-        loadGroupVariants(groupId);
-      }, 500);
-      
-    } else {
-      throw new Error(result.error || 'Failed to update variant');
-    }
-    
-  } catch (error) {
-    console.error('❌ Error updating variant:', error);
-    alert(`Error: ${error.message}`);
-    
-    submitBtn.disabled = false;
-    submitBtn.innerHTML = originalText;
-  }
-}
-
 // Close Edit Variant Modal - COMPLETE FIX
 function closeEditVariantModal() {
   console.log('Closing edit variant modal');
@@ -8840,103 +8339,42 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-
-    // ✅ PASTE THIS NEW CODE HERE - Reset productModal when closed
-  const productModalElement = document.getElementById('productModal');
-  if (productModalElement) {
-    productModalElement.addEventListener('hidden.bs.modal', function () {
-      const form = document.getElementById('productForm');
-      
-      // Reset variant flags
-      if (form) {
-        form.dataset.isVariant = 'false';
-        form.dataset.groupId = '';
-      }
-      
-      // Reset modal title
-      const modalTitle = document.getElementById('productModalLabel');
-      if (modalTitle) {
-        modalTitle.textContent = 'Edit Product';
-      }
-      
-      // Re-enable all readonly fields
-      const productNameField = document.getElementById('productName');
-      const brandField = document.getElementById('brand');
-      const sizeField = document.getElementById('size');
-      
-      if (productNameField) {
-        productNameField.readOnly = false;
-        productNameField.style.background = '';
-        productNameField.style.color = '';
-      }
-      
-      if (brandField) {
-        brandField.readOnly = false;
-        brandField.style.background = '';
-      }
-      
-      if (sizeField) {
-        sizeField.readOnly = false;
-        sizeField.style.background = '';
-      }
-      
-      console.log('✅ productModal reset complete');
-    });
-  }
-
-
 /**
  * ==========================================
  * UTILITY: Navigate to Home (Override if needed)
  * ==========================================
  */
-// Navigate back to Home - FINAL VERSION
+
+// Update navigateToHome to handle product groups page
 function navigateToHome() {
   console.log('🏠 Navigating to Home');
   
-  // ✅ Remove product groups container
-  const groupsContainer = document.getElementById('productGroupsPageContainer');
-  if (groupsContainer) {
-    console.log('✅ Removing productGroupsPageContainer');
-    groupsContainer.remove();
-  }
+  // Remove product groups pages if they exist
+  const groupsPage = document.getElementById('productGroupsPageContainer');
+  const variantsPage = document.getElementById('groupVariantsPageContainer');
   
-  // ✅ Remove variants container (if exists)
-  const variantsContainer = document.getElementById('groupVariantsPageContainer');
-  if (variantsContainer) {
-    console.log('✅ Removing groupVariantsPageContainer');
-    variantsContainer.remove();
-  }
+  if (groupsPage) groupsPage.remove();
+  if (variantsPage) variantsPage.remove();
   
-  // ✅ Show main app
-  const mainApp = document.getElementById('mainApp');
-  if (mainApp) {
-    mainApp.style.display = 'block';
-    console.log('✅ mainApp shown');
-  }
-  
-  // ✅ Show navbar
+  // Show navbar
   const navbar = document.querySelector('.navbar');
-  if (navbar) {
-    navbar.style.display = 'block';
-    console.log('✅ navbar shown');
+  if (navbar) navbar.style.display = 'block';
+  
+  // Show main app
+  const mainApp = document.getElementById('mainApp');
+  if (mainApp) mainApp.style.display = 'block';
+  
+  // Close sidebar
+  if (typeof closeSidebar === 'function') {
+    closeSidebar();
   }
-  
-  // Restore scroll
-  document.body.style.overflow = '';
-  
-  // Close sidebar if open
-  const sidebar = document.getElementById('sidebarMenu');
-  const overlay = document.getElementById('sidebarOverlay');
-  if (sidebar) sidebar.classList.remove('open');
-  if (overlay) overlay.classList.remove('show');
   
   // Scroll to top
   window.scrollTo({ top: 0, behavior: 'smooth' });
-  
-  console.log('✅ Navigation to Home complete');
 }
 
+
+console.log('✅ Product Groups module loaded successfully');
 
 async function createProductGroup(groupData) {
   try {                                                                          // [attached_file:29]
@@ -9224,24 +8662,6 @@ function navigateToGroupDetail(groupId, groupName) {
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
