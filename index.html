@@ -8059,7 +8059,7 @@ async function handleCreateGroup(event) {
  * EDIT VARIANT MODAL FUNCTIONS
  * ==========================================
  */
-// Open Edit Variant Modal - SAFE VERSION WITH NULL CHECKS
+// Open Edit Variant Modal - FORCE SHOW VERSION
 function openEditVariantModal(variantId) {
   console.log('🔍 Opening edit modal for variant:', variantId);
   
@@ -8086,13 +8086,15 @@ function openEditVariantModal(variantId) {
     modalTitle.textContent = 'Edit Variant';
   }
 
-  // ✅ SAFE FIELD POPULATION WITH NULL CHECKS
+  // ✅ SAFE FIELD POPULATION
   const setFieldValue = (id, value) => {
     const field = document.getElementById(id);
     if (field) {
       field.value = value;
+      return true;
     } else {
       console.warn(`⚠️ Field not found: ${id}`);
+      return false;
     }
   };
 
@@ -8116,7 +8118,7 @@ function openEditVariantModal(variantId) {
     form.dataset.groupId = variant.groupId;
   }
 
-  // Make fields readonly (prevent editing variant name/attributes)
+  // Make fields readonly
   const makeReadonly = (id) => {
     const field = document.getElementById(id);
     if (field) {
@@ -8130,12 +8132,57 @@ function openEditVariantModal(variantId) {
   makeReadonly('brand');
   makeReadonly('size');
 
-  // Show the Bootstrap modal
-  const bootstrapModal = new bootstrap.Modal(modal);
-  bootstrapModal.show();
+  // ✅ FORCE SHOW MODAL - Multiple methods
+  console.log('Attempting to show modal...');
+  
+  // Method 1: Try Bootstrap 5 Modal API
+  try {
+    let bootstrapModal = bootstrap.Modal.getInstance(modal);
+    if (!bootstrapModal) {
+      bootstrapModal = new bootstrap.Modal(modal);
+    }
+    bootstrapModal.show();
+    console.log('✅ Bootstrap modal.show() called');
+  } catch (e) {
+    console.error('❌ Bootstrap Modal failed:', e);
+    
+    // Method 2: Manual show with jQuery (fallback)
+    if (typeof $ !== 'undefined' && $.fn.modal) {
+      $(modal).modal('show');
+      console.log('✅ jQuery modal.show() called');
+    } else {
+      // Method 3: Direct CSS manipulation (last resort)
+      modal.classList.add('show');
+      modal.style.display = 'block';
+      modal.setAttribute('aria-modal', 'true');
+      modal.removeAttribute('aria-hidden');
+      document.body.classList.add('modal-open');
+      
+      // Add backdrop manually
+      const backdrop = document.createElement('div');
+      backdrop.className = 'modal-backdrop fade show';
+      backdrop.id = 'variantModalBackdrop';
+      document.body.appendChild(backdrop);
+      
+      console.log('✅ Manual modal display applied');
+    }
+  }
 
   console.log('✅ Edit variant modal opened for:', variant.variantName);
 }
+
+// Helper function to extract attribute value from JSON
+function extractAttributeValue(attributes, key) {
+  try {
+    const attrs = typeof attributes === 'string' 
+      ? JSON.parse(attributes) 
+      : attributes;
+    return attrs[key] || '';
+  } catch (e) {
+    return '';
+  }
+}
+
 
 // Helper function to extract attribute value from JSON
 function extractAttributeValue(attributes, key) {
@@ -8987,6 +9034,7 @@ function navigateToGroupDetail(groupId, groupName) {
 
 </body>
 </html>
+
 
 
 
