@@ -7244,7 +7244,7 @@ let attributeRowCounter = 0;
  * ==========================================
  */
 
-// Navigate to Product Groups List Page
+// Navigate to Product Groups List Page - FIXED
 function navigateToProductGroups() {
   console.log('📁 Navigating to Product Groups');
   
@@ -7256,57 +7256,63 @@ function navigateToProductGroups() {
   const mainApp = document.getElementById('mainApp');
   if (mainApp) mainApp.style.display = 'none';
   
-  // Build full-screen page
-  document.body.innerHTML += `
-    <div id="productGroupsPageContainer" style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #f8f9fa; z-index: 99999; overflow-y: auto;">
-      
-      <!-- Header -->
-      <div class="modal-header-mobile">
-        <button class="btn-cancel-modal" onclick="navigateToHome()">
-          ← Back
-        </button>
-        <h3>Products in Group</h3>
-        <button class="btn-primary-bottom" onclick="openCreateGroupModal()" style="padding: 8px 16px; min-height: auto; flex: none; font-size: 14px;">
-          + Create
-        </button>
-      </div>
-      
-      <!-- Search -->
-      <div style="padding: 16px;">
-        <input 
-          type="text" 
-          id="searchGroupsInput" 
-          placeholder="🔍 Search groups..."
-          style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px;"
-          onkeyup="filterProductGroups(this.value)">
-      </div>
-      
-      <!-- Loading State -->
-      <div id="groupsLoadingState" class="loading-spinner">
-        <div class="spinner"></div>
-        <p>Loading product groups...</p>
-      </div>
-      
-      <!-- Groups List -->
-      <div id="groupsListContainer" style="display: none;">
-        <!-- Groups will be rendered here -->
-      </div>
-      
-      <!-- Empty State -->
-      <div id="groupsEmptyState" class="empty-state" style="display: none;">
-        <div class="empty-state-icon">📁</div>
-        <h3>No Product Groups Yet</h3>
-        <p>Create your first product group to manage variants</p>
-        <button class="btn-primary-bottom" onclick="openCreateGroupModal()" style="max-width: 200px; margin: 0 auto;">
-          + Create First Group
-        </button>
-      </div>
-      
+  // ✅ REMOVE EXISTING CONTAINER FIRST (if any)
+  const existingContainer = document.getElementById('productGroupsPageContainer');
+  if (existingContainer) {
+    existingContainer.remove();
+  }
+  
+  // ✅ CREATE NEW CONTAINER (proper method)
+  const pageContainer = document.createElement('div');
+  pageContainer.id = 'productGroupsPageContainer';
+  pageContainer.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100vh;background:#f8f9fa;z-index:99999;overflow-y:auto;';
+  
+  pageContainer.innerHTML = `
+    <!-- Header -->
+    <div class="modal-header-mobile">
+      <button class="btn-cancel-modal" onclick="navigateToHome()">← Back</button>
+      <h3>Products in Group</h3>
+      <button class="btn-primary-bottom" onclick="openCreateGroupModal()" style="padding:8px 16px;min-height:auto;flex:none;font-size:14px;">+ Create</button>
+    </div>
+    
+    <!-- Search -->
+    <div style="padding:16px;">
+      <input 
+        type="text" 
+        id="searchGroupsInput" 
+        placeholder="Search groups..." 
+        style="width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;font-size:16px;" 
+        onkeyup="filterProductGroups(this.value)"
+      >
+    </div>
+    
+    <!-- Loading State -->
+    <div id="groupsLoadingState" class="loading-spinner">
+      <div class="spinner"></div>
+      <p>Loading product groups...</p>
+    </div>
+    
+    <!-- Groups List -->
+    <div id="groupsListContainer" style="display:none;">
+      <!-- Groups will be rendered here -->
+    </div>
+    
+    <!-- Empty State -->
+    <div id="groupsEmptyState" class="empty-state" style="display:none;">
+      <div class="empty-state-icon">📦</div>
+      <h3>No Product Groups Yet</h3>
+      <p>Create your first product group to manage variants</p>
+      <button class="btn-primary-bottom" onclick="openCreateGroupModal()" style="max-width:200px;margin:16px auto 0;">Create First Group</button>
     </div>
   `;
   
+  // ✅ APPEND TO BODY (proper method)
+  document.body.appendChild(pageContainer);
+  
   // Load data
   loadProductGroups();
+  
+  console.log('✅ Product Groups page created');
 }
 
 
@@ -8879,41 +8885,39 @@ document.addEventListener('DOMContentLoaded', function() {
  * UTILITY: Navigate to Home (Override if needed)
  * ==========================================
  */
-
-// Navigate back to Home - SIMPLE WORKING VERSION
+// Navigate back to Home - FINAL VERSION
 function navigateToHome() {
   console.log('🏠 Navigating to Home');
   
-  // ✅ DIRECT REMOVAL (Same as console test that worked)
-  const container = document.getElementById('productGroupsPageContainer');
-  if (container) {
-    console.log('✅ Container found, removing...');
-    container.remove();
-    console.log('✅ Container removed successfully');
-  } else {
-    console.log('⚠️ Container not found');
+  // ✅ Remove product groups container
+  const groupsContainer = document.getElementById('productGroupsPageContainer');
+  if (groupsContainer) {
+    console.log('✅ Removing productGroupsPageContainer');
+    groupsContainer.remove();
   }
   
-  // Also remove variants container if exists
+  // ✅ Remove variants container (if exists)
   const variantsContainer = document.getElementById('groupVariantsPageContainer');
   if (variantsContainer) {
+    console.log('✅ Removing groupVariantsPageContainer');
     variantsContainer.remove();
-    console.log('✅ Variants container removed');
   }
   
-  // Show main app (if it was hidden)
+  // ✅ Show main app
   const mainApp = document.getElementById('mainApp');
   if (mainApp) {
     mainApp.style.display = 'block';
+    console.log('✅ mainApp shown');
   }
   
-  // Show navbar (if it was hidden)
+  // ✅ Show navbar
   const navbar = document.querySelector('.navbar');
   if (navbar) {
     navbar.style.display = 'block';
+    console.log('✅ navbar shown');
   }
   
-  // Restore body scroll
+  // Restore scroll
   document.body.style.overflow = '';
   
   // Close sidebar if open
@@ -8925,10 +8929,8 @@ function navigateToHome() {
   // Scroll to top
   window.scrollTo({ top: 0, behavior: 'smooth' });
   
-  console.log('✅ Navigation complete - Homepage visible');
+  console.log('✅ Navigation to Home complete');
 }
-
-
 
 async function createProductGroup(groupData) {
   try {                                                                          // [attached_file:29]
@@ -9216,6 +9218,7 @@ function navigateToGroupDetail(groupId, groupName) {
 
 </body>
 </html>
+
 
 
 
