@@ -4462,7 +4462,7 @@ async function deleteProductFromSheet(id) {
   window.editingProductImageUrl = '';
 }
 
-// ✅ NEW FUNCTION: Save Variant Data - FIXED VERSION
+// ✅ COMPLETE FIX: Save Variant Data - Backend Compatible Version
 async function saveVariantData() {
   console.log('💾 Saving variant...');
   
@@ -4477,25 +4477,14 @@ async function saveVariantData() {
   try {
     const form = document.getElementById('productForm');
     
-    // ✅ GET VARIANT ID FROM MULTIPLE SOURCES
+    // Get variant ID from multiple sources
     let variantId = document.getElementById('productId')?.value;
-    
-    // Fallback: try to get from form dataset
     if (!variantId || variantId === '') {
       variantId = form.dataset.variantId;
     }
     
-    // Fallback: try to get from hidden input with different name
-    if (!variantId || variantId === '') {
-      const hiddenInput = form.querySelector('input[type="hidden"]');
-      if (hiddenInput) {
-        variantId = hiddenInput.value;
-      }
-    }
-    
     const groupId = form.dataset.groupId;
     
-    // ✅ DETAILED LOGGING
     console.log('🔍 Debug info:', {
       variantId: variantId,
       groupId: groupId,
@@ -4504,7 +4493,7 @@ async function saveVariantData() {
       productIdValue: document.getElementById('productId')?.value
     });
     
-    // ✅ ENHANCED VALIDATION
+    // Validation
     if (!variantId || variantId === '' || variantId === 'undefined') {
       throw new Error('Variant ID is missing. Please close and reopen the edit form.');
     }
@@ -4513,7 +4502,7 @@ async function saveVariantData() {
       throw new Error('Group ID is missing. Please close and reopen the edit form.');
     }
     
-    // Get other field values with fallbacks
+    // Get field values
     const getFieldValue = (id, defaultValue = 0) => {
       const field = document.getElementById(id);
       return field ? (field.value || defaultValue) : defaultValue;
@@ -4524,7 +4513,6 @@ async function saveVariantData() {
     const minStock = parseInt(getFieldValue('minStock', 0));
     const unitType = getFieldValue('unitType', 'Piece');
     
-    // Validation
     if (isNaN(sellingPrice) || sellingPrice < 0) {
       throw new Error('Invalid selling price');
     }
@@ -4533,36 +4521,41 @@ async function saveVariantData() {
       throw new Error('Invalid stock value');
     }
     
-    console.log('📤 Sending variant update:', {
-      variantId,
-      groupId,
-      sellingPrice,
-      stock,
-      minStock,
-      unitType
-    });
-    
-    // Send update request
-    const postBody = new URLSearchParams({
+    // ✅ PREPARE DATA - Format matching backend expectations
+    const updateData = {
       action: 'updateGroupVariant',
       email: userEmail,
       hash: userHash,
       variantId: variantId,
       groupId: groupId,
-      costPrice: 0,
-      sellingPrice: sellingPrice,
-      stock: stock,
-      minStock: minStock,
+      costPrice: '0',
+      sellingPrice: sellingPrice.toString(),
+      stock: stock.toString(),
+      minStock: minStock.toString(),
       unitType: unitType
+    };
+    
+    console.log('📤 Sending variant update:', updateData);
+    
+    // ✅ METHOD 1: Try URLSearchParams (proper encoding)
+    const formData = new URLSearchParams();
+    Object.keys(updateData).forEach(key => {
+      formData.append(key, updateData[key]);
     });
+    
+    console.log('📦 FormData string:', formData.toString());
     
     const response = await fetch(GOOGLE_SCRIPT_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: postBody
+      body: formData.toString()
     });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
     
     const result = await response.json();
     console.log('📥 Backend response:', result);
@@ -4589,7 +4582,7 @@ async function saveVariantData() {
       const modal = bootstrap.Modal.getInstance(document.getElementById('productModal'));
       if (modal) modal.hide();
       
-      // Clear the variant flag and reset fields
+      // Clear flags
       form.dataset.isVariant = 'false';
       form.dataset.groupId = '';
       form.dataset.variantId = '';
@@ -4621,15 +4614,15 @@ async function saveVariantData() {
     
   } catch (error) {
     console.error('❌ Error updating variant:', error);
-    alert(`Error: ${error.message}`);
+    alert(`Error: ${error.message}\n\nPlease check the console for details.`);
   } finally {
-    // Re-enable button
     if (submitBtn) {
       submitBtn.disabled = false;
       submitBtn.innerHTML = originalText;
     }
   }
 }
+
 
   
 
@@ -9204,6 +9197,7 @@ function navigateToGroupDetail(groupId, groupName) {
 
 </body>
 </html>
+
 
 
 
