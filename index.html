@@ -8880,66 +8880,112 @@ document.addEventListener('DOMContentLoaded', function() {
  * ==========================================
  */
 
-// Navigate back to Home - COMPLETE FIX
+// Navigate back to Home - FORCE REMOVE VERSION
 function navigateToHome() {
   console.log('🏠 Navigating to Home');
   
-  // ✅ METHOD 1: Remove dynamically created page containers
-  const groupsPageContainer = document.getElementById('productGroupsPageContainer');
-  const variantsPageContainer = document.getElementById('groupVariantsPageContainer');
+  // ✅ FORCE REMOVE: Try multiple selection methods
+  let groupsContainer = document.getElementById('productGroupsPageContainer');
   
-  if (groupsPageContainer) {
-    console.log('✅ Removing productGroupsPageContainer');
-    groupsPageContainer.remove();
+  // If not found by ID, try querySelector
+  if (!groupsContainer) {
+    groupsContainer = document.querySelector('#productGroupsPageContainer');
   }
   
-  if (variantsPageContainer) {
+  // If still not found, try finding by class or attribute
+  if (!groupsContainer) {
+    groupsContainer = document.querySelector('[id="productGroupsPageContainer"]');
+  }
+  
+  if (groupsContainer) {
+    console.log('✅ Found productGroupsPageContainer, removing...');
+    console.log('Container parent:', groupsContainer.parentElement);
+    console.log('Container z-index:', window.getComputedStyle(groupsContainer).zIndex);
+    
+    // Force remove
+    groupsContainer.remove();
+    console.log('✅ Container removed');
+  } else {
+    console.warn('⚠️ productGroupsPageContainer not found');
+  }
+  
+  // Remove variants container too
+  const variantsContainer = document.getElementById('groupVariantsPageContainer');
+  if (variantsContainer) {
     console.log('✅ Removing groupVariantsPageContainer');
-    variantsPageContainer.remove();
+    variantsContainer.remove();
   }
   
-  // ✅ METHOD 2: Reset page state
-  currentPage = 'home';
-  currentGroupId = null;
-  currentGroupName = null;
+  // ✅ SHOW MAIN CONTENT - Try different selectors
+  let mainApp = document.getElementById('mainApp');
   
-  // ✅ METHOD 3: Show main app and navbar
-  const mainApp = document.getElementById('mainApp');
+  if (!mainApp) {
+    mainApp = document.querySelector('#mainApp');
+  }
+  
+  if (!mainApp) {
+    mainApp = document.querySelector('main');
+  }
+  
   if (mainApp) {
     mainApp.style.display = 'block';
     mainApp.style.visibility = 'visible';
     mainApp.style.opacity = '1';
-    console.log('✅ mainApp shown');
+    mainApp.style.zIndex = '1';
+    console.log('✅ mainApp shown:', mainApp);
+  } else {
+    console.error('❌ mainApp not found - trying to show body children');
+    // Last resort: show all direct body children except the container
+    Array.from(document.body.children).forEach(child => {
+      if (!child.id.includes('productGroups') && !child.id.includes('groupVariants')) {
+        child.style.display = 'block';
+        child.style.visibility = 'visible';
+      }
+    });
   }
   
+  // ✅ SHOW NAVBAR
   const navbar = document.querySelector('.navbar');
   if (navbar) {
     navbar.style.display = 'block';
     navbar.style.visibility = 'visible';
-    navbar.style.opacity = '1';
+    navbar.style.zIndex = '1000';
     console.log('✅ navbar shown');
   }
   
-  // ✅ METHOD 4: Remove any page-view active classes
-  const allPageViews = document.querySelectorAll('.page-view');
-  allPageViews.forEach(page => {
+  // ✅ HIDE ALL PAGE VIEWS
+  const pageViews = document.querySelectorAll('.page-view');
+  pageViews.forEach(page => {
     page.classList.remove('active');
     page.style.display = 'none';
   });
   
-  // ✅ METHOD 5: Close sidebar if open
-  if (typeof closeSidebar === 'function') {
-    closeSidebar();
-  }
-  
-  // ✅ METHOD 6: Restore body scroll
+  // ✅ RESET BODY STYLES
   document.body.style.overflow = '';
+  document.body.style.position = '';
   
-  // ✅ METHOD 7: Scroll to top
+  // ✅ CLOSE SIDEBAR
+  const sidebar = document.getElementById('sidebarMenu');
+  const overlay = document.getElementById('sidebarOverlay');
+  if (sidebar) sidebar.classList.remove('open');
+  if (overlay) overlay.classList.remove('show');
+  
+  // ✅ SCROLL TO TOP
   window.scrollTo({ top: 0, behavior: 'smooth' });
   
-  console.log('✅ Home navigation complete - All containers removed');
+  console.log('✅ Home navigation complete');
+  
+  // Debug check
+  setTimeout(() => {
+    console.log('🔍 Final state:', {
+      groupsPage: !!document.getElementById('productGroupsPageContainer'),
+      mainApp: !!document.getElementById('mainApp'),
+      navbar: !!document.querySelector('.navbar'),
+      bodyChildren: document.body.children.length
+    });
+  }, 500);
 }
+
 
 async function createProductGroup(groupData) {
   try {                                                                          // [attached_file:29]
@@ -9227,6 +9273,7 @@ function navigateToGroupDetail(groupId, groupName) {
 
 </body>
 </html>
+
 
 
 
