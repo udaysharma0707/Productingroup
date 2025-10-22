@@ -8885,46 +8885,28 @@ document.addEventListener('DOMContentLoaded', function() {
  * UTILITY: Navigate to Home (Override if needed)
  * ==========================================
  */
-// Navigate to Home - FINAL FIXED VERSION
 function navigateToHome() {
-  console.log('🏠 Navigating to Home');
+  console.log('🏠 Force navigating to Home');
   
-  // Remove product groups container
-  const container = document.getElementById('productGroupsPageContainer');
-  if (container) {
-    console.log('✅ Removing container');
-    container.remove();
-  } else {
-    console.log('⚠️ Container not found!');
-  }
+  // Nuclear option: Remove ALL dynamically created elements
+  const allDynamicContainers = document.querySelectorAll('[id*="PageContainer"], [id*="pageContainer"]');
+  allDynamicContainers.forEach(el => {
+    console.log('Removing:', el.id);
+    el.remove();
+  });
   
-  // Remove variants container too
-  const variantsContainer = document.getElementById('groupVariantsPageContainer');
-  if (variantsContainer) {
-    variantsContainer.remove();
-  }
+  // Force show everything
+  document.getElementById('mainApp').style.cssText = 'display:block !important; visibility:visible !important; opacity:1 !important;';
+  document.querySelector('.navbar').style.cssText = 'display:block !important; visibility:visible !important;';
   
-  // Show main app
-  const mainApp = document.getElementById('mainApp');
-  if (mainApp) {
-    mainApp.style.display = 'block';
-    console.log('✅ Main app shown');
-  }
-  
-  // Show navbar
-  const navbar = document.querySelector('.navbar');
-  if (navbar) {
-    navbar.style.display = 'block';
-    console.log('✅ Navbar shown');
-  }
-  
-  // Restore scroll
+  // Reset body
   document.body.style.overflow = '';
+  document.body.style.position = '';
   
   // Scroll to top
   window.scrollTo(0, 0);
   
-  console.log('✅ Home visible!');
+  console.log('✅ Forced home navigation complete');
 }
 
 
@@ -9214,6 +9196,7 @@ function navigateToGroupDetail(groupId, groupName) {
 
 </body>
 </html>
+
 
 
 
