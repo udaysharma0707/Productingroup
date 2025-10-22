@@ -8059,8 +8059,7 @@ async function handleCreateGroup(event) {
  * EDIT VARIANT MODAL FUNCTIONS
  * ==========================================
  */
-
-// Open Edit Variant Modal - REUSE BOOTSTRAP MODAL
+// Open Edit Variant Modal - SAFE VERSION WITH NULL CHECKS
 function openEditVariantModal(variantId) {
   console.log('🔍 Opening edit modal for variant:', variantId);
   
@@ -8087,40 +8086,69 @@ function openEditVariantModal(variantId) {
     modalTitle.textContent = 'Edit Variant';
   }
 
-  // Populate form fields (mapping variant fields to product fields)
-  document.getElementById('productId').value = variant.variantId; // Use variantId as productId
-  document.getElementById('productName').value = variant.variantName;
-  document.getElementById('brand').value = variant.manufacturer || variant.brand || '';
-  document.getElementById('size').value = extractAttributeValue(variant.attributes, 'Size') || '';
-  document.getElementById('category').value = variant.category || 'Tiles';
-  document.getElementById('unitType').value = variant.unitType || 'Piece';
-  document.getElementById('piecesPerBox').value = 0; // Variants don't use this
-  document.getElementById('sftPerBox').value = 0; // Variants don't use this
-  document.getElementById('pricePerUnit').value = variant.sellingPrice || 0;
-  document.getElementById('currentStock').value = variant.stock || 0;
-  document.getElementById('minStock').value = variant.minStock || 0;
+  // ✅ SAFE FIELD POPULATION WITH NULL CHECKS
+  const setFieldValue = (id, value) => {
+    const field = document.getElementById(id);
+    if (field) {
+      field.value = value;
+    } else {
+      console.warn(`⚠️ Field not found: ${id}`);
+    }
+  };
 
-  // Store that this is a variant edit (for save function)
-  document.getElementById('productForm').dataset.isVariant = 'true';
-  document.getElementById('productForm').dataset.groupId = variant.groupId;
+  // Populate form fields
+  setFieldValue('productId', variant.variantId);
+  setFieldValue('productName', variant.variantName);
+  setFieldValue('brand', variant.manufacturer || variant.brand || '');
+  setFieldValue('size', extractAttributeValue(variant.attributes, 'Size') || '');
+  setFieldValue('category', variant.category || 'Tiles');
+  setFieldValue('unitType', variant.unitType || 'Piece');
+  setFieldValue('piecesPerBox', 0);
+  setFieldValue('sftPerBox', 0);
+  setFieldValue('price', variant.sellingPrice || 0);
+  setFieldValue('stock', variant.stock || 0);
+  setFieldValue('minStock', variant.minStock || 0);
 
-  // Disable name field (variants can't change names)
-  document.getElementById('productName').readOnly = true;
-  document.getElementById('productName').style.background = '#f8f9fa';
-  document.getElementById('productName').style.color = '#6c757d';
+  // Store that this is a variant edit
+  const form = document.getElementById('productForm');
+  if (form) {
+    form.dataset.isVariant = 'true';
+    form.dataset.groupId = variant.groupId;
+  }
 
-  // Disable brand/size fields (variant attributes are fixed)
-  document.getElementById('brand').readOnly = true;
-  document.getElementById('brand').style.background = '#f8f9fa';
-  document.getElementById('size').readOnly = true;
-  document.getElementById('size').style.background = '#f8f9fa';
+  // Make fields readonly (prevent editing variant name/attributes)
+  const makeReadonly = (id) => {
+    const field = document.getElementById(id);
+    if (field) {
+      field.readOnly = true;
+      field.style.background = '#f8f9fa';
+      field.style.color = '#6c757d';
+    }
+  };
+
+  makeReadonly('productName');
+  makeReadonly('brand');
+  makeReadonly('size');
 
   // Show the Bootstrap modal
   const bootstrapModal = new bootstrap.Modal(modal);
   bootstrapModal.show();
 
-  console.log('✅ Edit variant modal opened (using productModal) for:', variant.variantName);
+  console.log('✅ Edit variant modal opened for:', variant.variantName);
 }
+
+// Helper function to extract attribute value from JSON
+function extractAttributeValue(attributes, key) {
+  try {
+    const attrs = typeof attributes === 'string' 
+      ? JSON.parse(attributes) 
+      : attributes;
+    return attrs[key] || '';
+  } catch (e) {
+    return '';
+  }
+}
+
 
 // Helper function to extract attribute value from JSON
 function extractAttributeValue(attributes, key) {
@@ -8959,6 +8987,7 @@ function navigateToGroupDetail(groupId, groupName) {
 
 </body>
 </html>
+
 
 
 
