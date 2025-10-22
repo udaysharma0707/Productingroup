@@ -1834,6 +1834,59 @@ body.modal-open {
     transform: translateX(-50%);
   }
 }
+/* ==========================================
+   FORCE PRODUCT MODAL TO SHOW (OVERRIDE ALL)
+   ========================================== */
+
+#productModal.show {
+  display: block !important;
+  z-index: 999999 !important;
+  background: rgba(0, 0, 0, 0.5) !important;
+}
+
+#productModal .modal-dialog {
+  z-index: 1000000 !important;
+  position: relative;
+  margin: 1.75rem auto;
+  max-width: 500px;
+}
+
+#productModal .modal-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  pointer-events: auto;
+  background-color: #fff !important;
+  background-clip: padding-box;
+  border: 1px solid rgba(0,0,0,.2);
+  border-radius: 0.3rem;
+  outline: 0;
+  box-shadow: 0 5px 15px rgba(0,0,0,.5) !important;
+}
+
+/* Ensure backdrop appears */
+.modal-backdrop.show {
+  opacity: 0.5 !important;
+  z-index: 999998 !important;
+}
+
+/* Override any conflicting page view styles */
+body:has(#productModal.show) .page-view {
+  z-index: 1 !important;
+}
+
+/* Make sure modal appears above everything */
+#productModal {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  outline: 0 !important;
+}
 
 
     
@@ -8059,7 +8112,7 @@ async function handleCreateGroup(event) {
  * EDIT VARIANT MODAL FUNCTIONS
  * ==========================================
  */
-// Open Edit Variant Modal - FORCE SHOW VERSION
+// Open Edit Variant Modal - AGGRESSIVE FORCE SHOW VERSION
 function openEditVariantModal(variantId) {
   console.log('🔍 Opening edit modal for variant:', variantId);
   
@@ -8168,8 +8221,79 @@ function openEditVariantModal(variantId) {
     }
   }
 
+  // ✅ AGGRESSIVE FORCE TO FOREGROUND (Works regardless of Bootstrap method)
+  setTimeout(() => {
+    // Force modal container
+    modal.style.cssText = `
+      display: block !important;
+      z-index: 999999 !important;
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      overflow-y: auto !important;
+      background: rgba(0, 0, 0, 0.5) !important;
+    `;
+    
+    // Force modal dialog
+    const modalDialog = modal.querySelector('.modal-dialog');
+    if (modalDialog) {
+      modalDialog.style.cssText = `
+        z-index: 1000000 !important;
+        position: relative !important;
+        margin: 1.75rem auto !important;
+        max-width: 500px !important;
+        pointer-events: auto !important;
+      `;
+    }
+    
+    // Force modal content
+    const modalContent = modal.querySelector('.modal-content');
+    if (modalContent) {
+      modalContent.style.cssText = `
+        background: white !important;
+        border-radius: 8px !important;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
+        position: relative !important;
+        display: flex !important;
+        flex-direction: column !important;
+      `;
+    }
+    
+    // Force backdrop if exists
+    const backdrop = document.querySelector('.modal-backdrop');
+    if (backdrop) {
+      backdrop.style.cssText = `
+        z-index: 999998 !important;
+        opacity: 0.5 !important;
+      `;
+    }
+    
+    // Lower z-index of page views
+    const pageViews = document.querySelectorAll('.page-view');
+    pageViews.forEach(view => {
+      view.style.zIndex = '1';
+    });
+    
+    console.log('✅ Modal FORCED to foreground with inline styles');
+  }, 100);
+
   console.log('✅ Edit variant modal opened for:', variant.variantName);
 }
+
+// Helper function to extract attribute value from JSON
+function extractAttributeValue(attributes, key) {
+  try {
+    const attrs = typeof attributes === 'string' 
+      ? JSON.parse(attributes) 
+      : attributes;
+    return attrs[key] || '';
+  } catch (e) {
+    return '';
+  }
+}
+
 
 // Helper function to extract attribute value from JSON
 function extractAttributeValue(attributes, key) {
@@ -9034,6 +9158,7 @@ function navigateToGroupDetail(groupId, groupName) {
 
 </body>
 </html>
+
 
 
 
