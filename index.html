@@ -2298,6 +2298,58 @@ body:has(#productModal.show) .page-view {
       <i class="bi bi-plus-lg"></i> Add
     </button>
   </div>
+
+
+<!-- PRODUCT GROUPS PAGE (Full Screen) -->
+<div class="page-view" id="productGroupsPage">
+  <div class="page-header">
+    <button class="back-btn" onclick="navigateToHome()">
+      <i class="bi bi-arrow-left"></i> Back
+    </button>
+    <h3>Products in Group</h3>
+    <button class="btn btn-success btn-sm" onclick="openCreateGroupModal()">
+      <i class="bi bi-plus-circle"></i> Create
+    </button>
+  </div>
+  
+  <!-- Search Box -->
+  <div class="container-fluid" style="padding: 20px;">
+    <input 
+      type="text" 
+      class="form-control mb-3" 
+      id="searchGroupsInput" 
+      placeholder="🔍 Search groups..." 
+      onkeyup="filterProductGroups(this.value)"
+      style="max-width: 600px; margin: 0 auto;"
+    >
+    
+    <!-- Loading State -->
+    <div id="groupsLoadingState" class="text-center my-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-3 text-muted">Loading product groups...</p>
+    </div>
+    
+    <!-- Groups List Container -->
+    <div id="groupsListContainer" style="display:none; max-width: 800px; margin: 0 auto;">
+      <!-- Groups will be rendered here by JavaScript -->
+    </div>
+    
+    <!-- Empty State -->
+    <div id="groupsEmptyState" class="text-center my-5" style="display:none;">
+      <div style="font-size: 64px; opacity: 0.5;">📦</div>
+      <h4 class="mt-3">No Product Groups Yet</h4>
+      <p class="text-muted">Create your first product group to manage variants</p>
+      <button class="btn btn-primary mt-3" onclick="openCreateGroupModal()">
+        <i class="bi bi-plus-circle"></i> Create First Group
+      </button>
+    </div>
+  </div>
+</div>
+
+
+
   
   <!-- Search Bar -->
   <div class="mb-3">
@@ -7243,36 +7295,43 @@ let attributeRowCounter = 0;
  * NAVIGATION - PRODUCT GROUPS
  * ==========================================
  */
-// Navigate to Product Groups - FIXED TO MATCH ALL PRODUCTS PATTERN
+// Navigate to Product Groups - FINAL VERSION
 function navigateToProductGroups() {
   console.log('📁 Navigating to Product Groups');
   
-  // Same pattern as navigateToAllProducts
   const mainApp = document.getElementById('mainApp');
   const allProductsPage = document.getElementById('allProductsPage');
   const productGroupsPage = document.getElementById('productGroupsPage');
   const groupDetailPage = document.getElementById('groupDetailPage');
   
-  // HIDE the main dashboard
+  // Hide main dashboard
   if (mainApp) mainApp.style.display = 'none';
   
-  // HIDE THE BLUE NAVBAR
+  // Hide navbar
   const navbar = document.querySelector('.navbar');
   if (navbar) navbar.style.display = 'none';
   
-  // SHOW Product Groups page
-  if (productGroupsPage) productGroupsPage.classList.add('active');
+  // Show Product Groups page
+  if (productGroupsPage) {
+    productGroupsPage.classList.add('active');
+    console.log('✅ Product Groups page shown');
+  } else {
+    console.error('❌ productGroupsPage not found!');
+  }
+  
+  // Hide other pages
   if (allProductsPage) allProductsPage.classList.remove('active');
   if (groupDetailPage) groupDetailPage.classList.remove('active');
   
-  // Load groups
-  if (typeof loadProductGroups === 'function') {
-    loadProductGroups();
-  }
+  // ✅ LOAD GROUPS DATA
+  console.log('📊 Loading product groups...');
+  loadProductGroups();
   
+  // Close sidebar and scroll to top
   closeSidebar();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+
 
 
 // Navigate to Group Variants (Detail Page)
@@ -9164,6 +9223,7 @@ function navigateToGroupDetail(groupId, groupName) {
 
 </body>
 </html>
+
 
 
 
