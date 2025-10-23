@@ -5330,7 +5330,7 @@ function showSuccessToast(message) {
     displayProducts(filteredProducts);
 }
 
-    // Filter All Products by Category - MISSING FUNCTION
+   // Filter All Products by Category - FIXED
 function filterByCategory(category) {
   console.log('Filtering by category:', category);
   
@@ -5338,14 +5338,14 @@ function filterByCategory(category) {
   
   if (category === 'all') {
     // Show all products
-    searchInput.value = '';
-    renderAllProductsList();
+    if (searchInput) searchInput.value = '';
+    displayAllProducts();  // ✅ CORRECT FUNCTION
     
     // Update button states
     document.querySelectorAll('[onclick*="filterByCategory"]').forEach(btn => {
       btn.classList.remove('active');
     });
-    event.target.classList.add('active');
+    if (event && event.target) event.target.classList.add('active');
     return;
   }
   
@@ -5355,7 +5355,7 @@ function filterByCategory(category) {
   console.log(`Found ${filtered.length} products in category: ${category}`);
   
   // Render filtered products
-  renderAllProductsListCustom(filtered);
+  displayProducts(filtered);  // ✅ CORRECT FUNCTION
   
   // Update button states
   document.querySelectorAll('[onclick*="filterByCategory"]').forEach(btn => {
@@ -7251,9 +7251,8 @@ function navigateToAllProducts() {
   if (productGroupsPage) productGroupsPage.classList.remove('active');
   if (groupDetailPage) groupDetailPage.classList.remove('active');
   
-  if (typeof renderAllProductsList === 'function') {
-    renderAllProductsList();
-  }
+  // ✅ CALL THE CORRECT FUNCTION
+  displayAllProducts();
   
   closeSidebar();
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -9026,6 +9025,7 @@ function navigateToGroupDetail(groupId, groupName) {
 
 </body>
 </html>
+
 
 
 
