@@ -1652,188 +1652,6 @@ body:has(.fullscreen-modal.active) .navbar {
   display: none !important;
 }
 
-/* ==========================================
-   ENHANCED FULLSCREEN MODAL FIX
-   ========================================== */
-
-.fullscreen-modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
-  background: #f8f9fa;
-  z-index: 99999;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-.fullscreen-modal.active {
-  display: flex !important;
-  flex-direction: column;
-}
-
-/* Header stays at top */
-.modal-header-mobile {
-  position: sticky;
-  top: 0;
-  background: #ffffff;
-  padding: 16px;
-  border-bottom: 1px solid #e0e0e0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  z-index: 100;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-  flex-shrink: 0;
-}
-
-.modal-header-mobile h3 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 600;
-  color: #1a1a1a;
-  flex: 1;
-  text-align: center;
-}
-
-.btn-cancel-modal {
-  background: transparent;
-  color: #dc3545;
-  border: none;
-  padding: 8px 12px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-/* Scrollable content area */
-.mobile-form {
-  flex: 1;
-  overflow-y: auto;
-  padding: 20px;
-  padding-bottom: 100px; /* Space for fixed bottom buttons */
-}
-
-/* Form sections with better spacing */
-.form-section {
-  margin-bottom: 24px;
-  background: white;
-  padding: 16px;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-}
-
-.form-label {
-  display: block;
-  font-size: 14px;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 8px;
-}
-
-.form-control {
-  width: 100%;
-  padding: 12px;
-  font-size: 16px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background: white;
-  min-height: 48px;
-  box-sizing: border-box;
-}
-
-.form-control:focus {
-  outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
-}
-
-/* Read-only attributes display */
-.attributes-display {
-  background: #f8f9fa;
-  padding: 12px;
-  border-radius: 8px;
-  border: 1px solid #e0e0e0;
-  font-size: 14px;
-  color: #495057;
-  min-height: 48px;
-  display: flex;
-  align-items: center;
-}
-
-/* Fixed bottom action buttons */
-.form-actions-bottom {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: white;
-  padding: 16px;
-  box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
-  display: flex;
-  gap: 12px;
-  z-index: 1000;
-  flex-shrink: 0;
-}
-
-.btn-secondary-bottom {
-  flex: 1;
-  padding: 14px;
-  background: #6c757d;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  min-height: 48px;
-}
-
-.btn-primary-bottom {
-  flex: 2;
-  padding: 14px;
-  background: #28a745;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  min-height: 48px;
-}
-
-.btn-primary-bottom:disabled {
-  background: #ccc;
-  cursor: not-allowed;
-}
-
-/* Ensure body doesn't scroll when modal is open */
-body.modal-open {
-  overflow: hidden;
-}
-
-/* Hide navbar when fullscreen modal is active */
-.fullscreen-modal.active ~ .navbar,
-.fullscreen-modal.active ~ .top-bar,
-.fullscreen-modal.active ~ #mainApp {
-  display: none !important;
-}
-
-/* Desktop/tablet responsive */
-@media (min-width: 768px) {
-  .mobile-form {
-    max-width: 600px;
-    margin: 0 auto;
-  }
-  
-  .form-actions-bottom {
-    max-width: 600px;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-}
 
 
     
@@ -3210,7 +3028,7 @@ body.modal-open {
             <input type="number" id="photoProductStock" class="form-control" min="0" placeholder="0">
           </div>
           <div class="col-6 mb-3">
-            <label class="form-label">Unit Price (₹)</label>
+            <label class="form-label">Unit Price (â‚¹)</label>
             <input type="number" id="photoProductPrice" class="form-control" min="0" step="0.01" placeholder="0.00">
           </div>
         </div>
@@ -4051,88 +3869,41 @@ function delay(ms) {
 // ==========================================
 // HELPER: Success Toast Notification
 // ==========================================
-// Show success toast notification
 function showSuccessToast(message) {
-  showToast(message, 'success');
-}
-
-// Show error toast notification
-function showErrorToast(message) {
-  showToast(message, 'error');
-}
-
-// Universal toast function
-function showToast(message, type = 'success') {
-  // Remove existing toasts
-  const existingToasts = document.querySelectorAll('.toast-notification');
-  existingToasts.forEach(toast => toast.remove());
+  // Remove existing toast if any
+  const existingToast = document.getElementById('successToast');
+  if (existingToast) {
+    existingToast.remove();
+  }
   
   // Create toast element
   const toast = document.createElement('div');
+  toast.id = 'successToast';
   toast.className = 'toast-notification';
-  toast.style.cssText = `
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    padding: 16px 24px;
-    border-radius: 8px;
-    color: white;
-    font-weight: 600;
-    font-size: 16px;
-    z-index: 999999;
-    animation: slideInRight 0.3s ease-out;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    max-width: 400px;
-    ${type === 'success' ? 'background: #4caf50;' : 'background: #f44336;'}
-  `;
-  toast.textContent = message;
-  
-  // Add animation
-  const style = document.createElement('style');
-  style.textContent = `
-    @keyframes slideInRight {
-      from {
-        transform: translateX(400px);
-        opacity: 0;
-      }
-      to {
-        transform: translateX(0);
-        opacity: 1;
-      }
-    }
-    @keyframes slideOutRight {
-      from {
-        transform: translateX(0);
-        opacity: 1;
-      }
-      to {
-        transform: translateX(400px);
-        opacity: 0;
-      }
-    }
+  toast.innerHTML = `
+    <div class="d-flex align-items-center">
+      <i class="bi bi-check-circle-fill text-success me-2" style="font-size: 1.5rem;"></i>
+      <div><strong>${message}</strong></div>
+    </div>
   `;
   
-  if (!document.querySelector('#toast-animations')) {
-    style.id = 'toast-animations';
-    document.head.appendChild(style);
-  }
-  
-  // Append to body
   document.body.appendChild(toast);
   
-  // Auto remove after 4 seconds
+  // Show toast with animation
   setTimeout(() => {
-    toast.style.animation = 'slideOutRight 0.3s ease-in';
-    setTimeout(() => toast.remove(), 300);
-  }, 4000);
+    toast.classList.add('show');
+  }, 100);
   
-  // Click to dismiss
-  toast.addEventListener('click', () => {
-    toast.style.animation = 'slideOutRight 0.3s ease-in';
-    setTimeout(() => toast.remove(), 300);
-  });
+  // Hide and remove after 3 seconds
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => {
+      if (toast && toast.parentNode) {
+        toast.parentNode.removeChild(toast);
+      }
+    }, 300);
+  }, 3000);
 }
-
 
 // ==========================================
 // HELPER: Update sync indicator
@@ -4325,18 +4096,7 @@ async function deleteProductFromSheet(id) {
     new bootstrap.Modal(document.getElementById('productModal')).show();
   }
 
-  async function saveProduct() {
-  // ✅ CHECK IF THIS IS A VARIANT EDIT
-  const form = document.getElementById('productForm');
-  const isVariant = form.dataset.isVariant === 'true';
-  
-  if (isVariant) {
-    // Handle variant save
-    await saveVariantData();
-    return;
-  }
-  
-  // ✅ EXISTING PRODUCT SAVE LOGIC (UNCHANGED)
+ async function saveProduct() {
   const name = document.getElementById('productName').value.trim();
   const category = document.getElementById('category').value;
   const brand = document.getElementById('brand').value.trim();
@@ -4365,7 +4125,7 @@ async function deleteProductFromSheet(id) {
     price: price,
     stock: stock,
     minStock: minStock,
-    imageUrl: window.editingProductImageUrl || ''  // ✅ PRESERVE IMAGE URL
+    imageUrl: window.editingProductImageUrl || ''  // âœ… PRESERVE IMAGE URL
   };
   
   const idx = cachedProducts.findIndex(p => p.id === product.id);
@@ -4407,179 +4167,6 @@ async function deleteProductFromSheet(id) {
   window.editingProductImageUrl = '';
 }
 
-
-
-// ✅ COMPLETE FIX: Save Variant Data - Backend Compatible Version
-async function saveVariantData() {
-  console.log('💾 Saving variant...');
-  
-  const submitBtn = document.querySelector('#productModal .btn-primary');
-  const originalText = submitBtn ? submitBtn.innerHTML : 'Save Product';
-  
-  if (submitBtn) {
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '⏳ Saving...';
-  }
-  
-  try {
-    const form = document.getElementById('productForm');
-    
-    // Get variant ID from multiple sources
-    let variantId = document.getElementById('productId')?.value;
-    if (!variantId || variantId === '') {
-      variantId = form.dataset.variantId;
-    }
-    
-    const groupId = form.dataset.groupId;
-    
-    console.log('🔍 Debug info:', {
-      variantId: variantId,
-      groupId: groupId,
-      formDataset: form.dataset,
-      productIdField: document.getElementById('productId'),
-      productIdValue: document.getElementById('productId')?.value
-    });
-    
-    // Validation
-    if (!variantId || variantId === '' || variantId === 'undefined') {
-      throw new Error('Variant ID is missing. Please close and reopen the edit form.');
-    }
-    
-    if (!groupId || groupId === '' || groupId === 'undefined') {
-      throw new Error('Group ID is missing. Please close and reopen the edit form.');
-    }
-    
-    // Get field values
-    const getFieldValue = (id, defaultValue = 0) => {
-      const field = document.getElementById(id);
-      return field ? (field.value || defaultValue) : defaultValue;
-    };
-    
-    const sellingPrice = parseFloat(getFieldValue('price', 0));
-    const stock = parseInt(getFieldValue('stock', 0));
-    const minStock = parseInt(getFieldValue('minStock', 0));
-    const unitType = getFieldValue('unitType', 'Piece');
-    
-    if (isNaN(sellingPrice) || sellingPrice < 0) {
-      throw new Error('Invalid selling price');
-    }
-    
-    if (isNaN(stock) || stock < 0) {
-      throw new Error('Invalid stock value');
-    }
-    
-    // ✅ PREPARE DATA - Format matching backend expectations
-    const updateData = {
-      action: 'updateGroupVariant',
-      email: userEmail,
-      hash: userHash,
-      variantId: variantId,
-      groupId: groupId,
-      costPrice: '0',
-      sellingPrice: sellingPrice.toString(),
-      stock: stock.toString(),
-      minStock: minStock.toString(),
-      unitType: unitType
-    };
-    
-    console.log('📤 Sending variant update:', updateData);
-    
-    // ✅ METHOD 1: Try URLSearchParams (proper encoding)
-    const formData = new URLSearchParams();
-    Object.keys(updateData).forEach(key => {
-      formData.append(key, updateData[key]);
-    });
-    
-    console.log('📦 FormData string:', formData.toString());
-    
-    const response = await fetch(GOOGLE_SCRIPT_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: formData.toString()
-    });
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    
-    const result = await response.json();
-    console.log('📥 Backend response:', result);
-    
-    if (result.success || result.ok) {
-      console.log('✅ Variant updated successfully');
-      
-      // Update local cache
-      const variantIndex = cachedGroupVariants.findIndex(v => v.variantId === variantId);
-      if (variantIndex !== -1) {
-        cachedGroupVariants[variantIndex] = {
-          ...cachedGroupVariants[variantIndex],
-          sellingPrice,
-          stock,
-          minStock,
-          unitType
-        };
-      }
-      
-      // Show success message
-      showSuccessToast('✅ Variant updated successfully!');
-      
-      // Close modal
-      const modal = bootstrap.Modal.getInstance(document.getElementById('productModal'));
-      if (modal) modal.hide();
-      
-      // Clear flags
-      form.dataset.isVariant = 'false';
-      form.dataset.groupId = '';
-      form.dataset.variantId = '';
-      
-      // Reset readonly fields
-      const resetField = (id) => {
-        const field = document.getElementById(id);
-        if (field) {
-          field.readOnly = false;
-          field.style.background = '';
-          field.style.color = '';
-        }
-      };
-      
-      resetField('productName');
-      resetField('brand');
-      resetField('size');
-      
-      // Refresh variants list
-      setTimeout(() => {
-        if (typeof loadGroupVariants === 'function') {
-          loadGroupVariants(groupId);
-        }
-      }, 500);
-      
-    } else {
-      throw new Error(result.error || result.message || 'Failed to update variant');
-    }
-    
-  } catch (error) {
-    console.error('❌ Error updating variant:', error);
-    alert(`Error: ${error.message}\n\nPlease check the console for details.`);
-  } finally {
-    if (submitBtn) {
-      submitBtn.disabled = false;
-      submitBtn.innerHTML = originalText;
-    }
-  }
-}
-
-
-
-
-
-
-
-
-
-
-    
   
 
   function deleteProduct(id) {
@@ -5837,7 +5424,7 @@ function showPhotoProducts() {
       `<span class="badge bg-success">Stock: ${product.stock}</span>` : 
       `<span class="badge bg-danger">Out of Stock</span>`;
     
-    const priceDisplay = product.price > 0 ? `₹${product.price.toFixed(2)}` : 'Price not set';
+    const priceDisplay = product.price > 0 ? `â‚¹${product.price.toFixed(2)}` : 'Price not set';
     
     const card = `
       <div class="col">
@@ -5898,7 +5485,7 @@ function viewPhotoProduct(productId) {
         <tr><th>Brand</th><td>${product.brand || 'N/A'}</td></tr>
         <tr><th>Size</th><td>${product.size || 'N/A'}</td></tr>
         <tr><th>Stock</th><td>${product.stock || 0} ${product.unitType || 'Pieces'}</td></tr>
-        <tr><th>Price</th><td>₹${formatCurrency(product.price || 0)}</td></tr>
+        <tr><th>Price</th><td>â‚¹${formatCurrency(product.price || 0)}</td></tr>
         <tr><th>Minimum Stock Alert</th><td>${product.minStock || 0}</td></tr>
       </table>
     </div>
@@ -6570,7 +6157,7 @@ async function shareInvoiceAsImage() {
         try {
           await navigator.share({
             title: `Invoice ${invoiceData.invoiceNumber}`,
-            text: `Invoice for ${invoiceData.customerName} - ₹${invoiceData.total.toFixed(2)}`,
+            text: `Invoice for ${invoiceData.customerName} - â‚¹${invoiceData.total.toFixed(2)}`,
             files: [file]
           });
           console.log('âœ… Invoice shared successfully');
@@ -6812,7 +6399,7 @@ function fallbackWhatsAppShare(phoneNumber, invoiceData, canvas, fileName) {
   const message = encodeURIComponent(
     `ðŸ“„ Invoice ${invoiceData.invoiceNumber}\n` +
     `Customer: ${invoiceData.customerName}\n` +
-    `Amount: ₹${invoiceData.total.toFixed(2)}`
+    `Amount: â‚¹${invoiceData.total.toFixed(2)}`
   );
   
   // Open WhatsApp with the specific number
@@ -6847,7 +6434,7 @@ function fallbackWhatsAppShare(phoneNumber, invoiceData, canvas, fileName) {
   const message = encodeURIComponent(
     `ðŸ“„ Invoice ${invoiceData.invoiceNumber}\n` +
     `Customer: ${invoiceData.customerName}\n` +
-    `Amount: ₹${invoiceData.total.toFixed(2)}\n\n` +
+    `Amount: â‚¹${invoiceData.total.toFixed(2)}\n\n` +
     `Invoice image downloaded. Please attach and send.`
   );
   
@@ -6879,8 +6466,8 @@ function generateInvoiceHTMLForImage(data) {
         <td style="text-align:center;padding:8px;border:1px solid #ddd;">${index + 1}</td>
         <td style="padding:8px;border:1px solid #ddd;">${escapeHtml(item.name)}</td>
         <td style="text-align:center;padding:8px;border:1px solid #ddd;">${item.quantity}</td>
-        <td style="text-align:right;padding:8px;border:1px solid #ddd;">₹${item.rate.toFixed(2)}</td>
-        <td style="text-align:right;padding:8px;border:1px solid #ddd;">₹${item.amount.toFixed(2)}</td>
+        <td style="text-align:right;padding:8px;border:1px solid #ddd;">â‚¹${item.rate.toFixed(2)}</td>
+        <td style="text-align:right;padding:8px;border:1px solid #ddd;">â‚¹${item.amount.toFixed(2)}</td>
       </tr>
     `;
   });
@@ -6922,19 +6509,19 @@ function generateInvoiceHTMLForImage(data) {
         <table style="margin-left:auto;width:300px;">
           <tr>
             <td style="padding:5px;"><strong>Sub Total:</strong></td>
-            <td style="padding:5px;text-align:right;">₹${data.subtotal.toFixed(2)}</td>
+            <td style="padding:5px;text-align:right;">â‚¹${data.subtotal.toFixed(2)}</td>
           </tr>
           <tr>
             <td style="padding:5px;color:#dc3545;"><strong>Discount:</strong></td>
-            <td style="padding:5px;text-align:right;color:#dc3545;">-₹${data.discount.toFixed(2)}</td>
+            <td style="padding:5px;text-align:right;color:#dc3545;">-â‚¹${data.discount.toFixed(2)}</td>
           </tr>
           <tr>
             <td style="padding:5px;"><strong>Tax:</strong></td>
-            <td style="padding:5px;text-align:right;">₹${data.tax.toFixed(2)}</td>
+            <td style="padding:5px;text-align:right;">â‚¹${data.tax.toFixed(2)}</td>
           </tr>
           <tr style="border-top:2px solid #000;">
             <td style="padding:10px;font-size:18px;"><strong>Grand Total:</strong></td>
-            <td style="padding:10px;text-align:right;font-size:18px;"><strong>₹${data.total.toFixed(2)}</strong></td>
+            <td style="padding:10px;text-align:right;font-size:18px;"><strong>â‚¹${data.total.toFixed(2)}</strong></td>
           </tr>
         </table>
       </div>
@@ -7019,19 +6606,19 @@ function generateShareText(data) {
   
   text += `ITEMS:\n`;
   data.items.forEach((item, i) => {
-    text += `${i + 1}. ${item.name} x ${item.quantity} = ₹${item.amount.toFixed(2)}\n`;
+    text += `${i + 1}. ${item.name} x ${item.quantity} = â‚¹${item.amount.toFixed(2)}\n`;
   });
   
   text += `\n`;
-  text += `Sub Total: ₹${data.subtotal.toFixed(2)}\n`;
+  text += `Sub Total: â‚¹${data.subtotal.toFixed(2)}\n`;
   if (data.discount > 0) {
-    text += `Discount: -₹${data.discount.toFixed(2)}\n`;
+    text += `Discount: -â‚¹${data.discount.toFixed(2)}\n`;
   }
   if (data.tax > 0) {
-    text += `Tax: ₹${data.tax.toFixed(2)}\n`;
+    text += `Tax: â‚¹${data.tax.toFixed(2)}\n`;
   }
   text += `â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”\n`;
-  text += `TOTAL: ₹${data.total.toFixed(2)}\n\n`;
+  text += `TOTAL: â‚¹${data.total.toFixed(2)}\n\n`;
   
   text += `Thank you for your business!\n`;
   text += `- Tile & Sanitaryware Inventory`;
@@ -7484,48 +7071,36 @@ function renderProductGroups(groups) {
 }
 
 
-// Render Group Variants List - FIXED
+// Render Group Variants List
 function renderGroupVariants(variants) {
   const container = document.getElementById('variantsListContainer');
   if (!container) return;
-
-  if (!variants || variants.length === 0) {
-    container.innerHTML = `
-      <div class="empty-state">
-        <div class="empty-state-icon">📦</div>
-        <h3>No Variants Yet</h3>
-        <p>This group doesn't have any variants</p>
-      </div>
-    `;
-    return;
-  }
-
+  
   let html = '';
   
   variants.forEach(variant => {
     // Parse attributes
     let attributesText = '';
     try {
-      const attrs = typeof variant.attributes === 'string' 
-        ? JSON.parse(variant.attributes) 
-        : variant.attributes;
+      const attrs = typeof variant.attributes === 'string' ? JSON.parse(variant.attributes) : variant.attributes;
       const attrArray = Object.entries(attrs).map(([key, value]) => `${key}: ${value}`);
       attributesText = attrArray.join(' • ');
     } catch (e) {
       attributesText = '';
     }
-
+    
     // Stock status
     const stockClass = variant.stock <= variant.minStock ? 'low' : 'good';
-    const stockIcon = variant.stock <= variant.minStock ? '⚠️' : '✅';
+    const stockIcon = variant.stock <= variant.minStock ? '⚠️' : '✓';
     const stockText = `${stockIcon} ${variant.stock}`;
-
+    
     // Price
     const priceText = variant.sellingPrice > 0 ? `₹${variant.sellingPrice.toFixed(2)}` : '₹0.00';
-
+    
     html += `
       <div class="variant-card">
         <div class="variant-icon">📦</div>
+        
         <div class="variant-info">
           <div class="variant-name">${escapeHtml(variant.variantName)}</div>
           ${attributesText ? `<div class="variant-attributes">${attributesText}</div>` : ''}
@@ -7534,18 +7109,19 @@ function renderGroupVariants(variants) {
             <span class="variant-price">${priceText}</span>
           </div>
         </div>
+        
         <div class="variant-actions">
           <button class="btn-icon-small btn-edit-small" onclick="openEditVariantModal('${variant.variantId}')">
-            <i class="bi bi-pencil"></i>
+            ✏️
           </button>
           <button class="btn-icon-small btn-delete-small" onclick="confirmDeleteVariant('${variant.variantId}', '${escapeHtml(variant.variantName)}')">
-            <i class="bi bi-trash"></i>
+            🗑️
           </button>
         </div>
       </div>
     `;
   });
-
+  
   container.innerHTML = html;
   container.style.display = 'block';
 }
@@ -7687,105 +7263,59 @@ function openCreateGroupModal() {
 
 
 
-// Close Create Group Modal - FIXED
+// Close Create Group Modal
 function closeCreateGroupModal() {
-  console.log('🔒 Closing Create Group Modal');
-  
   const modal = document.getElementById('createGroupModal');
   if (modal) {
-    // Remove active class
     modal.classList.remove('active');
-    
-    // Hide with inline styles
-    modal.style.display = 'none';
   }
-  
-  // Restore body scroll
   document.body.style.overflow = '';
-  
-  // Reset form
-  const form = document.getElementById('createGroupForm');
-  if (form) {
-    form.reset();
-  }
-  
-  // Clear attributes container
-  const container = document.getElementById('attributesContainer');
-  if (container) {
-    container.innerHTML = '';
-  }
-  
-  // Reset attribute counter
-  attributeRowCounter = 0;
-  
-  // Reset button
-  const submitBtn = document.getElementById('btnSaveGroup');
-  if (submitBtn) {
-    submitBtn.disabled = false;
-    submitBtn.innerHTML = '💾 Save & Generate';
-  }
-  
-  console.log('✅ Modal closed and reset');
 }
 
-
-    
-// Add Attribute Row - MOBILE OPTIMIZED
+// Add Attribute Row
 function addAttributeRow() {
+  attributeRowCounter++;
+  
   const container = document.getElementById('attributesContainer');
-  if (!container) return;
+  if (!container) {
+    console.error('❌ Attributes container not found');
+    return;
+  }
   
-  const rowId = `attributeRow${Date.now()}`;
-  
-  const row = document.createElement('div');
-  row.className = 'attribute-row';
-  row.id = rowId;
-  row.style.cssText = 'display: flex; gap: 8px; margin-bottom: 12px; align-items: center;';
-  
-  row.innerHTML = `
-    <input 
-      type="text" 
-      class="attr-name" 
-      placeholder="Attribute (e.g., Size)" 
-      style="flex: 1; padding: 12px; font-size: 16px; border: 1px solid #ddd; border-radius: 8px;"
-      autocomplete="off"
-      autocorrect="off"
-      autocapitalize="words"
-      oninput="updateVariantPreview()"
-    >
-    <input 
-      type="text" 
-      class="attr-options" 
-      placeholder="Options (e.g., Small, Large)" 
-      style="flex: 2; padding: 12px; font-size: 16px; border: 1px solid #ddd; border-radius: 8px;"
-      autocomplete="off"
-      autocorrect="off"
-      autocapitalize="words"
-      oninput="updateVariantPreview()"
-    >
-    <button 
-      type="button" 
-      onclick="removeAttributeRow('${rowId}')" 
-      style="padding: 10px 12px; background: #dc3545; color: #fff; border: none; border-radius: 8px; font-size: 18px;"
-      aria-label="Remove attribute"
-    >
-      ×
-    </button>
+  const rowHtml = `
+    <div class="attribute-row" id="attributeRow${attributeRowCounter}" style="background: white; padding: 16px; border-radius: 8px; margin-bottom: 12px; border: 2px solid #e0e0e0;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <span style="font-weight: 600; color: #333;">Attribute ${attributeRowCounter}</span>
+        ${attributeRowCounter > 1 ? `<button type="button" onclick="removeAttributeRow(${attributeRowCounter})" style="background: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 13px;">🗑️ Remove</button>` : ''}
+      </div>
+      
+      <label style="display: block; font-size: 14px; font-weight: 600; color: #333; margin-bottom: 8px;">
+        Attribute Name <span style="color: #dc3545;">*</span>
+      </label>
+      <input 
+        type="text" 
+        class="attr-name" 
+        placeholder="e.g., Size, Color"
+        style="width: 100%; padding: 12px; font-size: 16px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 12px;"
+        oninput="updateVariantPreview()">
+      
+      <label style="display: block; font-size: 14px; font-weight: 600; color: #333; margin-bottom: 8px;">
+        Options <span style="color: #dc3545;">*</span> 
+        <span style="font-weight: normal; font-size: 12px; color: #666;">(comma separated)</span>
+      </label>
+      <input 
+        type="text" 
+        class="attr-options" 
+        placeholder="e.g., Small, Medium, Large"
+        style="width: 100%; padding: 12px; font-size: 16px; border: 1px solid #ddd; border-radius: 8px;"
+        oninput="updateVariantPreview()">
+    </div>
   `;
   
-  container.appendChild(row);
-  
-  // Focus on the attribute name input (mobile-friendly)
-  setTimeout(() => {
-    const nameInput = row.querySelector('.attr-name');
-    if (nameInput) {
-      nameInput.focus();
-    }
-  }, 100);
-  
+  container.insertAdjacentHTML('beforeend', rowHtml);
   updateVariantPreview();
   
-  console.log(`✅ Added attribute row: ${rowId}`);
+  console.log('✅ Added attribute row', attributeRowCounter);
 }
 
 // Remove Attribute Row
@@ -7812,63 +7342,34 @@ function removeAttributeRow(rowId) {
  * VARIANT GENERATION & PREVIEW
  * ==========================================
  */
-// Parse Attributes from Form - MOBILE OPTIMIZED
+
 function parseAttributesFromForm() {
-  console.log('🔍 Parsing attributes from form...');
-  
+  const attributeRows = document.querySelectorAll('.attribute-row');
   const attributes = {};
-  const rows = document.querySelectorAll('.attribute-row');
   
-  console.log(`Found ${rows.length} attribute rows`);
-  
-  rows.forEach((row, index) => {
-    // Try multiple selector strategies for mobile compatibility
-    const nameInput = row.querySelector('.attr-name') || 
-                     row.querySelector('input[placeholder*="Size"]') ||
-                     row.querySelector('input[type="text"]:first-child');
-    
-    const optionsInput = row.querySelector('.attr-options') || 
-                        row.querySelector('input[placeholder*="Small"]') ||
-                        row.querySelector('input[type="text"]:last-child');
+  attributeRows.forEach(row => {
+    const nameInput = row.querySelector('.attr-name');
+    const optionsInput = row.querySelector('.attr-options');
     
     if (nameInput && optionsInput) {
-      // Get values with fallback for mobile
-      const attrName = (nameInput.value || '').trim();
-      const optionsText = (optionsInput.value || '').trim();
+      const name = nameInput.value.trim();
+      const optionsText = optionsInput.value.trim();
       
-      console.log(`Row ${index + 1}:`, {
-        name: attrName,
-        options: optionsText
-      });
-      
-      if (attrName && optionsText) {
-        // Parse options - handle multiple separators
-        const attrOptions = optionsText
-          .split(/[,;|]/) // Split by comma, semicolon, or pipe
+      if (name && optionsText) {
+        const options = optionsText
+          .split(',')
           .map(opt => opt.trim())
           .filter(opt => opt.length > 0);
         
-        if (attrOptions.length > 0) {
-          attributes[attrName] = attrOptions;
-          console.log(`✅ Added attribute: ${attrName} = [${attrOptions.join(', ')}]`);
-        } else {
-          console.warn(`⚠️ No valid options for attribute: ${attrName}`);
+        if (options.length > 0) {
+          attributes[name] = options;
         }
-      } else {
-        console.warn(`⚠️ Row ${index + 1} - Empty name or options`);
       }
-    } else {
-      console.error(`❌ Row ${index + 1} - Could not find inputs`);
     }
   });
   
-  console.log('📦 Final parsed attributes:', attributes);
-  console.log('📊 Total attributes:', Object.keys(attributes).length);
-  
   return attributes;
 }
-
-
 
 // Generate Variant Combinations
 function generateVariantCombinations(attributes) {
@@ -7919,55 +7420,52 @@ function generateVariantName(groupName, attributes) {
 }
 
 
-// Update Variant Preview (Real-time)
+// Update variant preview
 function updateVariantPreview() {
-  const groupName = document.getElementById('groupName').value.trim() || 'Product';
   const attributes = parseAttributesFromForm();
-  const variants = generateVariantCombinations(attributes);
+  const previewContainer = document.getElementById('variantPreview');
   
-  // Update count
-  document.getElementById('variantCount').textContent = variants.length;
+  if (!previewContainer) return;
   
-  // Update preview list
-  const container = document.getElementById('variantPreviewContainer');
-  if (!container) return;
+  const attributeKeys = Object.keys(attributes);
   
-  if (variants.length === 0) {
-    container.innerHTML = `
-      <div class="variant-preview-item">
-        Add attributes to see preview...
-      </div>
-    `;
+  if (attributeKeys.length === 0) {
+    previewContainer.innerHTML = '<p style="color: #999;">Add attributes to see variant preview</p>';
     return;
   }
   
-  // Show first 10 variants
-  const previewLimit = 10;
-  let html = '';
-  
-  variants.slice(0, previewLimit).forEach(attr => {
-    const variantName = generateVariantName(groupName, attr);
-    html += `
-      <div class="variant-preview-item">
-        <span class="icon">✓</span>
-        ${escapeHtml(variantName)}
-      </div>
-    `;
+  // Calculate total variants (cartesian product)
+  let totalVariants = 1;
+  attributeKeys.forEach(key => {
+    totalVariants *= attributes[key].length;
   });
   
-  // Show "and X more" if needed
-  if (variants.length > previewLimit) {
-    html += `
-      <div class="variant-preview-more">
-        ... and ${variants.length - previewLimit} more
-      </div>
-    `;
+  // Generate preview (show first few)
+  const groupName = document.getElementById('groupName')?.value.trim() || 'Product';
+  const previewList = [];
+  
+  // Show first attribute options as examples
+  if (attributeKeys.length > 0) {
+    const firstAttr = attributeKeys[0];
+    attributes[firstAttr].slice(0, 3).forEach(opt => {
+      previewList.push(`${groupName}-${opt}`);
+    });
   }
   
-  container.innerHTML = html;
+  previewContainer.innerHTML = `
+    <div style="background: #e3f2fd; padding: 12px; border-radius: 8px;">
+      <div style="font-weight: 600; color: #1976d2; margin-bottom: 8px;">
+        ${totalVariants} Variants Will Be Created
+      </div>
+      ${previewList.map(name => `<div style="padding: 4px 0;">✓ ${name}</div>`).join('')}
+      ${totalVariants > 3 ? `<div style="padding: 4px 0; color: #666;">... and ${totalVariants - 3} more</div>` : ''}
+    </div>
+  `;
 }
 
 
+
+// Continue in next message...
 
 /**
  * ==========================================
@@ -7975,67 +7473,37 @@ function updateVariantPreview() {
  * ==========================================
  */
 
-// Handle Create Group Form Submission - MOBILE FIX
+// Handle Create Group Form Submission - SEND AS SEPARATE PARAMETERS
 async function handleCreateGroup(event) {
   event.preventDefault();
+  
   console.log('📝 Creating product group...');
   
   const submitBtn = document.getElementById('btnSaveGroup');
   const originalText = submitBtn.innerHTML;
-  
-  // Prevent double submission
-  if (submitBtn.disabled) {
-    console.log('⚠️ Already submitting...');
-    return;
-  }
-  
   submitBtn.disabled = true;
   submitBtn.innerHTML = '⏳ Creating...';
   
   try {
-    // Collect form data
     const groupName = document.getElementById('groupName').value.trim();
     const description = document.getElementById('groupDescription').value.trim();
     const manufacturer = document.getElementById('groupManufacturer').value.trim();
     const category = document.getElementById('groupCategory').value;
-    
-    console.log('📋 Form data:', {
-      groupName,
-      description,
-      manufacturer,
-      category
-    });
-    
-    // Parse attributes with detailed logging
     const attributes = parseAttributesFromForm();
     
-    // ENHANCED VALIDATION with specific error messages
-    if (!groupName) {
-      throw new Error('❌ Group name is required');
-    }
+    console.log('🔍 COLLECTED DATA:');
+    console.log('  groupName:', groupName);
+    console.log('  attributes:', attributes);
     
-    if (groupName.length < 2) {
-      throw new Error('❌ Group name must be at least 2 characters');
+    if (!groupName) {
+      throw new Error('Group name is required');
     }
     
     if (Object.keys(attributes).length === 0) {
-      throw new Error('❌ Please add at least one attribute with options.\n\nExample:\nAttribute: Size\nOptions: Small, Large');
+      throw new Error('Please add at least one attribute');
     }
     
-    // Validate each attribute has options
-    for (const [attrName, attrOptions] of Object.entries(attributes)) {
-      if (attrOptions.length === 0) {
-        throw new Error(`❌ Attribute "${attrName}" has no options.\n\nPlease enter options separated by commas.\n\nExample: Small, Medium, Large`);
-      }
-    }
-    
-    console.log('✅ Validation passed!');
-    
-    // Calculate expected variant count
-    const variantCount = Object.values(attributes).reduce((total, options) => total * options.length, 1);
-    console.log(`📊 Will create ${variantCount} variants`);
-    
-    // Send data as individual parameters (mobile-friendly)
+    // ✅ SEND DATA AS INDIVIDUAL PARAMETERS (not as nested JSON)
     const postBody = new URLSearchParams({
       action: 'createProductGroup',
       email: userEmail,
@@ -8049,55 +7517,35 @@ async function handleCreateGroup(event) {
       createdBy: userEmail
     });
     
-    console.log('📤 Sending request...');
+    console.log('📤 Sending POST body:', postBody.toString());
     
     const response = await fetch(GOOGLE_SCRIPT_URL, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: postBody
     });
     
     console.log('📥 Response status:', response.status);
     
     const result = await response.json();
-    console.log('📦 Response data:', result);
+    console.log('📥 Response data:', result);
     
-    // Check for success
-    if (result.success || result.ok) {
-      console.log('✅ Group created successfully!');
-      
-      const createdCount = result.totalVariants || variantCount;
-      
-      // Show success message
-      showSuccessToast(`✅ Created "${groupName}" with ${createdCount} variants!`);
-      
-      // Close modal
+    if (result.success) {
+      console.log('✅ Group created:', result);
+      showSuccessMessage(`Created "${groupName}" with ${result.totalVariants || 'multiple'} variants!`);
       closeCreateGroupModal();
-      
-      // Reload groups list
-      setTimeout(() => {
-        loadProductGroups();
-      }, 500);
-      
+      setTimeout(() => loadProductGroups(), 500);
     } else {
-      throw new Error(result.error || result.message || 'Failed to create product group');
+      throw new Error(result.error || 'Failed to create group');
     }
     
   } catch (error) {
-    console.error('❌ Error creating product group:', error);
-    
-    // Show user-friendly error
-    alert(`Error: ${error.message}`);
-    
-    // Re-enable button
+    console.error('❌ Error creating group:', error);
+    alert('Error: ' + error.message);
     submitBtn.disabled = false;
     submitBtn.innerHTML = originalText;
   }
 }
-
-
 
 
 /**
@@ -8106,9 +7554,9 @@ async function handleCreateGroup(event) {
  * ==========================================
  */
 
-// Open Edit Variant Modal - AGGRESSIVE FORCE SHOW VERSION
+// Open Edit Variant Modal
 function openEditVariantModal(variantId) {
-  console.log('🔍 Opening edit modal for variant:', variantId);
+  console.log('✏️ Opening edit modal for variant:', variantId);
   
   // Find variant in cache
   const variant = cachedGroupVariants.find(v => v.variantId === variantId);
@@ -8117,198 +7565,49 @@ function openEditVariantModal(variantId) {
     alert('Variant not found');
     return;
   }
-
-  // Use the existing Bootstrap product modal
-  const modal = document.getElementById('productModal');
   
-  if (!modal) {
-    console.error('❌ productModal not found in DOM!');
-    alert('Error: Edit modal not found. Please refresh the page.');
-    return;
-  }
-
-  // Set modal title
-  const modalTitle = document.getElementById('productModalLabel');
-  if (modalTitle) {
-    modalTitle.textContent = 'Edit Variant';
-  }
-
-  // ✅ SAFE FIELD POPULATION
-  const setFieldValue = (id, value) => {
-    const field = document.getElementById(id);
-    if (field) {
-      field.value = value;
-      return true;
-    } else {
-      console.warn(`⚠️ Field not found: ${id}`);
-      return false;
-    }
-  };
-
-  // Populate form fields
-  setFieldValue('productId', variant.variantId);
-  setFieldValue('productName', variant.variantName);
-  setFieldValue('brand', variant.manufacturer || variant.brand || '');
-  setFieldValue('size', extractAttributeValue(variant.attributes, 'Size') || '');
-  setFieldValue('category', variant.category || 'Tiles');
-  setFieldValue('unitType', variant.unitType || 'Piece');
-  setFieldValue('piecesPerBox', 0);
-  setFieldValue('sftPerBox', 0);
-  setFieldValue('price', variant.sellingPrice || 0);
-  setFieldValue('stock', variant.stock || 0);
-  setFieldValue('minStock', variant.minStock || 0);
-
-  // Store that this is a variant edit
-  const form = document.getElementById('productForm');
-  if (form) {
-    form.dataset.isVariant = 'true';
-    form.dataset.groupId = variant.groupId;
-  }
-
-  // Make fields readonly
-  const makeReadonly = (id) => {
-    const field = document.getElementById(id);
-    if (field) {
-      field.readOnly = true;
-      field.style.background = '#f8f9fa';
-      field.style.color = '#6c757d';
-    }
-  };
-
-  makeReadonly('productName');
-  makeReadonly('brand');
-  makeReadonly('size');
-
-  // ✅ FORCE SHOW MODAL - Multiple methods
-  console.log('Attempting to show modal...');
+  // Populate form
+  document.getElementById('editVariantId').value = variant.variantId;
+  document.getElementById('editVariantGroupId').value = variant.groupId;
+  document.getElementById('editVariantName').value = variant.variantName;
+  document.getElementById('editVariantCostPrice').value = variant.costPrice || 0;
+  document.getElementById('editVariantSellingPrice').value = variant.sellingPrice || 0;
+  document.getElementById('editVariantStock').value = variant.stock || 0;
+  document.getElementById('editVariantMinStock').value = variant.minStock || 0;
+  document.getElementById('editVariantUnitType').value = variant.unitType || 'Piece';
   
-  // Method 1: Try Bootstrap 5 Modal API
-  try {
-    let bootstrapModal = bootstrap.Modal.getInstance(modal);
-    if (!bootstrapModal) {
-      bootstrapModal = new bootstrap.Modal(modal);
-    }
-    bootstrapModal.show();
-    console.log('✅ Bootstrap modal.show() called');
-  } catch (e) {
-    console.error('❌ Bootstrap Modal failed:', e);
-    
-    // Method 2: Manual show with jQuery (fallback)
-    if (typeof $ !== 'undefined' && $.fn.modal) {
-      $(modal).modal('show');
-      console.log('✅ jQuery modal.show() called');
-    } else {
-      // Method 3: Direct CSS manipulation (last resort)
-      modal.classList.add('show');
-      modal.style.display = 'block';
-      modal.setAttribute('aria-modal', 'true');
-      modal.removeAttribute('aria-hidden');
-      document.body.classList.add('modal-open');
-      
-      // Add backdrop manually
-      const backdrop = document.createElement('div');
-      backdrop.className = 'modal-backdrop fade show';
-      backdrop.id = 'variantModalBackdrop';
-      document.body.appendChild(backdrop);
-      
-      console.log('✅ Manual modal display applied');
+  // Display attributes (read-only)
+  const attributesContainer = document.getElementById('editVariantAttributes');
+  if (attributesContainer) {
+    try {
+      const attrs = typeof variant.attributes === 'string' ? JSON.parse(variant.attributes) : variant.attributes;
+      const attrHtml = Object.entries(attrs)
+        .map(([key, value]) => `<strong>${key}:</strong> ${value}`)
+        .join(' • ');
+      attributesContainer.innerHTML = attrHtml || 'No attributes';
+    } catch (e) {
+      attributesContainer.innerHTML = 'No attributes';
     }
   }
-
-  // ✅ AGGRESSIVE FORCE TO FOREGROUND (Works regardless of Bootstrap method)
-  setTimeout(() => {
-    // Force modal container
-    modal.style.cssText = `
-      display: block !important;
-      z-index: 999999 !important;
-      position: fixed !important;
-      top: 0 !important;
-      left: 0 !important;
-      width: 100% !important;
-      height: 100% !important;
-      overflow-y: auto !important;
-      background: rgba(0, 0, 0, 0.5) !important;
-    `;
-    
-    // Force modal dialog
-    const modalDialog = modal.querySelector('.modal-dialog');
-    if (modalDialog) {
-      modalDialog.style.cssText = `
-        z-index: 1000000 !important;
-        position: relative !important;
-        margin: 1.75rem auto !important;
-        max-width: 500px !important;
-        pointer-events: auto !important;
-      `;
-    }
-    
-    // Force modal content
-    const modalContent = modal.querySelector('.modal-content');
-    if (modalContent) {
-      modalContent.style.cssText = `
-        background: white !important;
-        border-radius: 8px !important;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
-        position: relative !important;
-        display: flex !important;
-        flex-direction: column !important;
-      `;
-    }
-    
-    // Force backdrop if exists
-    const backdrop = document.querySelector('.modal-backdrop');
-    if (backdrop) {
-      backdrop.style.cssText = `
-        z-index: 999998 !important;
-        opacity: 0.5 !important;
-      `;
-    }
-    
-    // Lower z-index of page views
-    const pageViews = document.querySelectorAll('.page-view');
-    pageViews.forEach(view => {
-      view.style.zIndex = '1';
-    });
-    
-    console.log('✅ Modal FORCED to foreground with inline styles');
-  }, 100);
-
-  console.log('✅ Edit variant modal opened for:', variant.variantName);
-}
-
-// Helper function to extract attribute value from JSON
-function extractAttributeValue(attributes, key) {
-  try {
-    const attrs = typeof attributes === 'string' 
-      ? JSON.parse(attributes) 
-      : attributes;
-    return attrs[key] || '';
-  } catch (e) {
-    return '';
+  
+  // Show modal
+  const modal = document.getElementById('editVariantModal');
+  if (modal) {
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
   }
 }
 
-// Close Edit Variant Modal - COMPLETE FIX
+
+// Close Edit Variant Modal
 function closeEditVariantModal() {
-  console.log('Closing edit variant modal');
-  
   const modal = document.getElementById('editVariantModal');
   if (modal) {
     modal.classList.remove('active');
-    modal.style.display = 'none'; // Hide it
-    
-    // Restore body scroll
-    document.body.style.overflow = '';
   }
-
-  // Reset form
-  const form = document.getElementById('editVariantForm');
-  if (form) {
-    form.reset();
-  }
-  
-  console.log('Modal closed');
+  document.body.style.overflow = '';
 }
+
 
 // Handle Update Variant Form Submission
 async function handleUpdateVariant(event) {
@@ -8808,6 +8107,7 @@ function navigateToGroupDetail(groupId, groupName) {
 
 
 
+
     
 
     
@@ -8962,18 +8262,6 @@ function navigateToGroupDetail(groupId, groupName) {
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
