@@ -5332,7 +5332,7 @@ function showSuccessToast(message) {
 
 
 
-    // Filter products by category in All Products page
+  // Filter products by category in All Products page
 function filterByCategory(category) {
   console.log('📂 Filtering by category:', category);
   
@@ -5359,8 +5359,8 @@ function filterByCategory(category) {
   });
   
   if (category === 'all' || category === 'All') {
-    // Show all products
-    renderAllProductsList();
+    // Show all products - use existing displayProducts function
+    displayProducts(cachedProducts);
     return;
   }
   
@@ -5371,9 +5371,10 @@ function filterByCategory(category) {
   
   console.log(`Found ${filtered.length} products in category: ${category}`);
   
-  // Render filtered products
-  renderFilteredProductsList(filtered, category);
+  // Use existing displayProducts function
+  displayProducts(filtered);
 }
+
 
 // Render filtered products list
 function renderFilteredProductsList(products, categoryName) {
@@ -9093,6 +9094,7 @@ function navigateToGroupDetail(groupId, groupName) {
 
 </body>
 </html>
+
 
 
 
