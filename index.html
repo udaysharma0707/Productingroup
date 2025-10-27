@@ -7993,7 +7993,86 @@ function updateVariantPreview() {
   container.innerHTML = html;
 }
 
+// Navigate back to Home - FIXED
+function navigateToHome() {
+  console.log('🏠 Navigating to Home');
+  
+  currentPage = 'home';
+  
+  const mainApp = document.getElementById('mainApp');
+  const allProductsPage = document.getElementById('allProductsPage');
+  const productGroupsPage = document.getElementById('productGroupsPage');
+  const groupDetailPage = document.getElementById('groupDetailPage');
+  
+  if (mainApp) {
+    mainApp.style.display = 'block';
+  }
+  
+  // ✅ SHOW THE BLUE NAVBAR AGAIN
+  const navbar = document.querySelector('.navbar');
+  if (navbar) {
+    navbar.style.display = 'block';
+  }
+  
+  if (allProductsPage) allProductsPage.classList.remove('active');
+  if (productGroupsPage) productGroupsPage.classList.remove('active');
+  if (groupDetailPage) groupDetailPage.classList.remove('active');
+  
+  closeSidebar();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  
+  const btnPhotoView = document.getElementById('btnPhotoView');
+  if (btnPhotoView && btnPhotoView.classList.contains('active')) {
+    if (typeof showAllProducts === 'function') {
+      showAllProducts();
+    }
+  }
+}
 
+// Navigate to Group Detail - FIXED
+function navigateToGroupDetail(groupId, groupName) {
+  console.log('📦 Navigating to Group Detail:', groupName);
+  
+  currentPage = 'groupDetail';
+  currentGroupId = groupId;
+  
+  const mainApp = document.getElementById('mainApp');
+  const allProductsPage = document.getElementById('allProductsPage');
+  const productGroupsPage = document.getElementById('productGroupsPage');
+  const groupDetailPage = document.getElementById('groupDetailPage');
+  
+  // HIDE the main dashboard
+  if (mainApp) {
+    mainApp.style.display = 'none';
+  }
+  
+  // ✅ HIDE THE BLUE NAVBAR
+  const navbar = document.querySelector('.navbar');
+  if (navbar) {
+    navbar.style.display = 'none';
+  }
+  
+  // SHOW Group Detail page
+  if (groupDetailPage) {
+    groupDetailPage.classList.add('active');
+  }
+  
+  if (allProductsPage) allProductsPage.classList.remove('active');
+  if (productGroupsPage) productGroupsPage.classList.remove('active');
+  
+  // Set group title
+  const groupTitleEl = document.getElementById('groupDetailTitle');
+  if (groupTitleEl) {
+    groupTitleEl.textContent = groupName;
+  }
+  
+  // Load variants
+  if (typeof syncGroupVariants === 'function') {
+    syncGroupVariants(groupId);
+  }
+  
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 
 /**
  * ==========================================
@@ -8988,6 +9067,7 @@ function navigateToGroupDetail(groupId, groupName) {
 
 </body>
 </html>
+
 
 
 
