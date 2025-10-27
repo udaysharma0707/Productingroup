@@ -7993,6 +7993,7 @@ function updateVariantPreview() {
   container.innerHTML = html;
 }
 
+    
 // Navigate back to Home - FIXED
 function navigateToHome() {
   console.log('🏠 Navigating to Home');
@@ -8074,6 +8075,10 @@ function navigateToGroupDetail(groupId, groupName) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+
+
+
+    
 /**
  * ==========================================
  * FORM SUBMISSION HANDLERS
@@ -8628,6 +8633,36 @@ async function deleteVariant(variantId, variantName) {
 }
 
 
+
+  // Open Add Product modal (from All Products page) - FIXED
+function openAddProduct() {
+  console.log('📝 Opening Add Product modal');
+  
+  // Reset product modal
+  const modalTitle = document.getElementById('modalTitle');
+  const productForm = document.getElementById('productForm');
+  const productId = document.getElementById('productId');
+  const currentPhotoUrl = document.getElementById('currentPhotoUrl');
+  const photoPreview = document.getElementById('photoPreview');
+  
+  if (modalTitle) modalTitle.textContent = 'Add New Product';
+  if (productForm) productForm.reset();
+  if (productId) productId.value = '';
+  if (currentPhotoUrl) currentPhotoUrl.value = '';
+  if (photoPreview) photoPreview.style.display = 'none';
+  
+  // Show modal - FIXED Bootstrap 5 syntax
+  const productModal = document.getElementById('productModal');
+  if (productModal) {
+    const modal = new bootstrap.Modal(productModal);
+    modal.show();
+    console.log('✅ Product modal opened');
+  } else {
+    console.error('❌ Product modal not found');
+    alert('Error: Product modal not found. Please refresh the page.');
+  }
+}  
+
 /**
  * ==========================================
  * UI HELPER FUNCTIONS
@@ -9067,6 +9102,7 @@ function navigateToGroupDetail(groupId, groupName) {
 
 </body>
 </html>
+
 
 
 
