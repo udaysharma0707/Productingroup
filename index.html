@@ -7173,21 +7173,47 @@ function navigateToAllProducts() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+// Navigate to Product Groups page - FIXED
+function navigateToProductGroups() {
+  console.log('📁 Navigating to Product Groups');
+  
+  currentPage = 'productGroups';
+  
+  const mainApp = document.getElementById('mainApp');
+  const allProductsPage = document.getElementById('allProductsPage');
+  const productGroupsPage = document.getElementById('productGroupsPage');
+  const groupDetailPage = document.getElementById('groupDetailPage');
+  
+  // HIDE the main dashboard
+  if (mainApp) {
+    mainApp.style.display = 'none';
+  }
+  
+  // ✅ HIDE THE BLUE NAVBAR
+  const navbar = document.querySelector('.navbar');
+  if (navbar) {
+    navbar.style.display = 'none';
+  }
+  
+  // SHOW Product Groups page
+  if (productGroupsPage) {
+    productGroupsPage.classList.add('active');
+  }
+  
+  if (allProductsPage) allProductsPage.classList.remove('active');
+  if (groupDetailPage) groupDetailPage.classList.remove('active');
+  
+  if (typeof syncProductGroups === 'function') {
+    syncProductGroups();
+  }
+  
+  closeSidebar();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 
 
 
 
-
-
-
-
-
-    
-/**
- * ==========================================
- * PRODUCT GROUPS - JAVASCRIPT FUNCTIONS
- * ==========================================
- */
 
 
 let currentGroupName = null;
@@ -8962,6 +8988,7 @@ function navigateToGroupDetail(groupId, groupName) {
 
 </body>
 </html>
+
 
 
 
