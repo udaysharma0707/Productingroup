@@ -7309,28 +7309,20 @@ function navigateToProductGroups() {
   const productGroupsPage = document.getElementById('productGroupsPage');
   const groupDetailPage = document.getElementById('groupDetailPage');
   
-  // HIDE the main dashboard
-  if (mainApp) {
-    mainApp.style.display = 'none';
-  }
+  // Hide main dashboard
+  if (mainApp) mainApp.style.display = 'none';
   
-  // ✅ HIDE THE BLUE NAVBAR
+  // Hide navbar
   const navbar = document.querySelector('.navbar');
-  if (navbar) {
-    navbar.style.display = 'none';
-  }
+  if (navbar) navbar.style.display = 'none';
   
-  // SHOW Product Groups page
-  if (productGroupsPage) {
-    productGroupsPage.classList.add('active');
-  }
-  
+  // Show Product Groups page
+  if (productGroupsPage) productGroupsPage.classList.add('active');
   if (allProductsPage) allProductsPage.classList.remove('active');
   if (groupDetailPage) groupDetailPage.classList.remove('active');
   
-  if (typeof syncProductGroups === 'function') {
-    syncProductGroups();
-  }
+  // ✅ LOAD AND RENDER GROUPS
+  loadProductGroups();
   
   closeSidebar();
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -7432,11 +7424,13 @@ async function loadProductGroups() {
       if (loadingState) loadingState.style.display = 'none';
       
       // Show appropriate view
+      // Show appropriate view
       if (data.groups.length === 0) {
         const emptyState = document.getElementById('groupsEmptyState');
         if (emptyState) emptyState.style.display = 'flex';
       } else {
-        renderProductGroups(data.groups);
+        // ✅✅✅ ADD THIS LINE:
+        renderProductGroups();
       }
     } else {
       throw new Error(data.error || 'Failed to load groups');
@@ -7459,6 +7453,68 @@ async function loadProductGroups() {
       `;
     }
   }
+}
+
+    // Render Product Groups List in UI
+function renderProductGroups() {
+  console.log('📋 Rendering product groups...');
+  
+  const listContainer = document.getElementById('productGroupsList');
+  const emptyState = document.getElementById('groupsEmptyState');
+  
+  if (!listContainer) {
+    console.error('❌ productGroupsList container not found!');
+    return;
+  }
+  
+  // Show empty state if no groups
+  if (!cachedProductGroups || cachedProductGroups.length === 0) {
+    if (listContainer) listContainer.innerHTML = '';
+    if (emptyState) emptyState.style.display = 'block';
+    console.log('No groups to display');
+    return;
+  }
+  
+  // Hide empty state
+  if (emptyState) emptyState.style.display = 'none';
+  
+  // Render groups
+  let html = '<div class="container-fluid" style="padding: 20px;">';
+  
+  cachedProductGroups.forEach(group => {
+    const variantCount = group.totalVariants || 0;
+    const categoryIcon = group.category === 'Tiles' ? '🔲' : 
+                        group.category === 'Sanitaryware' ? '🚿' : 
+                        group.category === 'Accessories' ? '🔧' : '📦';
+    
+    html += `
+      <div class="card mb-3 shadow-sm" style="cursor: pointer;" onclick="navigateToGroupDetail('${group.groupId}', '${escapeHtml(group.groupName)}')">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start">
+            <div style="flex: 1;">
+              <h5 class="card-title mb-2">
+                <span style="font-size: 24px; margin-right: 8px;">${categoryIcon}</span>
+                ${escapeHtml(group.groupName)}
+              </h5>
+              ${group.description ? `<p class="text-muted small mb-2">${escapeHtml(group.description)}</p>` : ''}
+              <div class="d-flex gap-3 flex-wrap">
+                ${group.manufacturer ? `<span class="badge bg-secondary">${escapeHtml(group.manufacturer)}</span>` : ''}
+                ${group.category ? `<span class="badge bg-info">${escapeHtml(group.category)}</span>` : ''}
+                <span class="badge bg-primary">${variantCount} variant${variantCount !== 1 ? 's' : ''}</span>
+              </div>
+            </div>
+            <button class="btn btn-sm btn-danger" onclick="event.stopPropagation(); confirmDeleteGroup('${group.groupId}', '${escapeHtml(group.groupName)}')">
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+  
+  html += '</div>';
+  listContainer.innerHTML = html;
+  console.log(`✅ Rendered ${cachedProductGroups.length} product groups`);
 }
 
 
@@ -9037,6 +9093,7 @@ function navigateToGroupDetail(groupId, groupName) {
 
 </body>
 </html>
+
 
 
 
