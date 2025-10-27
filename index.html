@@ -7455,41 +7455,24 @@ async function loadProductGroups() {
     }
   }
 }
-// Render Product Groups - SIMPLE WORKING VERSION
 function renderProductGroups() {
-  console.log('🎨 Rendering groups...');
-  
   const container = document.getElementById('productGroupsList');
+  if (!container) return;
   
-  if (!container) {
-    console.error('Container not found!');
+  if (!cachedProductGroups?.length) {
+    container.innerHTML = '<p style="padding:40px;text-align:center;color:#999">No groups</p>';
     return;
   }
   
-  if (!cachedProductGroups || cachedProductGroups.length === 0) {
-    container.innerHTML = '<p style="padding:40px; text-align:center; color:#999;">No groups</p>';
-    console.log('No groups to show');
-    return;
-  }
-  
-  console.log('Rendering', cachedProductGroups.length, 'groups');
-  
-  let html = '';
-  
-  cachedProductGroups.forEach(group => {
-    html += `
-      <div class="card mb-3" onclick="navigateToGroupDetail('${group.groupId}', '${group.groupName}')">
-        <div class="card-body">
-          <h5>${group.groupName}</h5>
-          <p class="text-muted">${group.description || 'No description'}</p>
-          <span class="badge bg-primary">${group.totalVariants || 0} variants</span>
-        </div>
+  container.innerHTML = cachedProductGroups.map(g => `
+    <div class="card mb-3" style="cursor:pointer" onclick="navigateToGroupDetail('${g.groupId}','${g.groupName}')">
+      <div class="card-body">
+        <h5>${g.groupName}</h5>
+        <p class="text-muted">${g.description||''}</p>
+        <span class="badge bg-primary">${g.totalVariants||0} variants</span>
       </div>
-    `;
-  });
-  
-  container.innerHTML = html;
-  console.log('✅ Rendered!');
+    </div>
+  `).join('');
 }
 
 
@@ -9069,6 +9052,7 @@ function navigateToGroupDetail(groupId, groupName) {
 
 </body>
 </html>
+
 
 
 
