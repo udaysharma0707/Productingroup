@@ -7455,26 +7455,36 @@ async function loadProductGroups() {
     }
   }
 }
+// Render Product Groups - WORKING VERSION
 function renderProductGroups() {
   const container = document.getElementById('productGroupsList');
-  if (!container) return;
-  
-  if (!cachedProductGroups?.length) {
-    container.innerHTML = '<p style="padding:40px;text-align:center;color:#999">No groups</p>';
+  if (!container) {
+    console.error('Container not found');
     return;
   }
   
-  container.innerHTML = cachedProductGroups.map(g => `
-    <div class="card mb-3" style="cursor:pointer" onclick="navigateToGroupDetail('${g.groupId}','${g.groupName}')">
-      <div class="card-body">
-        <h5>${g.groupName}</h5>
-        <p class="text-muted">${g.description||''}</p>
-        <span class="badge bg-primary">${g.totalVariants||0} variants</span>
+  if (!cachedProductGroups || cachedProductGroups.length === 0) {
+    container.innerHTML = '<div style="padding:40px;text-align:center;color:#999">No groups yet</div>';
+    return;
+  }
+  
+  let html = '<div style="padding:20px;">';
+  cachedProductGroups.forEach(g => {
+    html += `
+      <div class="card mb-3" style="cursor:pointer" onclick="navigateToGroupDetail('${g.groupId}','${g.groupName}')">
+        <div class="card-body">
+          <h5>${g.groupName}</h5>
+          <p class="text-muted">${g.description || 'No description'}</p>
+          <span class="badge bg-primary">${g.totalVariants || 0} variants</span>
+        </div>
       </div>
-    </div>
-  `).join('');
+    `;
+  });
+  html += '</div>';
+  
+  container.innerHTML = html;
+  console.log('✅ Groups rendered:', cachedProductGroups.length);
 }
-
 
 
 // Load Group Variants from Backend
@@ -9052,6 +9062,7 @@ function navigateToGroupDetail(groupId, groupName) {
 
 </body>
 </html>
+
 
 
 
