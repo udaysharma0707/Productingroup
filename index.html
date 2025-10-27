@@ -9,9 +9,9 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
 
-  <!-- âœ… html2canvas for image generation -->
+  <!-- Ã¢Å“â€¦ html2canvas for image generation -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <!-- Ã¢Å“â€¦ ADD THIS LINE -->
+  <!-- ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ ADD THIS LINE -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 
@@ -240,7 +240,7 @@ body:has(.page-view.active) .action-buttons {
 
 
     
-/* ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ NEW: Additional mobile fixes for Record Sale modal */
+/* ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ NEW: Additional mobile fixes for Record Sale modal */
 @media (max-width: 768px) {
     /* Specific fixes for salesModal only */
     #salesModal .modal-dialog {
@@ -487,7 +487,7 @@ body:has(.page-view.active) .action-buttons {
 
 
     
-/* ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ NEW: Mobile Recent Sales Table Optimization */
+/* ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ NEW: Mobile Recent Sales Table Optimization */
 @media (max-width: 768px) {
     .table-responsive {
         font-size: 0.75rem;
@@ -1652,6 +1652,188 @@ body:has(.fullscreen-modal.active) .navbar {
   display: none !important;
 }
 
+/* ==========================================
+   ENHANCED FULLSCREEN MODAL FIX
+   ========================================== */
+
+.fullscreen-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: #f8f9fa;
+  z-index: 99999;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.fullscreen-modal.active {
+  display: flex !important;
+  flex-direction: column;
+}
+
+/* Header stays at top */
+.modal-header-mobile {
+  position: sticky;
+  top: 0;
+  background: #ffffff;
+  padding: 16px;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 100;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  flex-shrink: 0;
+}
+
+.modal-header-mobile h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1a1a;
+  flex: 1;
+  text-align: center;
+}
+
+.btn-cancel-modal {
+  background: transparent;
+  color: #dc3545;
+  border: none;
+  padding: 8px 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Scrollable content area */
+.mobile-form {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  padding-bottom: 100px; /* Space for fixed bottom buttons */
+}
+
+/* Form sections with better spacing */
+.form-section {
+  margin-bottom: 24px;
+  background: white;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.form-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: white;
+  min-height: 48px;
+  box-sizing: border-box;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+}
+
+/* Read-only attributes display */
+.attributes-display {
+  background: #f8f9fa;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  font-size: 14px;
+  color: #495057;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+}
+
+/* Fixed bottom action buttons */
+.form-actions-bottom {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  padding: 16px;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+  display: flex;
+  gap: 12px;
+  z-index: 1000;
+  flex-shrink: 0;
+}
+
+.btn-secondary-bottom {
+  flex: 1;
+  padding: 14px;
+  background: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 48px;
+}
+
+.btn-primary-bottom {
+  flex: 2;
+  padding: 14px;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 48px;
+}
+
+.btn-primary-bottom:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+/* Ensure body doesn't scroll when modal is open */
+body.modal-open {
+  overflow: hidden;
+}
+
+/* Hide navbar when fullscreen modal is active */
+.fullscreen-modal.active ~ .navbar,
+.fullscreen-modal.active ~ .top-bar,
+.fullscreen-modal.active ~ #mainApp {
+  display: none !important;
+}
+
+/* Desktop/tablet responsive */
+@media (min-width: 768px) {
+  .mobile-form {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  .form-actions-bottom {
+    max-width: 600px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
 
 
     
@@ -1812,7 +1994,7 @@ body:has(.fullscreen-modal.active) .navbar {
         <h2 class="mb-3">Tile & Sanitaryware Inventory</h2>
         <p class="text-muted mb-4">Sign in to access inventory</p>
         
-        <!-- Ã¢Å“â€¦ NEW: Email + Password Form -->
+        <!-- ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ NEW: Email + Password Form -->
         <form id="emailAuthForm" onsubmit="handleEmailPasswordAuth(event)">
           <div class="mb-3">
             <input 
@@ -1826,7 +2008,7 @@ body:has(.fullscreen-modal.active) .navbar {
             >
           </div>
           
-          <!-- Ã¢Å“â€¦ NEW: Password Input with Toggle -->
+          <!-- ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ NEW: Password Input with Toggle -->
           <div class="mb-3 position-relative">
             <input 
               type="password" 
@@ -1884,7 +2066,7 @@ body:has(.fullscreen-modal.active) .navbar {
   <i class="bi bi-person-circle me-2" style="font-size: 1.5rem;"></i>
   <span id="userName" class="me-3">User</span>
 
-  <!-- Ã¢Å“â€¦ NEW: Background sync indicator -->
+  <!-- ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ NEW: Background sync indicator -->
   <div id="backgroundSyncStatus">
     <i class="bi bi-cloud-upload-fill"></i>
     <span>Syncing</span>
@@ -1892,7 +2074,7 @@ body:has(.fullscreen-modal.active) .navbar {
 
 
           
-  <!-- Ã¢Å“â€¦ NEW: Change Password Button -->
+  <!-- ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ NEW: Change Password Button -->
   <button class="btn btn-outline-light btn-sm me-2" onclick="openChangePasswordModal()">
     <i class="bi bi-key me-1"></i>Change Password
   </button>
@@ -1904,7 +2086,7 @@ body:has(.fullscreen-modal.active) .navbar {
 
 
 
-        <!-- ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ NEW: View Invoices Button -->
+        <!-- ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ NEW: View Invoices Button -->
       <button class="btn btn-success btn-sm" onclick="viewSavedInvoices()">
         <i class="bi bi-receipt-cutoff"></i> View Invoices
       </button>
@@ -1922,7 +2104,7 @@ body:has(.fullscreen-modal.active) .navbar {
     <i class="bi bi-plus-circle"></i> Add Product
   </button>
   
-  <!-- âœ… NEW: Photo Product Button -->
+  <!-- Ã¢Å“â€¦ NEW: Photo Product Button -->
   <button class="btn btn-primary me-2" onclick="openPhotoProductModal()">
     <i class="bi bi-camera"></i> Product by Photo
   </button>
@@ -1997,9 +2179,9 @@ body:has(.fullscreen-modal.active) .navbar {
       <div class="col-md-6 mx-auto">
         <!-- Search bar with view toggle -->
 <div class="d-flex justify-content-between align-items-center mb-3">
-  <input type="text" id="productSearch" class="form-control" placeholder="ðŸ”Ž Search products..." onkeyup="searchProducts()">
+  <input type="text" id="productSearch" class="form-control" placeholder="Ã°Å¸â€Å½ Search products..." onkeyup="searchProducts()">
   
-  <!-- âœ… NEW: View Mode Toggle -->
+  <!-- Ã¢Å“â€¦ NEW: View Mode Toggle -->
   <div class="btn-group ms-3" role="group">
     <button type="button" class="btn btn-outline-secondary btn-sm active" id="btnAllView" onclick="showAllProducts()">
       <i class="bi bi-list"></i> All
@@ -2010,7 +2192,7 @@ body:has(.fullscreen-modal.active) .navbar {
   </div>
 </div>
 
-<!-- âœ… NEW: Photo Product Grid (Hidden by default) -->
+<!-- Ã¢Å“â€¦ NEW: Photo Product Grid (Hidden by default) -->
 <div id="photoProductGrid" style="display:none;" class="row row-cols-1 row-cols-md-3 g-4 mb-4">
   <!-- Photo product cards will be dynamically inserted here -->
 </div>
@@ -2052,7 +2234,7 @@ body:has(.fullscreen-modal.active) .navbar {
     </div>
   </div>
 
-<!-- ✅ NEW: All Products Page -->
+<!-- âœ… NEW: All Products Page -->
 <div class="page-view" id="allProductsPage">
   <div class="page-header">
     <button class="back-btn" onclick="navigateToHome()">
@@ -2069,7 +2251,7 @@ body:has(.fullscreen-modal.active) .navbar {
     <input type="text" 
            class="form-control" 
            id="allProductsSearch" 
-           placeholder="🔍 Search products by name, category, brand..." 
+           placeholder="ðŸ” Search products by name, category, brand..." 
            onkeyup="filterAllProducts()">
   </div>
   
@@ -2087,7 +2269,7 @@ body:has(.fullscreen-modal.active) .navbar {
   </div>
 </div>
 
-<!-- ✅ NEW: Product Groups Page -->
+<!-- âœ… NEW: Product Groups Page -->
 <div class="page-view" id="productGroupsPage">
   <div class="page-header">
     <button class="back-btn" onclick="navigateToHome()">
@@ -2115,7 +2297,7 @@ body:has(.fullscreen-modal.active) .navbar {
   </div>
 </div>
 
-<!-- ✅ NEW: Group Detail Page (Variants List) -->
+<!-- âœ… NEW: Group Detail Page (Variants List) -->
 <div class="page-view" id="groupDetailPage">
   <div class="page-header">
     <button class="back-btn" onclick="navigateToProductGroups()">
@@ -2129,7 +2311,7 @@ body:has(.fullscreen-modal.active) .navbar {
     <input type="text" 
            class="form-control" 
            id="groupVariantsSearch" 
-           placeholder="🔍 Search variants..." 
+           placeholder="ðŸ” Search variants..." 
            onkeyup="filterGroupVariants()">
   </div>
   
@@ -2252,8 +2434,8 @@ body:has(.fullscreen-modal.active) .navbar {
                   <tr>
                     <th style="width: 40%">Item Details</th>
                     <th style="width: 12%" class="text-center">Quantity</th>
-                    <th style="width: 15%" class="text-end">Rate (Ã¢â€šÂ¹)</th>
-                    <th style="width: 18%" class="text-end">Amount (Ã¢â€šÂ¹)</th>
+                    <th style="width: 15%" class="text-end">Rate (ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹)</th>
+                    <th style="width: 18%" class="text-end">Amount (ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹)</th>
                     <th style="width: 5%"></th>
                   </tr>
                 </thead>
@@ -2274,7 +2456,7 @@ body:has(.fullscreen-modal.active) .navbar {
               <table class="table table-sm">
                 <tr>
                   <td class="text-end"><strong>Sub Total:</strong></td>
-                  <td class="text-end" style="width: 150px" id="invoiceSubtotal">Ã¢â€šÂ¹0.00</td>
+                  <td class="text-end" style="width: 150px" id="invoiceSubtotal">ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹0.00</td>
                 </tr>
                 <tr>
                   <td class="text-end">
@@ -2285,11 +2467,11 @@ body:has(.fullscreen-modal.active) .navbar {
                     <select class="form-select form-select-sm d-inline-block" 
                             style="width: 60px" id="invoiceDiscountType" 
                             onchange="calculateInvoiceTotal()">
-                      <option value="amount">Ã¢â€šÂ¹</option>
+                      <option value="amount">ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹</option>
                       <option value="percent">%</option>
                     </select>
                   </td>
-                  <td class="text-end text-danger" id="invoiceDiscountAmount">-Ã¢â€šÂ¹0.00</td>
+                  <td class="text-end text-danger" id="invoiceDiscountAmount">-ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹0.00</td>
                 </tr>
                 <tr>
                   <td class="text-end">
@@ -2304,11 +2486,11 @@ body:has(.fullscreen-modal.active) .navbar {
                       <option value="28">28%</option>
                     </select>
                   </td>
-                  <td class="text-end" id="invoiceTaxAmount">Ã¢â€šÂ¹0.00</td>
+                  <td class="text-end" id="invoiceTaxAmount">ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹0.00</td>
                 </tr>
                 <tr class="table-success fw-bold">
-                  <td class="text-end"><h5 class="mb-0">Total (Ã¢â€šÂ¹):</h5></td>
-                  <td class="text-end"><h5 class="mb-0" id="invoiceGrandTotal">Ã¢â€šÂ¹0.00</h5></td>
+                  <td class="text-end"><h5 class="mb-0">Total (ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹):</h5></td>
+                  <td class="text-end"><h5 class="mb-0" id="invoiceGrandTotal">ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹0.00</h5></td>
                 </tr>
               </table>
             </div>
@@ -2345,7 +2527,7 @@ body:has(.fullscreen-modal.active) .navbar {
     <i class="bi bi-eye"></i> Preview
   </button>
   
-  <!-- âœ… FIXED: Share Invoice Dropdown with proper attributes -->
+  <!-- Ã¢Å“â€¦ FIXED: Share Invoice Dropdown with proper attributes -->
   <div class="btn-group" role="group">
     <button type="button" class="btn btn-primary dropdown-toggle" 
             data-bs-toggle="dropdown" 
@@ -2365,7 +2547,7 @@ body:has(.fullscreen-modal.active) .navbar {
       </li>
       <li><hr class="dropdown-divider"></li>
 
- <!-- âœ… NEW: Share image on specific WhatsApp number -->
+ <!-- Ã¢Å“â€¦ NEW: Share image on specific WhatsApp number -->
   <li>
     <a class="dropdown-item" href="javascript:void(0);" onclick="shareImageToWhatsAppNumber()">
       <i class="bi bi-whatsapp text-success"></i> Share Image on WhatsApp
@@ -2464,7 +2646,7 @@ body:has(.fullscreen-modal.active) .navbar {
 
     <div class="modal-body">
 
-      <!-- ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ NEW: Multi-Select Product Picker -->
+      <!-- ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ NEW: Multi-Select Product Picker -->
   <div class="mb-3">
     <label class="form-label fw-bold">
       <i class="bi bi-lightning-charge-fill text-warning"></i> Quick Add Products (Multi-Select)
@@ -2476,7 +2658,7 @@ body:has(.fullscreen-modal.active) .navbar {
       </button>
       <div class="multi-select-options" id="multiSelectOptions">
         <input type="text" class="form-control form-control-sm mb-2" 
-               placeholder="ÃƒÂ°Ã…Â¸Ã¢â‚¬ÂÃ‚Â Search products..." 
+               placeholder="ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒâ€šÃ‚Â Search products..." 
                id="multiSelectSearch" 
                oninput="filterMultiSelectOptions()">
         <div class="multi-select-list" id="multiSelectList">
@@ -2490,7 +2672,7 @@ body:has(.fullscreen-modal.active) .navbar {
 
 
       
-      <!-- ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ NEW: Buttons at TOP -->
+      <!-- ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ NEW: Buttons at TOP -->
   <div class="mb-3 text-end">
     <button class="btn btn-outline-primary btn-sm me-2" onclick="addMoreRows()">
       <i class="bi bi-plus-circle"></i> Add More Rows
@@ -2514,8 +2696,8 @@ body:has(.fullscreen-modal.active) .navbar {
         </div>
         <div class="text-end" style="min-width:320px;">
           <table class="table table-borderless mb-0">
-            <tr><td class="text-end small-muted"><strong>Subtotal:</strong></td><td id="subtotal" class="text-end">Ã¢â€šÂ¹0.00</td></tr>
-            <tr style="font-size:1.25rem;color:#28a745"><td class="text-end"><strong>GRAND TOTAL:</strong></td><td id="grandTotal" class="text-end">Ã¢â€šÂ¹0.00</td></tr>
+            <tr><td class="text-end small-muted"><strong>Subtotal:</strong></td><td id="subtotal" class="text-end">ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹0.00</td></tr>
+            <tr style="font-size:1.25rem;color:#28a745"><td class="text-end"><strong>GRAND TOTAL:</strong></td><td id="grandTotal" class="text-end">ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹0.00</td></tr>
           </table>
         </div>
       </div>
@@ -2546,7 +2728,7 @@ body:has(.fullscreen-modal.active) .navbar {
          <div class="col-md-6 mb-3"><label class="form-label">Quantity (for this sale) *</label><input id="customQty" type="number" class="form-control" min="1" value="1"/></div>
 
 
-        <div class="mb-3"><label class="form-label">Total</label><div id="customTotal" class="fw-bold">Ã¢â€šÂ¹0.00</div></div>
+        <div class="mb-3"><label class="form-label">Total</label><div id="customTotal" class="fw-bold">ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹0.00</div></div>
       </form>
     </div>
 
@@ -2634,7 +2816,7 @@ body:has(.fullscreen-modal.active) .navbar {
               <table class="table table-sm">
                 <tr>
                   <td class="text-end"><strong>Sub Total:</strong></td>
-                  <td class="text-end" id="invoiceSubtotal">Ã¢â€šÂ¹0.00</td>
+                  <td class="text-end" id="invoiceSubtotal">ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹0.00</td>
                 </tr>
                 <tr>
                   <td class="text-end">
@@ -2645,11 +2827,11 @@ body:has(.fullscreen-modal.active) .navbar {
                     <select class="form-select form-select-sm d-inline-block" 
                             style="width: 60px" id="invoiceDiscountType" 
                             onchange="calculateInvoiceTotal()">
-                      <option value="amount">Ã¢â€šÂ¹</option>
+                      <option value="amount">ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹</option>
                       <option value="percent">%</option>
                     </select>
                   </td>
-                  <td class="text-end text-danger" id="invoiceDiscountAmount">-Ã¢â€šÂ¹0.00</td>
+                  <td class="text-end text-danger" id="invoiceDiscountAmount">-ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹0.00</td>
                 </tr>
                 <tr>
                   <td class="text-end">
@@ -2664,11 +2846,11 @@ body:has(.fullscreen-modal.active) .navbar {
                       <option value="28">GST 28%</option>
                     </select>
                   </td>
-                  <td class="text-end" id="invoiceTaxAmount">Ã¢â€šÂ¹0.00</td>
+                  <td class="text-end" id="invoiceTaxAmount">ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹0.00</td>
                 </tr>
                 <tr class="table-success">
-                  <td class="text-end"><h5>Total (Ã¢â€šÂ¹):</h5></td>
-                  <td class="text-end"><h5 id="invoiceGrandTotal">Ã¢â€šÂ¹0.00</h5></td>
+                  <td class="text-end"><h5>Total (ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹):</h5></td>
+                  <td class="text-end"><h5 id="invoiceGrandTotal">ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹0.00</h5></td>
                 </tr>
               </table>
             </div>
@@ -2702,7 +2884,7 @@ body:has(.fullscreen-modal.active) .navbar {
     <i class="bi bi-eye"></i> Preview
   </button>
   
-  <!-- âœ… NEW: Share Invoice Dropdown -->
+  <!-- Ã¢Å“â€¦ NEW: Share Invoice Dropdown -->
   <div class="btn-group">
     <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown">
       <i class="bi bi-share"></i> Share Invoice
@@ -2761,7 +2943,7 @@ body:has(.fullscreen-modal.active) .navbar {
 <div class="fullscreen-modal" id="createGroupModal">
   <div class="modal-header-mobile">
     <button class="btn-cancel-modal" onclick="closeCreateGroupModal()">
-      ✕ Cancel
+      âœ• Cancel
     </button>
     <h3>New Item Group</h3>
     <div style="width: 80px;"></div> <!-- Spacer for centering -->
@@ -2822,7 +3004,7 @@ body:has(.fullscreen-modal.active) .navbar {
       </div>
       
       <button type="button" class="btn-add-more" onclick="addAttributeRow()">
-        ➕ Add Attribute
+        âž• Add Attribute
       </button>
     </div>
     
@@ -2846,7 +3028,7 @@ body:has(.fullscreen-modal.active) .navbar {
         Cancel
       </button>
       <button type="submit" class="btn-primary-bottom" id="btnSaveGroup">
-        💾 Save & Generate
+        ðŸ’¾ Save & Generate
       </button>
     </div>
     
@@ -2861,7 +3043,7 @@ body:has(.fullscreen-modal.active) .navbar {
 <div class="fullscreen-modal" id="editVariantModal">
   <div class="modal-header-mobile">
     <button class="btn-cancel-modal" onclick="closeEditVariantModal()">
-      ✕ Cancel
+      âœ• Cancel
     </button>
     <h3>Edit Variant</h3>
     <div style="width: 80px;"></div>
@@ -2949,7 +3131,7 @@ body:has(.fullscreen-modal.active) .navbar {
         Cancel
       </button>
       <button type="submit" class="btn-primary-bottom">
-        💾 Save Changes
+        ðŸ’¾ Save Changes
       </button>
     </div>
     
@@ -2962,7 +3144,7 @@ body:has(.fullscreen-modal.active) .navbar {
      ========================================== -->
 
 <div class="success-overlay" id="successOverlay">
-  <div style="font-size: 32px; margin-bottom: 8px;">✅</div>
+  <div style="font-size: 32px; margin-bottom: 8px;">âœ…</div>
   <div id="successMessage">Success!</div>
 </div>
 
@@ -2973,19 +3155,19 @@ body:has(.fullscreen-modal.active) .navbar {
 
 
 
-    <!-- âœ… NEW: Photo Product Modal -->
+    <!-- Ã¢Å“â€¦ NEW: Photo Product Modal -->
 <div class="modal fade" id="photoProductModal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">ðŸ“• Add Product by Photo</h5>
+        <h5 class="modal-title">Ã°Å¸â€œâ€¢ Add Product by Photo</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
         
         <!-- Photo Upload Area -->
         <div class="upload-area" id="photoUploadArea" onclick="document.getElementById('photoFileInput').click()">
-          <div class="upload-icon">ðŸ“•</div>
+          <div class="upload-icon">Ã°Å¸â€œâ€¢</div>
           <div class="upload-text">Click to take photo or select from gallery</div>
         </div>
         
@@ -3048,7 +3230,7 @@ body:has(.fullscreen-modal.active) .navbar {
   </div>
 </div>
 
-<!-- âœ… NEW: View Photo Modal (Enlarged View) -->
+<!-- Ã¢Å“â€¦ NEW: View Photo Modal (Enlarged View) -->
 <div class="modal fade" id="viewPhotoModal" tabindex="-1">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
@@ -3079,11 +3261,11 @@ body:has(.fullscreen-modal.active) .navbar {
   let cachedProducts = [];
   let cachedSales = [];
 
- // ✅ NEW: Product Groups cache
+ // âœ… NEW: Product Groups cache
 let cachedProductGroups = [];
 let cachedGroupVariants = [];
 
-// ✅ NEW: Page state management
+// âœ… NEW: Page state management
 let currentPage = 'home'; // home, allProducts, productGroups, groupDetail
 let currentGroupId = null; // For group detail view
 
@@ -3103,7 +3285,7 @@ let backgroundSyncActive = false;
 
 let currentUser = null;
 let userEmail = null;
-let userHash = null; // Ã¢Å“â€¦ NEW: Store encrypted hash
+let userHash = null; // ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ NEW: Store encrypted hash
 
 // Simple hash function (matches backend)
 function simpleHash(text) {
@@ -3133,24 +3315,24 @@ function togglePasswordVisibility() {
 
 // Check authentication on page load
 window.addEventListener('load', async function() {
-  console.log('Ã°Å¸Å¡â‚¬ Page loaded, checking authentication...');
+  console.log('ÃƒÂ°Ã…Â¸Ã…Â¡Ã¢â€šÂ¬ Page loaded, checking authentication...');
   
   // Check localStorage for saved credentials
   const savedEmail = localStorage.getItem('userEmail');
   const savedHash = localStorage.getItem('userHash');
   const savedUser = localStorage.getItem('currentUser');
   
-  console.log('Ã°Å¸â€œÂ¦ Checking localStorage:', {
+  console.log('ÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã‚Â¦ Checking localStorage:', {
     hasEmail: !!savedEmail,
     hasHash: !!savedHash,
     hasUser: !!savedUser
   });
   
   if (savedEmail && savedHash) {
-    console.log('Ã¢Å“â€¦ Found saved credentials, auto-logging in...');
+    console.log('ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Found saved credentials, auto-logging in...');
     
     try {
-      // Ã¢Å“â€¦ SET VARIABLES FIRST
+      // ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ SET VARIABLES FIRST
       userEmail = savedEmail;
       userHash = savedHash;
       
@@ -3164,24 +3346,24 @@ window.addEventListener('load', async function() {
         };
       }
       
-      console.log('Ã¢Å“â€¦ Session restored:', { userEmail, hasHash: !!userHash });
+      console.log('ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Session restored:', { userEmail, hasHash: !!userHash });
       
-      // Ã¢Å“â€¦ Show app IMMEDIATELY
+      // ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Show app IMMEDIATELY
       showApp();
       updateUserUI();
       
-      // Ã¢Å“â€¦ Wait before syncing
+      // ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Wait before syncing
       setTimeout(async () => {
-        console.log('Ã°Å¸â€â€ž Starting data sync...');
+        console.log('ÃƒÂ°Ã…Â¸Ã¢â‚¬ÂÃ¢â‚¬Å¾ Starting data sync...');
         await syncFromGoogleSheets();
       }, 500);
       
     } catch (error) {
-      console.error('Ã¢ÂÅ’ Error restoring session:', error);
+      console.error('ÃƒÂ¢Ã‚ÂÃ…â€™ Error restoring session:', error);
       showAuthScreen();
     }
   } else {
-    console.log('Ã°Å¸â€˜Â¤ No saved credentials, showing login screen...');
+    console.log('ÃƒÂ°Ã…Â¸Ã¢â‚¬ËœÃ‚Â¤ No saved credentials, showing login screen...');
     showAuthScreen();
   }
 });
@@ -3202,7 +3384,7 @@ async function handleEmailPasswordAuth(event) {
     return;
   }
   
-  console.log('Ã°Å¸â€Â Authenticating:', email);
+  console.log('ÃƒÂ°Ã…Â¸Ã¢â‚¬ÂÃ‚Â Authenticating:', email);
   
   // Show loading state
   const originalText = loginButton.innerHTML;
@@ -3210,7 +3392,7 @@ async function handleEmailPasswordAuth(event) {
   loginButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Signing in...';
   
   try {
-    // Ã¢Å“â€¦ Send email + password to backend
+    // ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Send email + password to backend
     const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=authenticate&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`, {
       method: 'POST'
     });
@@ -3218,18 +3400,18 @@ async function handleEmailPasswordAuth(event) {
     const data = await response.json();
     
     if (data.ok && data.user && data.hash) {
-      // Ã¢Å“â€¦ SUCCESS - Save email + hash
+      // ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ SUCCESS - Save email + hash
       userEmail = email;
       userHash = data.hash;
       currentUser = data.user;
       
-      // Ã¢Å“â€¦ Save to localStorage for permanent login
+      // ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Save to localStorage for permanent login
       localStorage.setItem('userEmail', email);
       localStorage.setItem('userHash', data.hash);
       localStorage.setItem('currentUser', JSON.stringify(currentUser));
       
-      console.log('Ã¢Å“â€¦ Authentication successful');
-      console.log('Ã¢Å“â€¦ Hash saved to localStorage');
+      console.log('ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Authentication successful');
+      console.log('ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Hash saved to localStorage');
       
       // Clear password field
       passwordInput.value = '';
@@ -3243,8 +3425,8 @@ async function handleEmailPasswordAuth(event) {
       }, 300);
       
     } else {
-      // Ã¢ÂÅ’ FAILED
-      console.error('Ã¢ÂÅ’ Authentication failed:', data);
+      // ÃƒÂ¢Ã‚ÂÃ…â€™ FAILED
+      console.error('ÃƒÂ¢Ã‚ÂÃ…â€™ Authentication failed:', data);
       alert(data.message || 'Invalid email or password');
       loginButton.disabled = false;
       loginButton.innerHTML = originalText;
@@ -3253,7 +3435,7 @@ async function handleEmailPasswordAuth(event) {
     }
     
   } catch (error) {
-    console.error('Ã¢ÂÅ’ Authentication error:', error);
+    console.error('ÃƒÂ¢Ã‚ÂÃ…â€™ Authentication error:', error);
     alert('Failed to authenticate. Please check your internet connection and try again.');
     loginButton.disabled = false;
     loginButton.innerHTML = originalText;
@@ -3262,7 +3444,7 @@ async function handleEmailPasswordAuth(event) {
 
 // Clear authentication
 function clearAuth() {
-  console.log('Ã°Å¸â€”â€˜Ã¯Â¸Â Clearing authentication...');
+  console.log('ÃƒÂ°Ã…Â¸Ã¢â‚¬â€Ã¢â‚¬ËœÃƒÂ¯Ã‚Â¸Ã‚Â Clearing authentication...');
   userEmail = null;
   userHash = null;
   currentUser = null;
@@ -3273,7 +3455,7 @@ function clearAuth() {
 
 // Show authentication screen
 function showAuthScreen() {
-  console.log('Ã°Å¸â€œÂ± Showing auth screen');
+  console.log('ÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã‚Â± Showing auth screen');
   document.getElementById('authScreen').style.display = 'flex';
   document.getElementById('appContent').style.display = 'none';
   
@@ -3287,7 +3469,7 @@ function showAuthScreen() {
 
 // Show app
 function showApp() {
-  console.log('Ã°Å¸â€œÂ± Showing app');
+  console.log('ÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã‚Â± Showing app');
   document.getElementById('authScreen').style.display = 'none';
   document.getElementById('appContent').style.display = 'block';
 }
@@ -3299,28 +3481,28 @@ function updateUserUI() {
     
     if (userNameEl) {
       userNameEl.textContent = currentUser.name || currentUser.email;
-      console.log('Ã°Å¸â€˜Â¤ Updated username:', currentUser.email);
+      console.log('ÃƒÂ°Ã…Â¸Ã¢â‚¬ËœÃ‚Â¤ Updated username:', currentUser.email);
     }
   }
 }
 
 // Show auth error
 function showAuthError(message) {
-  console.warn('Ã°Å¸Å¡Â¨ Auth error:', message);
+  console.warn('ÃƒÂ°Ã…Â¸Ã…Â¡Ã‚Â¨ Auth error:', message);
   
   if (message && (message.includes('unauthorized') || message.includes('not authorized') || message.includes('expired'))) {
     clearAuth();
-    alert('Ã°Å¸â€â€™ ' + message);
+    alert('ÃƒÂ°Ã…Â¸Ã¢â‚¬ÂÃ¢â‚¬â„¢ ' + message);
     showAuthScreen();
   } else {
-    console.log('Ã¢Å¡ Ã¯Â¸Â Non-critical error, keeping credentials');
+    console.log('ÃƒÂ¢Ã…Â¡ ÃƒÂ¯Ã‚Â¸Ã‚Â Non-critical error, keeping credentials');
   }
 }
 
 // Sign out
 function signOut() {
   if (confirm('Are you sure you want to sign out?')) {
-    console.log('Ã°Å¸â€˜â€¹ Signing out...');
+    console.log('ÃƒÂ°Ã…Â¸Ã¢â‚¬ËœÃ¢â‚¬Â¹ Signing out...');
     clearAuth();
     showAuthScreen();
     setTimeout(() => location.reload(), 300);
@@ -3335,7 +3517,7 @@ let changePasswordModalInstance = null;
 
 // Open change password modal
 function openChangePasswordModal() {
-  console.log('Ã°Å¸â€â€˜ Opening change password modal');
+  console.log('ÃƒÂ°Ã…Â¸Ã¢â‚¬ÂÃ¢â‚¬Ëœ Opening change password modal');
   
   // Reset form
   document.getElementById('verifyPasswordStep').style.display = 'block';
@@ -3362,7 +3544,7 @@ async function verifyCurrentPassword() {
     return;
   }
   
-  console.log('Ã°Å¸â€Â Verifying current password...');
+  console.log('ÃƒÂ°Ã…Â¸Ã¢â‚¬ÂÃ‚Â Verifying current password...');
   
   try {
     // Verify by attempting authentication
@@ -3373,20 +3555,20 @@ async function verifyCurrentPassword() {
     const data = await response.json();
     
     if (data.ok) {
-      // Ã¢Å“â€¦ Password correct - show step 2
-      console.log('Ã¢Å“â€¦ Current password verified');
+      // ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Password correct - show step 2
+      console.log('ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Current password verified');
       document.getElementById('verifyPasswordStep').style.display = 'none';
       document.getElementById('newPasswordStep').style.display = 'block';
       document.getElementById('newPasswordInput').focus();
     } else {
-      // Ã¢ÂÅ’ Wrong password
+      // ÃƒÂ¢Ã‚ÂÃ…â€™ Wrong password
       alert('Current password is incorrect');
       currentPasswordInput.value = '';
       currentPasswordInput.focus();
     }
     
   } catch (error) {
-    console.error('Ã¢ÂÅ’ Error verifying password:', error);
+    console.error('ÃƒÂ¢Ã‚ÂÃ…â€™ Error verifying password:', error);
     alert('Failed to verify password. Please try again.');
   }
 }
@@ -3427,7 +3609,7 @@ async function submitNewPassword() {
     return;
   }
   
-  console.log('Ã°Å¸â€â€ž Changing password...');
+  console.log('ÃƒÂ°Ã…Â¸Ã¢â‚¬ÂÃ¢â‚¬Å¾ Changing password...');
   
   try {
     // Send change password request
@@ -3438,26 +3620,26 @@ async function submitNewPassword() {
     const data = await response.json();
     
     if (data.ok && data.hash) {
-      // Ã¢Å“â€¦ SUCCESS - Update hash in localStorage
+      // ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ SUCCESS - Update hash in localStorage
       userHash = data.hash;
       localStorage.setItem('userHash', data.hash);
       
-      console.log('Ã¢Å“â€¦ Password changed successfully');
-      console.log('Ã¢Å“â€¦ New hash saved');
+      console.log('ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Password changed successfully');
+      console.log('ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ New hash saved');
       
       // Close modal
       changePasswordModalInstance.hide();
       
       // Show success message
-      alert('Ã¢Å“â€¦ Password changed successfully!');
+      alert('ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Password changed successfully!');
       
     } else {
-      // Ã¢ÂÅ’ FAILED
+      // ÃƒÂ¢Ã‚ÂÃ…â€™ FAILED
       alert(data.message || 'Failed to change password');
     }
     
   } catch (error) {
-    console.error('Ã¢ÂÅ’ Error changing password:', error);
+    console.error('ÃƒÂ¢Ã‚ÂÃ…â€™ Error changing password:', error);
     alert('Failed to change password. Please try again.');
   }
 }
@@ -3471,7 +3653,7 @@ try {
     const stored = localStorage.getItem('deletedSaleIds');
     if (stored) {
         deletedSaleIds = JSON.parse(stored);
-        console.log('ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒâ€šÃ‚Â Loaded', deletedSaleIds.length, 'deleted sale IDs from localStorage');
+        console.log('ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â°ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â Loaded', deletedSaleIds.length, 'deleted sale IDs from localStorage');
     }
 } catch (e) {
     console.warn('Could not load deletedSaleIds from localStorage', e);
@@ -3506,7 +3688,7 @@ try {
       catch(e) { return { ok: res.ok, json: null, text: txt }; }
     });
   }
-  function formatCurrency(n){ return 'Ã¢â€šÂ¹' + Number(n||0).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+  function formatCurrency(n){ return 'ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹' + Number(n||0).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2}); }
   function generateId(){ return 'TMP_' + Date.now().toString(36) + Math.random().toString(36).substr(2); }
   function escapeHtml(s){ if (s===null||s===undefined) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
@@ -3516,15 +3698,15 @@ try {
  */
 async function syncFromGoogleSheets() {
   if (!userEmail || !userHash) {
-    console.warn('Ã¢Å¡ Ã¯Â¸Â No credentials, checking localStorage...');
+    console.warn('ÃƒÂ¢Ã…Â¡ ÃƒÂ¯Ã‚Â¸Ã‚Â No credentials, checking localStorage...');
     const savedEmail = localStorage.getItem('userEmail');
     const savedHash = localStorage.getItem('userHash');
     if (savedEmail && savedHash) {
       userEmail = savedEmail;
       userHash = savedHash;
-      console.log('Ã¢Å“â€¦ Restored credentials from localStorage');
+      console.log('ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Restored credentials from localStorage');
     } else {
-      console.log('Ã°Å¸â€˜Â¤ No credentials found');
+      console.log('ÃƒÂ°Ã…Â¸Ã¢â‚¬ËœÃ‚Â¤ No credentials found');
       showAuthScreen();
       return;
     }
@@ -3533,7 +3715,7 @@ async function syncFromGoogleSheets() {
   showSyncIndicator('Refreshing...');
   
   try {
-    // Ã¢Å“â€¦ Send email + hash for authentication
+    // ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Send email + hash for authentication
     const url = `${GOOGLE_SCRIPT_URL}?action=getAll&email=${encodeURIComponent(userEmail)}&hash=${encodeURIComponent(userHash)}&t=${Date.now()}`;
 
     const res = await fetch(url);
@@ -3546,8 +3728,8 @@ async function syncFromGoogleSheets() {
     
     // Check for unauthorized response
     if (!data.success && data.error === 'unauthorized') {
-      // Ã¢Å“â€¦ ONLY clear auth on real unauthorized error
-      console.error('Ã¢ÂÅ’ Email not authorized');
+      // ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ ONLY clear auth on real unauthorized error
+      console.error('ÃƒÂ¢Ã‚ÂÃ…â€™ Email not authorized');
       clearAuth();
       alert('Access denied. Your email is not authorized. Please contact administrator.');
       showAuthScreen();
@@ -3565,7 +3747,7 @@ async function syncFromGoogleSheets() {
       
       // Filter out manually deleted sales
       cachedSales = allSales.filter(sale => !deletedSaleIds.includes(sale.id));
-      console.log(`Ã°Å¸â€œÅ  Loaded ${allSales.length} sales from server, showing ${cachedSales.length} (${allSales.length - cachedSales.length} deleted)`);
+      console.log(`ÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã…  Loaded ${allSales.length} sales from server, showing ${cachedSales.length} (${allSales.length - cachedSales.length} deleted)`);
       
       // Sort sales by date (newest first)
       sortSalesByDateDescending();
@@ -3579,7 +3761,7 @@ async function syncFromGoogleSheets() {
       
       // Update dashboard metrics
       updateSummaryFromCache();
-        // ✅ NEW: Sync product groups and variants
+        // âœ… NEW: Sync product groups and variants
   // await syncProductGroups();
  // await syncAllVariants();
       showSyncIndicator('Synced!', 900);
@@ -3589,8 +3771,8 @@ async function syncFromGoogleSheets() {
     }
     
   } catch (err) {
-    console.error('Ã¢Å¡ Ã¯Â¸Â Sync error (non-critical):', err);
-    // Ã¢Å“â€¦ Don't show alert or clear auth on network errors
+    console.error('ÃƒÂ¢Ã…Â¡ ÃƒÂ¯Ã‚Â¸Ã‚Â Sync error (non-critical):', err);
+    // ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Don't show alert or clear auth on network errors
     hideSyncIndicator();
   }
 }
@@ -3630,17 +3812,17 @@ async function syncFromGoogleSheets() {
   function renderProducts(){
     const tbody = document.getElementById('productsTableBody');
     if(!hasInitialLoaded){
-      tbody.innerHTML = `<tr><td colspan="9" class="text-center py-4"><div class="spinner-border"></div><div class="mt-2 text-muted">Loading inventoryÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦</div></td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="9" class="text-center py-4"><div class="spinner-border"></div><div class="mt-2 text-muted">Loading inventoryÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¦</div></td></tr>`;
     } else if(!cachedProducts || cachedProducts.length===0){
       tbody.innerHTML = `<tr><td colspan="8" class="text-center text-muted py-4">No products yet</td></tr>`;
     } else {
       let html = '';
       cachedProducts.forEach(p => {
         const iconColor = categoryIconColor(p.category);
-        const priceText = (p.price!==undefined && p.price!==null) ? `Ã¢â€šÂ¹${parseFloat(p.price).toFixed(2)}/${p.unitType}` : '-';
+        const priceText = (p.price!==undefined && p.price!==null) ? `ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹${parseFloat(p.price).toFixed(2)}/${p.unitType}` : '-';
         html += `<tr>
           <td><i class="bi bi-file-earmark-fill" style="color:${iconColor}"></i></td>   
-<!-- âœ… Photo Thumbnail Column -->
+<!-- Ã¢Å“â€¦ Photo Thumbnail Column -->
   <td style="text-align: center;">
     ${p.imageUrl && p.imageUrl !== '' && p.imageUrl !== 'uploading...' ? 
       `<img src="${p.imageUrl}" 
@@ -3668,7 +3850,7 @@ async function syncFromGoogleSheets() {
     }
     // mobile list
     const container = document.getElementById('mobileProductsList');
-    if(!hasInitialLoaded){ container.innerHTML=`<div class="mobile-item text-center"><div class="spinner-border"></div><div class="mt-2 text-muted">Loading inventoryÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦</div></div>`; }
+    if(!hasInitialLoaded){ container.innerHTML=`<div class="mobile-item text-center"><div class="spinner-border"></div><div class="mt-2 text-muted">Loading inventoryÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¦</div></div>`; }
     else if(!cachedProducts || cachedProducts.length===0){ container.innerHTML=`<div class="mobile-item text-center text-muted">No products yet</div>`; }
     else {
       let html = '';
@@ -3679,8 +3861,8 @@ async function syncFromGoogleSheets() {
             <div style="width:36px;text-align:center;"><i class="bi bi-file-earmark-fill" style="font-size:1.25rem;color:${iconColor}"></i></div>
             <div>
               <div style="font-weight:600">${escapeHtml(p.name)}</div>
-              <div class="small-muted">${escapeHtml(p.category||'')} ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢ ${escapeHtml(p.brand||'')}</div>
-              <div class="small-muted"><strong>${escapeHtml(p.size||'')}</strong> ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢ Ã¢â€šÂ¹${parseFloat(p.price||0).toFixed(2)}/${p.unitType}</div>
+              <div class="small-muted">${escapeHtml(p.category||'')} ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ ${escapeHtml(p.brand||'')}</div>
+              <div class="small-muted"><strong>${escapeHtml(p.size||'')}</strong> ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹${parseFloat(p.price||0).toFixed(2)}/${p.unitType}</div>
             </div>
           </div>
           <div style="text-align:right;">
@@ -3701,7 +3883,7 @@ async function syncFromGoogleSheets() {
   function renderSales(){
     const tbody = document.getElementById('salesList');
     
-    if(!hasInitialLoaded){ tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4"><div class="spinner-border"></div><div class="mt-2 text-muted">Loading salesÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦</div></td></tr>`; return; }
+    if(!hasInitialLoaded){ tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4"><div class="spinner-border"></div><div class="mt-2 text-muted">Loading salesÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¦</div></td></tr>`; return; }
     
     if(!cachedSales || cachedSales.length===0){ tbody.innerHTML=`<tr><td colspan="5" class="text-center text-muted py-4">No sales recorded yet</td></tr>`; return; }
     
@@ -3711,7 +3893,7 @@ async function syncFromGoogleSheets() {
     recent.forEach(sale => {
       const d = new Date(sale.date||'');
       const formatted = d && !isNaN(d) ? (d.toLocaleDateString('en-IN') + ' ' + d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})) : sale.date;
-      html += `<tr><td>${formatted}</td><td>${escapeHtml(sale.productName)}</td><td>${sale.quantity}</td><td>${escapeHtml(sale.unitType)}</td><td class="text-success fw-bold">Ã¢â€šÂ¹${parseFloat(sale.totalAmount||0).toFixed(2)}</td></tr>`;
+      html += `<tr><td>${formatted}</td><td>${escapeHtml(sale.productName)}</td><td>${sale.quantity}</td><td>${escapeHtml(sale.unitType)}</td><td class="text-success fw-bold">ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹${parseFloat(sale.totalAmount||0).toFixed(2)}</td></tr>`;
     });
     tbody.innerHTML = html;
     updateSummaryFromCache();
@@ -3731,7 +3913,7 @@ async function syncFromGoogleSheets() {
     lowStockEl.textContent = lowStockCount;
   }
   
-  // ✅ NEW: Update Products in Group counter
+  // âœ… NEW: Update Products in Group counter
   const productsInGroupEl = document.getElementById('productsInGroup');
   if (productsInGroupEl) {
     // Calculate total variants across all groups
@@ -3741,7 +3923,7 @@ async function syncFromGoogleSheets() {
     productsInGroupEl.textContent = totalVariants;
   }
   
-  // ✅ NEW: Update Inventory Summary (placeholder for now)
+  // âœ… NEW: Update Inventory Summary (placeholder for now)
   const quantityInHandEl = document.getElementById('quantityInHand');
   if (quantityInHandEl) {
     quantityInHandEl.textContent = '0'; // TODO: Calculate from actual data
@@ -3802,7 +3984,7 @@ async function saveProductToSheet(product, isEdit=false) {
   }
   
   try {
-    // Ã¢Å“â€¦ Send hash for authentication
+    // ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Send hash for authentication
     const url = `${GOOGLE_SCRIPT_URL}?action=${isEdit ? 'updateProduct' : 'addProduct'}&email=${encodeURIComponent(userEmail)}&hash=${encodeURIComponent(userHash)}`;
 
     const res = await fetch(url, {
@@ -3836,7 +4018,7 @@ async function saveSaleToSheet(item) {
   }
   
   try {
-    // Ã¢Å“â€¦ Send hash for authentication
+    // ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Send hash for authentication
     const url = `${GOOGLE_SCRIPT_URL}?action=addSale&email=${encodeURIComponent(userEmail)}&hash=${encodeURIComponent(userHash)}`;
 
     const res = await fetch(url, {
@@ -3869,41 +4051,88 @@ function delay(ms) {
 // ==========================================
 // HELPER: Success Toast Notification
 // ==========================================
+// Show success toast notification
 function showSuccessToast(message) {
-  // Remove existing toast if any
-  const existingToast = document.getElementById('successToast');
-  if (existingToast) {
-    existingToast.remove();
-  }
+  showToast(message, 'success');
+}
+
+// Show error toast notification
+function showErrorToast(message) {
+  showToast(message, 'error');
+}
+
+// Universal toast function
+function showToast(message, type = 'success') {
+  // Remove existing toasts
+  const existingToasts = document.querySelectorAll('.toast-notification');
+  existingToasts.forEach(toast => toast.remove());
   
   // Create toast element
   const toast = document.createElement('div');
-  toast.id = 'successToast';
   toast.className = 'toast-notification';
-  toast.innerHTML = `
-    <div class="d-flex align-items-center">
-      <i class="bi bi-check-circle-fill text-success me-2" style="font-size: 1.5rem;"></i>
-      <div><strong>${message}</strong></div>
-    </div>
+  toast.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 16px 24px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    font-size: 16px;
+    z-index: 999999;
+    animation: slideInRight 0.3s ease-out;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    max-width: 400px;
+    ${type === 'success' ? 'background: #4caf50;' : 'background: #f44336;'}
+  `;
+  toast.textContent = message;
+  
+  // Add animation
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes slideInRight {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    @keyframes slideOutRight {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+    }
   `;
   
+  if (!document.querySelector('#toast-animations')) {
+    style.id = 'toast-animations';
+    document.head.appendChild(style);
+  }
+  
+  // Append to body
   document.body.appendChild(toast);
   
-  // Show toast with animation
+  // Auto remove after 4 seconds
   setTimeout(() => {
-    toast.classList.add('show');
-  }, 100);
+    toast.style.animation = 'slideOutRight 0.3s ease-in';
+    setTimeout(() => toast.remove(), 300);
+  }, 4000);
   
-  // Hide and remove after 3 seconds
-  setTimeout(() => {
-    toast.classList.remove('show');
-    setTimeout(() => {
-      if (toast && toast.parentNode) {
-        toast.parentNode.removeChild(toast);
-      }
-    }, 300);
-  }, 3000);
+  // Click to dismiss
+  toast.addEventListener('click', () => {
+    toast.style.animation = 'slideOutRight 0.3s ease-in';
+    setTimeout(() => toast.remove(), 300);
+  });
 }
+
 
 // ==========================================
 // HELPER: Update sync indicator
@@ -3923,12 +4152,12 @@ function updateSyncIndicator(active) {
 // ==========================================
 async function processBackgroundSaveQueue() {
   if (isProcessingQueue) {
-    console.log('Ã¢ÂÂ³ Queue processor already running');
+    console.log('ÃƒÂ¢Ã‚ÂÃ‚Â³ Queue processor already running');
     return;
   }
   
   if (backgroundSaveQueue.length === 0) {
-    console.log('Ã¢Å“â€¦ Queue empty, processor stopping');
+    console.log('ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Queue empty, processor stopping');
     backgroundSyncActive = false;
     updateSyncIndicator(false);
     return;
@@ -3938,12 +4167,12 @@ async function processBackgroundSaveQueue() {
   backgroundSyncActive = true;
   updateSyncIndicator(true);
   
-  console.log(`Ã°Å¸â€â€ž Processing ${backgroundSaveQueue.length} items in background queue...`);
+  console.log(`ÃƒÂ°Ã…Â¸Ã¢â‚¬ÂÃ¢â‚¬Å¾ Processing ${backgroundSaveQueue.length} items in background queue...`);
   
   while (backgroundSaveQueue.length > 0) {
     const item = backgroundSaveQueue[0]; // Peek at first item
     
-    console.log(`Ã°Å¸â€œÂ¤ Background saving: "${item.productName}" (${backgroundSaveQueue.length} remaining)`);
+    console.log(`ÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã‚Â¤ Background saving: "${item.productName}" (${backgroundSaveQueue.length} remaining)`);
     
     // Try to save with retry logic
     let saved = false;
@@ -3952,19 +4181,19 @@ async function processBackgroundSaveQueue() {
         const response = await saveSaleToSheet(item);
         
         if (response && response.success) {
-          console.log(`Ã¢Å“â€¦ Background saved: "${item.productName}"`);
+          console.log(`ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Background saved: "${item.productName}"`);
           saved = true;
           break;
         }
         
         // If not last attempt, wait before retry
         if (attempt < 3) {
-          console.log(`Ã¢Å¡ Ã¯Â¸Â Retry ${attempt}/3 for "${item.productName}" in ${attempt}s...`);
+          console.log(`ÃƒÂ¢Ã…Â¡ ÃƒÂ¯Ã‚Â¸Ã‚Â Retry ${attempt}/3 for "${item.productName}" in ${attempt}s...`);
           await delay(1000 * attempt); // 1s, 2s backoff
         }
         
       } catch (error) {
-        console.error(`Ã¢ÂÅ’ Attempt ${attempt}/3 failed for "${item.productName}":`, error);
+        console.error(`ÃƒÂ¢Ã‚ÂÃ…â€™ Attempt ${attempt}/3 failed for "${item.productName}":`, error);
         
         if (attempt < 3) {
           await delay(1000 * attempt);
@@ -3977,7 +4206,7 @@ async function processBackgroundSaveQueue() {
       backgroundSaveQueue.shift();
     } else {
       // Failed after 3 retries - log error and remove
-      console.error(`Ã¢ÂÅ’ PERMANENT FAILURE: Could not save "${item.productName}" after 3 attempts`);
+      console.error(`ÃƒÂ¢Ã‚ÂÃ…â€™ PERMANENT FAILURE: Could not save "${item.productName}" after 3 attempts`);
       console.error('Failed item data:', item);
       
       // Remove from queue to prevent infinite loop
@@ -3992,13 +4221,13 @@ async function processBackgroundSaveQueue() {
           error: 'Max retries exceeded'
         });
         localStorage.setItem('failedSales', JSON.stringify(failedItems));
-        console.log('Ã°Å¸â€™Â¾ Failed item saved to localStorage for recovery');
+        console.log('ÃƒÂ°Ã…Â¸Ã¢â‚¬â„¢Ã‚Â¾ Failed item saved to localStorage for recovery');
       } catch (e) {
         console.error('Could not save to localStorage:', e);
       }
     }
     
-    // Ã¢Å“â€¦ CRITICAL: Delay between items to prevent throttling
+    // ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ CRITICAL: Delay between items to prevent throttling
     if (backgroundSaveQueue.length > 0) {
       await delay(500); // 500ms delay between saves
     }
@@ -4008,11 +4237,11 @@ async function processBackgroundSaveQueue() {
   backgroundSyncActive = false;
   updateSyncIndicator(false);
   
-  console.log('Ã¢Å“â€¦ Background queue processing complete!');
+  console.log('ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Background queue processing complete!');
   
   // Optional: Silent background sync after all saves complete
   setTimeout(() => {
-    console.log('Ã°Å¸â€â€ž Starting background sync from Google Sheets...');
+    console.log('ÃƒÂ°Ã…Â¸Ã¢â‚¬ÂÃ¢â‚¬Å¾ Starting background sync from Google Sheets...');
     syncFromGoogleSheets();
   }, 2000);
 }
@@ -4042,7 +4271,7 @@ async function deleteProductFromSheet(id) {
   }
   
   try {
-    // Ã¢Å“â€¦ Send hash for authentication
+    // ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Send hash for authentication
     const url = `${GOOGLE_SCRIPT_URL}?action=deleteProduct&email=${encodeURIComponent(userEmail)}&hash=${encodeURIComponent(userHash)}`;
 
     const res = await fetch(url, {
@@ -4074,7 +4303,7 @@ async function deleteProductFromSheet(id) {
   function showAddProduct(){ editingProductId=null; document.getElementById('modalTitle').textContent='Add New Product'; document.getElementById('productForm').reset(); document.getElementById('productId').value=''; new bootstrap.Modal(document.getElementById('productModal')).show(); }
   function editProduct(id){
     const p = (cachedProducts||[]).find(x=>x.id===id);
-    if(!p){ alert('ÃƒÂ¢Ã‚ÂÃ…â€™ Product not found'); return; }
+    if(!p){ alert('ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€¦Ã¢â‚¬â„¢ Product not found'); return; }
     editingProductId = id;
     document.getElementById('modalTitle').textContent='Edit Product';
     document.getElementById('productId').value = p.id;
@@ -4089,14 +4318,25 @@ async function deleteProductFromSheet(id) {
     document.getElementById('stock').value = p.stock;
     document.getElementById('minStock').value = p.minStock;
 
-  // âœ… CRITICAL: Preserve imageUrl when editing
+  // Ã¢Å“â€¦ CRITICAL: Preserve imageUrl when editing
   // Store it in a hidden field or variable
   window.editingProductImageUrl = p.imageUrl || '';
     
     new bootstrap.Modal(document.getElementById('productModal')).show();
   }
 
- async function saveProduct() {
+  async function saveProduct() {
+  // âœ… CHECK IF THIS IS A VARIANT EDIT
+  const form = document.getElementById('productForm');
+  const isVariant = form.dataset.isVariant === 'true';
+  
+  if (isVariant) {
+    // Handle variant save
+    await saveVariantData();
+    return;
+  }
+  
+  // âœ… EXISTING PRODUCT SAVE LOGIC (UNCHANGED)
   const name = document.getElementById('productName').value.trim();
   const category = document.getElementById('category').value;
   const brand = document.getElementById('brand').value.trim();
@@ -4167,6 +4407,179 @@ async function deleteProductFromSheet(id) {
   window.editingProductImageUrl = '';
 }
 
+
+
+// âœ… COMPLETE FIX: Save Variant Data - Backend Compatible Version
+async function saveVariantData() {
+  console.log('ðŸ’¾ Saving variant...');
+  
+  const submitBtn = document.querySelector('#productModal .btn-primary');
+  const originalText = submitBtn ? submitBtn.innerHTML : 'Save Product';
+  
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = 'â³ Saving...';
+  }
+  
+  try {
+    const form = document.getElementById('productForm');
+    
+    // Get variant ID from multiple sources
+    let variantId = document.getElementById('productId')?.value;
+    if (!variantId || variantId === '') {
+      variantId = form.dataset.variantId;
+    }
+    
+    const groupId = form.dataset.groupId;
+    
+    console.log('ðŸ” Debug info:', {
+      variantId: variantId,
+      groupId: groupId,
+      formDataset: form.dataset,
+      productIdField: document.getElementById('productId'),
+      productIdValue: document.getElementById('productId')?.value
+    });
+    
+    // Validation
+    if (!variantId || variantId === '' || variantId === 'undefined') {
+      throw new Error('Variant ID is missing. Please close and reopen the edit form.');
+    }
+    
+    if (!groupId || groupId === '' || groupId === 'undefined') {
+      throw new Error('Group ID is missing. Please close and reopen the edit form.');
+    }
+    
+    // Get field values
+    const getFieldValue = (id, defaultValue = 0) => {
+      const field = document.getElementById(id);
+      return field ? (field.value || defaultValue) : defaultValue;
+    };
+    
+    const sellingPrice = parseFloat(getFieldValue('price', 0));
+    const stock = parseInt(getFieldValue('stock', 0));
+    const minStock = parseInt(getFieldValue('minStock', 0));
+    const unitType = getFieldValue('unitType', 'Piece');
+    
+    if (isNaN(sellingPrice) || sellingPrice < 0) {
+      throw new Error('Invalid selling price');
+    }
+    
+    if (isNaN(stock) || stock < 0) {
+      throw new Error('Invalid stock value');
+    }
+    
+    // âœ… PREPARE DATA - Format matching backend expectations
+    const updateData = {
+      action: 'updateGroupVariant',
+      email: userEmail,
+      hash: userHash,
+      variantId: variantId,
+      groupId: groupId,
+      costPrice: '0',
+      sellingPrice: sellingPrice.toString(),
+      stock: stock.toString(),
+      minStock: minStock.toString(),
+      unitType: unitType
+    };
+    
+    console.log('ðŸ“¤ Sending variant update:', updateData);
+    
+    // âœ… METHOD 1: Try URLSearchParams (proper encoding)
+    const formData = new URLSearchParams();
+    Object.keys(updateData).forEach(key => {
+      formData.append(key, updateData[key]);
+    });
+    
+    console.log('ðŸ“¦ FormData string:', formData.toString());
+    
+    const response = await fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: formData.toString()
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const result = await response.json();
+    console.log('ðŸ“¥ Backend response:', result);
+    
+    if (result.success || result.ok) {
+      console.log('âœ… Variant updated successfully');
+      
+      // Update local cache
+      const variantIndex = cachedGroupVariants.findIndex(v => v.variantId === variantId);
+      if (variantIndex !== -1) {
+        cachedGroupVariants[variantIndex] = {
+          ...cachedGroupVariants[variantIndex],
+          sellingPrice,
+          stock,
+          minStock,
+          unitType
+        };
+      }
+      
+      // Show success message
+      showSuccessToast('âœ… Variant updated successfully!');
+      
+      // Close modal
+      const modal = bootstrap.Modal.getInstance(document.getElementById('productModal'));
+      if (modal) modal.hide();
+      
+      // Clear flags
+      form.dataset.isVariant = 'false';
+      form.dataset.groupId = '';
+      form.dataset.variantId = '';
+      
+      // Reset readonly fields
+      const resetField = (id) => {
+        const field = document.getElementById(id);
+        if (field) {
+          field.readOnly = false;
+          field.style.background = '';
+          field.style.color = '';
+        }
+      };
+      
+      resetField('productName');
+      resetField('brand');
+      resetField('size');
+      
+      // Refresh variants list
+      setTimeout(() => {
+        if (typeof loadGroupVariants === 'function') {
+          loadGroupVariants(groupId);
+        }
+      }, 500);
+      
+    } else {
+      throw new Error(result.error || result.message || 'Failed to update variant');
+    }
+    
+  } catch (error) {
+    console.error('âŒ Error updating variant:', error);
+    alert(`Error: ${error.message}\n\nPlease check the console for details.`);
+  } finally {
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = originalText;
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+    
   
 
   function deleteProduct(id) {
@@ -4205,11 +4618,11 @@ async function deleteProductFromSheet(id) {
    ***********************/
   function openSalesModal(){
   initSalesGrid();
-  populateMultiSelect(); // ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ NEW: Populate multi-select
+  populateMultiSelect(); // ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ NEW: Populate multi-select
   new bootstrap.Modal(document.getElementById('salesModal')).show();
 }
 
-// âœ… CORRECTED: Multi-Select Functions with Photo Support
+// Ã¢Å“â€¦ CORRECTED: Multi-Select Functions with Photo Support
 function populateMultiSelect() {
     const container = document.getElementById('multiSelectList');
     if (!container) return;
@@ -4365,7 +4778,7 @@ document.addEventListener('click', function(e) {
 
       <td><input type="text" class="form-control unit-input readonly-input" id="unit-${index}" readonly /></td>
       <td><input type="number" class="form-control price-input readonly-input" id="price-${index}" readonly /></td>
-      <td><div id="total-${index}" class="fw-bold">Ã¢â€šÂ¹0.00</div></td>
+      <td><div id="total-${index}" class="fw-bold">ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹0.00</div></td>
       <td><button class="btn btn-sm btn-outline-danger" onclick="removeRow(this)"><i class="bi bi-x"></i></button></td>
     `;
     tbody.appendChild(tr);
@@ -4382,7 +4795,7 @@ document.addEventListener('click', function(e) {
   const tr = btn.closest('tr')
   if(!tr) return
   
-  // ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ FIX: Don't actually delete the row - just clear/reset it
+  // ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ FIX: Don't actually delete the row - just clear/reset it
   const select = tr.querySelector('.product-select')
   const sizeEl = tr.querySelector('.size-input')
   const qtyEl = tr.querySelector('.qty-input')
@@ -4410,7 +4823,7 @@ document.addEventListener('click', function(e) {
   }
   if(totalEl) totalEl.textContent = formatCurrency(0)
   
-  // ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ CRITICAL: Get row index and re-attach event listener
+  // ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ CRITICAL: Get row index and re-attach event listener
   const rowIndex = Array.from(tr.parentNode.children).indexOf(tr) + 1;
   
   if(select) {
@@ -4452,7 +4865,7 @@ function sortSalesByDateDescending() {
         const dateB = new Date(b.date);
         return dateB - dateA; // Newest first
     });
-    console.log('ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾ Sales sorted: newest first');
+    console.log('ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â°ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ Sales sorted: newest first');
 }
 
   /***********************
@@ -4505,7 +4918,7 @@ function sortSalesByDateDescending() {
     const qty = Number(qtyEl.value || 0);
     const max = Number(qtyEl.max || Infinity);
     if(qty > max){
-      alert(`ÃƒÂ¢Ã‚ÂÃ…â€™ Quantity exceeds available stock (${max}). Adjusting to max.`);
+      alert(`ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€¦Ã¢â‚¬â„¢ Quantity exceeds available stock (${max}). Adjusting to max.`);
       qtyEl.value = max;
     }
     updateRowTotal(rowIndex);
@@ -4545,7 +4958,7 @@ function sortSalesByDateDescending() {
    ***********************/
 function openCustomProductPopup() {
   document.getElementById('customProductForm').reset();
-  document.getElementById('customTotal').textContent = 'Ã¢â€šÂ¹0.00';
+  document.getElementById('customTotal').textContent = 'ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹0.00';
   new bootstrap.Modal(document.getElementById('customProductModal'), {backdrop: 'static'}).show();
   setTimeout(() => document.getElementById('customName').focus(), 200);
 }
@@ -4566,17 +4979,17 @@ function validateCustomProduct() {
   const price = Number(document.getElementById('customPrice').value || 0);
   
   if (!name || name.length < 2) {
-    alert('ÃƒÂ¢Ã‚ÂÃ…â€™ Product name required (min 2 chars)');
+    alert('ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€¦Ã¢â‚¬â„¢ Product name required (min 2 chars)');
     return false;
   }
   
   if (!qty || qty < 1) {
-    alert('ÃƒÂ¢Ã‚ÂÃ…â€™ Quantity must be at least 1');
+    alert('ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€¦Ã¢â‚¬â„¢ Quantity must be at least 1');
     return false;
   }
   
   if (!price || price <= 0) {
-    alert('ÃƒÂ¢Ã‚ÂÃ…â€™ Unit price must be greater than 0');
+    alert('ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€¦Ã¢â‚¬â„¢ Unit price must be greater than 0');
     return false;
   }
   
@@ -4625,7 +5038,7 @@ function addCustomProductToGrid() {
   if (modal) modal.hide();
   
   // Show success
-  alert(`ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Custom product "${name}" added to sale!`);
+  alert(`ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ Custom product "${name}" added to sale!`);
 }
 
 
@@ -4651,14 +5064,14 @@ function populateRowWithCustom(rowIndex, cp){
     document.getElementById(`unit-${rowIndex}`).value = cp.unitType;
     document.getElementById(`price-${rowIndex}`).value = cp.price;
     
-    // ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ FIX: Make quantity editable for custom products
+    // ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ FIX: Make quantity editable for custom products
     const qtyEl = document.getElementById(`qty-${rowIndex}`);
-    qtyEl.disabled = false;  // ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Keep enabled
-    qtyEl.readOnly = false;  // ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Not read-only
+    qtyEl.disabled = false;  // ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ Keep enabled
+    qtyEl.readOnly = false;  // ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ Not read-only
     qtyEl.value = cp.quantity;
     qtyEl.max = cp.quantity; // Can increase up to this amount
     
-    // ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ NEW: Add event listener to update total when quantity changes
+    // ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ NEW: Add event listener to update total when quantity changes
     qtyEl.addEventListener('input', function() {
         const newQty = parseFloat(this.value) || 0;
         const price = parseFloat(document.getElementById(`price-${rowIndex}`).value) || 0;
@@ -4688,7 +5101,7 @@ function populateRowWithCustom(rowIndex, cp){
    ***********************/
  /**
  * ==========================================
- * Ã¢Å“â€¦ FIXED: Sequential sale saving with delay
+ * ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ FIXED: Sequential sale saving with delay
  * ==========================================
  */
 
@@ -4748,20 +5161,20 @@ async function completeSale() {
   
   // Validation
   if (saleItems.length === 0) {
-    alert('Ã¢Å¡ Ã¯Â¸Â No products selected. Please add at least one product to complete the sale.');
+    alert('ÃƒÂ¢Ã…Â¡ ÃƒÂ¯Ã‚Â¸Ã‚Â No products selected. Please add at least one product to complete the sale.');
     return;
   }
   
   const totalAmount = saleItems.reduce((sum, item) => sum + item.totalAmount, 0);
   
-  if (!confirm(`Ã°Å¸â€œÂ¦ Complete sale with ${saleItems.length} item(s)?\n\nTotal: ${formatCurrency(totalAmount)}`)) {
+  if (!confirm(`ÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã‚Â¦ Complete sale with ${saleItems.length} item(s)?\n\nTotal: ${formatCurrency(totalAmount)}`)) {
     return;
   }
   
-  console.log(`Ã¢Å“â€¦ Sale confirmed: ${saleItems.length} items, total ${formatCurrency(totalAmount)}`);
+  console.log(`ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Sale confirmed: ${saleItems.length} items, total ${formatCurrency(totalAmount)}`);
   
   // ==========================================
-  // Ã¢Å“â€¦ STEP 1: INSTANT UI UPDATES (< 100ms)
+  // ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ STEP 1: INSTANT UI UPDATES (< 100ms)
   // ==========================================
   
   // Add to local cache immediately
@@ -4803,12 +5216,12 @@ async function completeSale() {
   customProductsInSale = [];
   
   // Show success toast notification
-  showSuccessToast(`Ã¢Å“â€¦ Sale completed! ${saleItems.length} item(s) recorded.`);
+  showSuccessToast(`ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Sale completed! ${saleItems.length} item(s) recorded.`);
   
-  console.log(`Ã¢Å“â€¦ UI updated instantly - ${saleItems.length} items displayed`);
+  console.log(`ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ UI updated instantly - ${saleItems.length} items displayed`);
   
   // ==========================================
-  // Ã°Å¸â€â€ž STEP 2: BACKGROUND SAVE TO GOOGLE SHEETS
+  // ÃƒÂ°Ã…Â¸Ã¢â‚¬ÂÃ¢â‚¬Å¾ STEP 2: BACKGROUND SAVE TO GOOGLE SHEETS
   // ==========================================
   
   // Add items to background save queue
@@ -4816,7 +5229,7 @@ async function completeSale() {
     backgroundSaveQueue.push(item);
   });
   
-  console.log(`Ã°Å¸â€â€ž Added ${saleItems.length} items to background save queue (queue size: ${backgroundSaveQueue.length})`);
+  console.log(`ÃƒÂ°Ã…Â¸Ã¢â‚¬ÂÃ¢â‚¬Å¾ Added ${saleItems.length} items to background save queue (queue size: ${backgroundSaveQueue.length})`);
   
   // Start background processor (if not already running)
   if (!isProcessingQueue) {
@@ -4824,7 +5237,7 @@ async function completeSale() {
       processBackgroundSaveQueue();
     }, 100); // Small delay to let UI settle
   } else {
-    console.log('Ã¢ÂÂ³ Background processor already running, items will be processed in sequence');
+    console.log('ÃƒÂ¢Ã‚ÂÃ‚Â³ Background processor already running, items will be processed in sequence');
   }
 }
 
@@ -4886,10 +5299,10 @@ function showSuccessToast(message) {
     const blob = new Blob([JSON.stringify(data, null, 2)], { type:'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a'); a.href = url; a.download = `inventory-backup-${new Date().toISOString().split('T')[0]}.json`; a.click();
-    alert('ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ Backup downloaded');
+    alert('ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ Backup downloaded');
   }
   function importData(){ document.getElementById('fileInput').click(); }
-  function handleFileImport(e){ const file = e.target.files[0]; if(!file) return; const reader = new FileReader(); reader.onload = function(evt){ try{ const data = JSON.parse(evt.target.result); if(data.products) cachedProducts = data.products; if(data.sales) cachedSales = data.sales; hasInitialLoaded=true; renderProducts(); renderSales(); alert('ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ Data restored (local)'); }catch(err){ alert('ÃƒÂ¢Ã‚ÂÃ…â€™ Invalid file'); } }; reader.readAsText(file); }
+  function handleFileImport(e){ const file = e.target.files[0]; if(!file) return; const reader = new FileReader(); reader.onload = function(evt){ try{ const data = JSON.parse(evt.target.result); if(data.products) cachedProducts = data.products; if(data.sales) cachedSales = data.sales; hasInitialLoaded=true; renderProducts(); renderSales(); alert('ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ Data restored (local)'); }catch(err){ alert('ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€¦Ã¢â‚¬â„¢ Invalid file'); } }; reader.readAsText(file); }
 
       function searchProducts() {
     const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
@@ -4948,7 +5361,7 @@ function displayProducts(products) {
                 <td>${escapeHtml(product.brand) || '-'}</td>
                 <td><strong>${escapeHtml(product.size) || 'N/A'}</strong></td>
                 <td><span class="badge ${stockBadgeClass}">${stockClass} (${product.stock})</span></td>
-                <td>Ã¢â€šÂ¹${product.price.toFixed(2)}/${product.unitType}</td>
+                <td>ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹${product.price.toFixed(2)}/${product.unitType}</td>
                 <td>
                     <button class="btn btn-sm btn-primary btn-action-sm me-1" onclick="editProduct('${product.id}')">
                         <i class="bi bi-pencil"></i> Edit
@@ -4983,7 +5396,7 @@ function displayProducts(products) {
                     <div>
                         <div style="font-weight:600">${escapeHtml(p.name)}</div>
                         <div class="small-muted">${escapeHtml(p.category)} ${escapeHtml(p.brand)}</div>
-                        <div class="small-muted"><strong>${escapeHtml(p.size)}</strong> Ã¢â€šÂ¹${parseFloat(p.price || 0).toFixed(2)}/${p.unitType}</div>
+                        <div class="small-muted"><strong>${escapeHtml(p.size)}</strong> ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹${parseFloat(p.price || 0).toFixed(2)}/${p.unitType}</div>
                     </div>
                 </div>
                 <div style="text-align:right">
@@ -5049,7 +5462,7 @@ function updateClearSalesCount() {
     if (!fromDate || !toDate) return;
     
     if (fromDate > toDate) {
-        alert('ÃƒÂ¢Ã‚ÂÃ…â€™ "From Date" cannot be after "To Date"');
+        alert('ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€¦Ã¢â‚¬â„¢ "From Date" cannot be after "To Date"');
         return;
     }
     
@@ -5073,7 +5486,7 @@ function clearSalesInDateRange() {
     const toDate = new Date(document.getElementById('clearToDate').value);
     
     if (!fromDate || !toDate) {
-        alert('ÃƒÂ¢Ã‚ÂÃ…â€™ Please select both From and To dates');
+        alert('ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€¦Ã¢â‚¬â„¢ Please select both From and To dates');
         return;
     }
     
@@ -5082,7 +5495,7 @@ function clearSalesInDateRange() {
     toDate.setHours(23, 59, 59, 999);
     
     if (fromDate > toDate) {
-        alert('ÃƒÂ¢Ã‚ÂÃ…â€™ "From Date" cannot be after "To Date"');
+        alert('ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€¦Ã¢â‚¬â„¢ "From Date" cannot be after "To Date"');
         return;
     }
     
@@ -5093,18 +5506,18 @@ function clearSalesInDateRange() {
     });
     
     if (salesInRange.length === 0) {
-        alert('ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¹ÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¸Ãƒâ€šÃ‚Â No sales found in the selected date range');
+        alert('ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¯ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â No sales found in the selected date range');
         return;
     }
     
     // Confirm deletion
     const fromStr = fromDate.toLocaleDateString('en-IN');
     const toStr = toDate.toLocaleDateString('en-IN');
-    const confirmMsg = `Are you sure you want to hide ${salesInRange.length} sales records between ${fromStr} and ${toStr}?\n\nÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã‚Â¡ ÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¸Ãƒâ€šÃ‚Â This will hide them from display only.\nGoogle Sheets data remains unchanged.\n\nYou can restore them later by clearing browser data.`;
+    const confirmMsg = `Are you sure you want to hide ${salesInRange.length} sales records between ${fromStr} and ${toStr}?\n\nÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¯ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â This will hide them from display only.\nGoogle Sheets data remains unchanged.\n\nYou can restore them later by clearing browser data.`;
     
     if (!confirm(confirmMsg)) return;
     
-    // ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ FIX: Store deleted IDs persistently
+    // ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ FIX: Store deleted IDs persistently
     salesInRange.forEach(sale => {
         if (sale.id && !deletedSaleIds.includes(sale.id)) {
             deletedSaleIds.push(sale.id);
@@ -5114,7 +5527,7 @@ function clearSalesInDateRange() {
     // Save to localStorage for persistence across sessions and page reloads
     try {
         localStorage.setItem('deletedSaleIds', JSON.stringify(deletedSaleIds));
-        console.log('ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢Ãƒâ€šÃ‚Â¾ Saved', deletedSaleIds.length, 'deleted sale IDs to localStorage');
+        console.log('ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â°ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¾ Saved', deletedSaleIds.length, 'deleted sale IDs to localStorage');
     } catch (e) {
         console.warn('Could not save deletedSaleIds to localStorage', e);
     }
@@ -5134,7 +5547,7 @@ function clearSalesInDateRange() {
     modal.hide();
     
     // Show success message
-    alert(`ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ Successfully cleared ${salesInRange.length} sales records!\n\nNote: They're hidden from display only. Google Sheets data is unchanged.\n\nTo restore: Clear browser data or use developer console to run:\nlocalStorage.removeItem('deletedSaleIds')`);
+    alert(`ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ Successfully cleared ${salesInRange.length} sales records!\n\nNote: They're hidden from display only. Google Sheets data is unchanged.\n\nTo restore: Clear browser data or use developer console to run:\nlocalStorage.removeItem('deletedSaleIds')`);
 }
 
 
@@ -5154,7 +5567,7 @@ function clearSalesInDateRange() {
   
   salesList.innerHTML = '';
   
-  // ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ FIX: Show only last 100 sales (most recent)
+  // ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ FIX: Show only last 100 sales (most recent)
   const recentSales = cachedSales.slice(0, 100);
   
   recentSales.forEach(sale => {
@@ -5168,14 +5581,14 @@ function clearSalesInDateRange() {
         <td>${sale.productName}</td>
         <td>${sale.quantity}</td>
         <td>${sale.unitType}</td>
-        <td class="text-success fw-bold">Ã¢â€šÂ¹${parseFloat(sale.totalAmount).toFixed(2)}</td>
+        <td class="text-success fw-bold">ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹${parseFloat(sale.totalAmount).toFixed(2)}</td>
       </tr>
     `;
     
     salesList.innerHTML += row;
   });
   
-  // ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ FIX: Show count if more than 100 sales exist
+  // ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ FIX: Show count if more than 100 sales exist
   if (cachedSales.length > 100) {
     salesList.innerHTML += `
       <tr>
@@ -5189,7 +5602,7 @@ function clearSalesInDateRange() {
 
 /**
  * ==========================================
- * âœ… PHOTO PRODUCT FUNCTIONALITY
+ * Ã¢Å“â€¦ PHOTO PRODUCT FUNCTIONALITY
  * ==========================================
  */
 
@@ -5352,7 +5765,7 @@ async function uploadPhotoToBackend(productData, photoBase64) {
       await saveProductToSheet(productData);
       
       renderProducts();
-      showSuccessToast('âœ… Photo uploaded successfully!');
+      showSuccessToast('Ã¢Å“â€¦ Photo uploaded successfully!');
       
     } else {
       throw new Error(photoResult.error || 'Photo upload failed');
@@ -5445,11 +5858,11 @@ function showPhotoProducts() {
             </p>
           </div>
           <div class="card-footer bg-white border-0 d-flex gap-2">
-            <!-- âœ… FIXED: Call editProduct which opens the correct modal -->
+            <!-- Ã¢Å“â€¦ FIXED: Call editProduct which opens the correct modal -->
             <button class="btn btn-sm btn-primary flex-fill" onclick="editProduct('${product.id}')">
               <i class="bi bi-pencil"></i> Edit
             </button>
-            <!-- âœ… FIXED: Call deleteProduct with proper confirmation -->
+            <!-- Ã¢Å“â€¦ FIXED: Call deleteProduct with proper confirmation -->
             <button class="btn btn-sm btn-danger flex-fill" onclick="deleteProduct('${product.id}')">
               <i class="bi bi-trash"></i> Delete
             </button>
@@ -5504,7 +5917,7 @@ function viewPhotoProduct(productId) {
 
 // Init
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('🚀 Initializing Inventory App...');
+  console.log('ðŸš€ Initializing Inventory App...');
   
   // Set initial page to home
   currentPage = 'home';
@@ -5516,22 +5929,22 @@ document.addEventListener('DOMContentLoaded', function() {
   
   if (allProductsPage) {
     allProductsPage.classList.remove('active');
-    console.log('✅ All Products page hidden');
+    console.log('âœ… All Products page hidden');
   }
   if (productGroupsPage) {
     productGroupsPage.classList.remove('active');
-    console.log('✅ Product Groups page hidden');
+    console.log('âœ… Product Groups page hidden');
   }
   if (groupDetailPage) {
     groupDetailPage.classList.remove('active');
-    console.log('✅ Group Detail page hidden');
+    console.log('âœ… Group Detail page hidden');
   }
   
   // Initialize main dashboard display
   const mainApp = document.getElementById('mainApp');
   if (mainApp) {
     mainApp.style.display = 'block';
-    console.log('✅ Main dashboard visible');
+    console.log('âœ… Main dashboard visible');
   }
   
   // Initialize data (existing code)
@@ -5539,7 +5952,7 @@ document.addEventListener('DOMContentLoaded', function() {
   renderSales();
   syncFromGoogleSheets();
   
-  console.log('✅ Page navigation initialized');
+  console.log('âœ… Page navigation initialized');
 });
 
 
@@ -5587,14 +6000,14 @@ function generateInvoice() {
   });
   
   if (items.length === 0) {
-    alert('âš ï¸ No products in the sale! Add products before generating invoice.');
+    alert('Ã¢Å¡ Ã¯Â¸Â No products in the sale! Add products before generating invoice.');
     return;
   }
   
   // Store items temporarily
   window.tempInvoiceItems = items;
   
-  // âœ… FIX: Close Sales Modal BEFORE opening Invoice Modal
+  // Ã¢Å“â€¦ FIX: Close Sales Modal BEFORE opening Invoice Modal
   const salesModal = bootstrap.Modal.getInstance(document.getElementById('salesModal'));
   if (salesModal) {
     salesModal.hide();
@@ -5712,7 +6125,7 @@ function createInvoiceRow(item, index) {
                oninput="updateInvoiceRowTotal(${index})">
       </td>
       <td class="text-end fw-bold invoice-row-total">
-        Ã¢â€šÂ¹${(item.quantity * item.rate).toFixed(2)}
+        ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹${(item.quantity * item.rate).toFixed(2)}
       </td>
       <td class="text-center">
         <button type="button" class="btn btn-sm btn-link text-danger" 
@@ -5804,7 +6217,7 @@ function loadDefaultTerms() {
   const defaultTerms = `1. Payment due within 14 days of invoice date
 2. Late payments subject to 2% monthly interest charge
 3. Goods once sold cannot be returned or exchanged
-4. Delivery charges may apply for orders under Ã¢â€šÂ¹10,000
+4. Delivery charges may apply for orders under ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹10,000
 5. Company not responsible for damages during transit`;
   
   document.getElementById('invoiceTerms').value = defaultTerms;
@@ -5816,7 +6229,7 @@ async function saveInvoice() {
   const customerName = document.getElementById('invoiceCustomerName').value.trim();
   
   if (!customerName) {
-    alert('ÃƒÂ¢Ã‚ÂÃ…â€™ Please enter customer name');
+    alert('ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€¦Ã¢â‚¬â„¢ Please enter customer name');
     return;
   }
   
@@ -5828,7 +6241,7 @@ async function saveInvoice() {
   invoices.push(invoiceData);
   localStorage.setItem('invoices', JSON.stringify(invoices));
   
-  alert('ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Invoice saved successfully!\n\nInvoice Number: ' + invoiceData.invoiceNumber);
+  alert('ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ Invoice saved successfully!\n\nInvoice Number: ' + invoiceData.invoiceNumber);
   
   // Close modal
   const modal = bootstrap.Modal.getInstance(document.getElementById('invoiceModal'));
@@ -5853,10 +6266,10 @@ function collectInvoiceData() {
     }
   });
   
-  const subtotal = parseFloat(document.getElementById('invoiceSubtotal').textContent.replace(/[Ã¢â€šÂ¹,]/g, ''));
-  const discount = parseFloat(document.getElementById('invoiceDiscountAmount').textContent.replace(/[Ã¢â€šÂ¹,-]/g, ''));
-  const tax = parseFloat(document.getElementById('invoiceTaxAmount').textContent.replace(/[Ã¢â€šÂ¹,]/g, ''));
-  const total = parseFloat(document.getElementById('invoiceGrandTotal').textContent.replace(/[Ã¢â€šÂ¹,]/g, ''));
+  const subtotal = parseFloat(document.getElementById('invoiceSubtotal').textContent.replace(/[ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹,]/g, ''));
+  const discount = parseFloat(document.getElementById('invoiceDiscountAmount').textContent.replace(/[ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹,-]/g, ''));
+  const tax = parseFloat(document.getElementById('invoiceTaxAmount').textContent.replace(/[ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹,]/g, ''));
+  const total = parseFloat(document.getElementById('invoiceGrandTotal').textContent.replace(/[ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹,]/g, ''));
   
   return {
     invoiceNumber: document.getElementById('invoiceNumber').value,
@@ -5879,7 +6292,7 @@ function previewInvoice() {
   const invoiceData = collectInvoiceData();
   
   if (!invoiceData.customerName) {
-    alert('ÃƒÂ¢Ã‚ÂÃ…â€™ Please enter customer name');
+    alert('ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€¦Ã¢â‚¬â„¢ Please enter customer name');
     return;
   }
   
@@ -5901,8 +6314,8 @@ function generateInvoiceHTML(data) {
         <td style="text-align: center">${index + 1}</td>
         <td>${escapeHtml(item.name)}</td>
         <td style="text-align: center">${item.quantity}</td>
-        <td style="text-align: right">Ã¢â€šÂ¹${item.rate.toFixed(2)}</td>
-        <td style="text-align: right">Ã¢â€šÂ¹${item.amount.toFixed(2)}</td>
+        <td style="text-align: right">ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹${item.rate.toFixed(2)}</td>
+        <td style="text-align: right">ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹${item.amount.toFixed(2)}</td>
       </tr>
     `;
   });
@@ -5960,19 +6373,19 @@ function generateInvoiceHTML(data) {
       <table style="width: 400px; margin-left: auto">
         <tr>
           <td>Sub Total:</td>
-          <td class="text-right">Ã¢â€šÂ¹${data.subtotal.toFixed(2)}</td>
+          <td class="text-right">ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹${data.subtotal.toFixed(2)}</td>
         </tr>
         <tr>
           <td>Discount:</td>
-          <td class="text-right">-Ã¢â€šÂ¹${data.discount.toFixed(2)}</td>
+          <td class="text-right">-ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹${data.discount.toFixed(2)}</td>
         </tr>
         <tr>
           <td>Tax:</td>
-          <td class="text-right">Ã¢â€šÂ¹${data.tax.toFixed(2)}</td>
+          <td class="text-right">ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹${data.tax.toFixed(2)}</td>
         </tr>
         <tr class="total-row">
           <td>Grand Total:</td>
-          <td class="text-right">Ã¢â€šÂ¹${data.total.toFixed(2)}</td>
+          <td class="text-right">ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹${data.total.toFixed(2)}</td>
         </tr>
       </table>
       
@@ -6042,7 +6455,7 @@ function viewSavedInvoices() {
           <td>${escapeHtml(inv.customerName)}</td>
           <td>${new Date(inv.invoiceDate).toLocaleDateString('en-IN')}</td>
           <td>${new Date(inv.dueDate).toLocaleDateString('en-IN')}</td>
-          <td class="text-end"><strong>Ã¢â€šÂ¹${inv.total.toFixed(2)}</strong></td>
+          <td class="text-end"><strong>ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¹${inv.total.toFixed(2)}</strong></td>
           <td><small>${escapeHtml(itemsSummary)}${moreItems}</small></td>
           <td class="text-center">
             <button class="btn btn-sm btn-info" onclick="previewSavedInvoice(${index})" title="Preview">
@@ -6099,7 +6512,7 @@ function deleteSavedInvoice(index) {
   invoices.splice(index, 1);
   localStorage.setItem('invoices', JSON.stringify(invoices));
   
-  alert(`ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Invoice ${deletedInvoice.invoiceNumber} deleted successfully`);
+  alert(`ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ Invoice ${deletedInvoice.invoiceNumber} deleted successfully`);
   
   // Refresh the list
   viewSavedInvoices();
@@ -6114,7 +6527,7 @@ async function shareInvoiceAsImage() {
   // Validate customer name
   const customerName = document.getElementById('invoiceCustomerName').value.trim();
   if (!customerName) {
-    alert('âŒ Please enter customer name before sharing');
+    alert('Ã¢ÂÅ’ Please enter customer name before sharing');
     return;
   }
   
@@ -6160,7 +6573,7 @@ async function shareInvoiceAsImage() {
             text: `Invoice for ${invoiceData.customerName} - â‚¹${invoiceData.total.toFixed(2)}`,
             files: [file]
           });
-          console.log('âœ… Invoice shared successfully');
+          console.log('Ã¢Å“â€¦ Invoice shared successfully');
         } catch (err) {
           if (err.name !== 'AbortError') {
             console.error('Share failed:', err);
@@ -6176,13 +6589,13 @@ async function shareInvoiceAsImage() {
   } catch (error) {
     hideLoading();
     console.error('Error generating image:', error);
-    alert('âŒ Error generating invoice image. Please try again.');
+    alert('Ã¢ÂÅ’ Error generating invoice image. Please try again.');
   }
 }
 
 /**
  * ==========================================
- * âœ… NEW: Share Invoice Image on WhatsApp Number
+ * Ã¢Å“â€¦ NEW: Share Invoice Image on WhatsApp Number
  * ==========================================
  */
 
@@ -6191,7 +6604,7 @@ function shareImageToWhatsAppNumber() {
   // Validate customer name first
   const customerName = document.getElementById('invoiceCustomerName').value.trim();
   if (!customerName) {
-    alert('âŒ Please enter customer name before sharing');
+    alert('Ã¢ÂÅ’ Please enter customer name before sharing');
     return;
   }
   
@@ -6219,13 +6632,13 @@ async function sendInvoiceToWhatsApp() {
   
   // Validation
   if (!phoneNumber) {
-    alert('❌ Please enter WhatsApp number');
+    alert('âŒ Please enter WhatsApp number');
     numberInput.focus();
     return;
   }
   
   if (!/^[0-9]{10}$/.test(phoneNumber)) {
-    alert('❌ Please enter a valid 10-digit mobile number');
+    alert('âŒ Please enter a valid 10-digit mobile number');
     numberInput.focus();
     return;
   }
@@ -6286,7 +6699,7 @@ async function sendInvoiceToWhatsApp() {
         const newWindow = window.open('', '_blank');
         
         if (newWindow) {
-          // ✅ FINAL FIX: Build HTML using DOM methods (no string escaping needed!)
+          // âœ… FINAL FIX: Build HTML using DOM methods (no string escaping needed!)
           const doc = newWindow.document;
           doc.open();
           doc.write('<!DOCTYPE html><html><head>');
@@ -6306,14 +6719,14 @@ async function sendInvoiceToWhatsApp() {
           
           // Add instructions
           doc.write('<div class="instructions">');
-          doc.write('<h2 style="color: #25D366;">📱 Save & Share Invoice</h2>');
+          doc.write('<h2 style="color: #25D366;">ðŸ“± Save & Share Invoice</h2>');
           doc.write('<ol>');
           doc.write('<li><strong>Tap and hold</strong> on the invoice image below</li>');
           doc.write('<li>Select <strong>"Add to Photos"</strong> or <strong>"Save Image"</strong></li>');
           doc.write('<li>Click the <strong>"Open WhatsApp"</strong> button below</li>');
-          doc.write('<li>In WhatsApp, tap <strong>📎</strong> → <strong>Gallery</strong> → Select invoice → Send</li>');
+          doc.write('<li>In WhatsApp, tap <strong>ðŸ“Ž</strong> â†’ <strong>Gallery</strong> â†’ Select invoice â†’ Send</li>');
           doc.write('</ol>');
-          doc.write('<button id="waBtn">📱 Open WhatsApp Chat</button>');
+          doc.write('<button id="waBtn">ðŸ“± Open WhatsApp Chat</button>');
           doc.write('</div>');
           
           // Add image
@@ -6327,7 +6740,7 @@ async function sendInvoiceToWhatsApp() {
           if (waBtn) {
             waBtn.onclick = function() {
               const waUrl = 'whatsapp://send?phone=' + fullNumber + '&text=' + 
-                encodeURIComponent('Invoice ' + invoiceData.invoiceNumber + ' - ₹' + invoiceData.total.toFixed(2));
+                encodeURIComponent('Invoice ' + invoiceData.invoiceNumber + ' - â‚¹' + invoiceData.total.toFixed(2));
               newWindow.location.href = waUrl;
             };
           }
@@ -6354,14 +6767,14 @@ async function sendInvoiceToWhatsApp() {
         link.click();
         
         // Show notification
-        alert('✅ Invoice downloaded: ' + fileName + '\n\n📱 WhatsApp will open now. Attach the downloaded invoice from Gallery.');
+        alert('âœ… Invoice downloaded: ' + fileName + '\n\nðŸ“± WhatsApp will open now. Attach the downloaded invoice from Gallery.');
         
         // Open WhatsApp
         setTimeout(function() {
           const message = encodeURIComponent(
-            '📄 Invoice ' + invoiceData.invoiceNumber + '\n' +
+            'ðŸ“„ Invoice ' + invoiceData.invoiceNumber + '\n' +
             'Customer: ' + invoiceData.customerName + '\n' +
-            'Amount: ₹' + invoiceData.total.toFixed(2)
+            'Amount: â‚¹' + invoiceData.total.toFixed(2)
           );
           window.location.href = 'whatsapp://send?phone=' + fullNumber + '&text=' + message;
         }, 1000);
@@ -6372,7 +6785,7 @@ async function sendInvoiceToWhatsApp() {
   } catch (error) {
     hideLoading();
     console.error('Error generating invoice image:', error);
-    alert('❌ Error generating invoice image. Please try again.');
+    alert('âŒ Error generating invoice image. Please try again.');
   }
 }
 
@@ -6397,7 +6810,7 @@ function fallbackWhatsAppShare(phoneNumber, invoiceData, canvas, fileName) {
   
   // Prepare WhatsApp message
   const message = encodeURIComponent(
-    `ðŸ“„ Invoice ${invoiceData.invoiceNumber}\n` +
+    `Ã°Å¸â€œâ€ž Invoice ${invoiceData.invoiceNumber}\n` +
     `Customer: ${invoiceData.customerName}\n` +
     `Amount: â‚¹${invoiceData.total.toFixed(2)}`
   );
@@ -6412,12 +6825,12 @@ function fallbackWhatsAppShare(phoneNumber, invoiceData, canvas, fileName) {
     window.location.href = whatsappUrl;
     
     setTimeout(() => {
-      alert('ðŸ“± Steps to send invoice:\n\n1. Tap attach button (ðŸ“Ž)\n2. Select "Gallery" or "Photos"\n3. Choose the downloaded invoice\n4. Tap Send âœ“\n\nThe invoice image is saved in your downloads/gallery.');
+      alert('Ã°Å¸â€œÂ± Steps to send invoice:\n\n1. Tap attach button (Ã°Å¸â€œÅ½)\n2. Select "Gallery" or "Photos"\n3. Choose the downloaded invoice\n4. Tap Send Ã¢Å“â€œ\n\nThe invoice image is saved in your downloads/gallery.');
     }, 1000);
   } else {
     // Desktop: Open WhatsApp Web
     window.open(whatsappUrl, '_blank');
-    alert('âœ… Invoice image downloaded!\nðŸ“± WhatsApp Web opened - please attach the downloaded image and send.');
+    alert('Ã¢Å“â€¦ Invoice image downloaded!\nÃ°Å¸â€œÂ± WhatsApp Web opened - please attach the downloaded image and send.');
   }
 }
 
@@ -6432,7 +6845,7 @@ function fallbackWhatsAppShare(phoneNumber, invoiceData, canvas, fileName) {
   
   // Open WhatsApp Web with pre-filled message
   const message = encodeURIComponent(
-    `ðŸ“„ Invoice ${invoiceData.invoiceNumber}\n` +
+    `Ã°Å¸â€œâ€ž Invoice ${invoiceData.invoiceNumber}\n` +
     `Customer: ${invoiceData.customerName}\n` +
     `Amount: â‚¹${invoiceData.total.toFixed(2)}\n\n` +
     `Invoice image downloaded. Please attach and send.`
@@ -6441,7 +6854,7 @@ function fallbackWhatsAppShare(phoneNumber, invoiceData, canvas, fileName) {
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
   window.open(whatsappUrl, '_blank');
   
-  alert('âœ… Invoice image downloaded!\nðŸ“± WhatsApp opened - please attach the downloaded image and send.');
+  alert('Ã¢Å“â€¦ Invoice image downloaded!\nÃ°Å¸â€œÂ± WhatsApp opened - please attach the downloaded image and send.');
 }
 
 
@@ -6454,7 +6867,7 @@ function fallbackDownloadImage(canvas, fileName) {
   link.download = fileName;
   link.href = canvas.toDataURL('image/png');
   link.click();
-  alert('âœ… Invoice image downloaded! You can now share it from your downloads.');
+  alert('Ã¢Å“â€¦ Invoice image downloaded! You can now share it from your downloads.');
 }
 
 // Generate clean invoice HTML for image conversion
@@ -6549,7 +6962,7 @@ function generateInvoiceHTMLForImage(data) {
 
 // Share Invoice as PDF
 async function shareInvoiceAsPDF() {
-  alert('ðŸ“„ PDF sharing coming soon! For now, use Preview â†’ Print to save as PDF.');
+  alert('Ã°Å¸â€œâ€ž PDF sharing coming soon! For now, use Preview Ã¢â€ â€™ Print to save as PDF.');
   // You can implement PDF generation using jsPDF or html2pdf.js later
 }
 
@@ -6558,7 +6971,7 @@ function shareViaWhatsApp() {
   const invoiceData = collectInvoiceData();
   
   if (!invoiceData.customerName) {
-    alert('âŒ Please enter customer name');
+    alert('Ã¢ÂÅ’ Please enter customer name');
     return;
   }
   
@@ -6572,7 +6985,7 @@ function shareViaEmail() {
   const invoiceData = collectInvoiceData();
   
   if (!invoiceData.customerName) {
-    alert('âŒ Please enter customer name');
+    alert('Ã¢ÂÅ’ Please enter customer name');
     return;
   }
   
@@ -6587,7 +7000,7 @@ function shareViaSMS() {
   const invoiceData = collectInvoiceData();
   
   if (!invoiceData.customerName) {
-    alert('âŒ Please enter customer name');
+    alert('Ã¢ÂÅ’ Please enter customer name');
     return;
   }
   
@@ -6598,7 +7011,7 @@ function shareViaSMS() {
 
 // Generate text message for sharing
 function generateShareText(data) {
-  let text = `ðŸ§¾ INVOICE\n\n`;
+  let text = `Ã°Å¸Â§Â¾ INVOICE\n\n`;
   text += `Invoice No: ${data.invoiceNumber}\n`;
   text += `Customer: ${data.customerName}\n`;
   text += `Date: ${new Date(data.invoiceDate).toLocaleDateString('en-IN')}\n`;
@@ -6617,7 +7030,7 @@ function generateShareText(data) {
   if (data.tax > 0) {
     text += `Tax: â‚¹${data.tax.toFixed(2)}\n`;
   }
-  text += `â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”\n`;
+  text += `Ã¢â€ÂÃ¢â€ÂÃ¢â€ÂÃ¢â€ÂÃ¢â€ÂÃ¢â€ÂÃ¢â€ÂÃ¢â€ÂÃ¢â€ÂÃ¢â€ÂÃ¢â€ÂÃ¢â€ÂÃ¢â€ÂÃ¢â€ÂÃ¢â€ÂÃ¢â€Â\n`;
   text += `TOTAL: â‚¹${data.total.toFixed(2)}\n\n`;
   
   text += `Thank you for your business!\n`;
@@ -6705,18 +7118,18 @@ function closeSidebar() {
   overlay.classList.remove('show');
 }
 
-// ✅ UPDATE: Go to Home function
+// âœ… UPDATE: Go to Home function
 function goToHome() {
   closeSidebar();
   navigateToHome();
 }
 
-// ✅ UPDATE: Sidebar Action function
+// âœ… UPDATE: Sidebar Action function
 function sidebarAction(action) {
   console.log('Sidebar action:', action);
   
   // Show coming soon for disabled items
-  alert('⏳ "' + action.replace(/([A-Z])/g, ' $1').trim() + '" feature coming soon!\n\nThis will be implemented in the next phase.');
+  alert('â³ "' + action.replace(/([A-Z])/g, ' $1').trim() + '" feature coming soon!\n\nThis will be implemented in the next phase.');
   
   closeSidebar();
 }
@@ -6724,7 +7137,7 @@ function sidebarAction(action) {
 
 // Navigate to All Products page - FIXED
 function navigateToAllProducts() {
-  console.log('📦 Navigating to All Products');
+  console.log('ðŸ“¦ Navigating to All Products');
   
   currentPage = 'allProducts';
   
@@ -6738,7 +7151,7 @@ function navigateToAllProducts() {
     mainApp.style.display = 'none';
   }
   
-  // ✅ HIDE THE BLUE NAVBAR
+  // âœ… HIDE THE BLUE NAVBAR
   const navbar = document.querySelector('.navbar');
   if (navbar) {
     navbar.style.display = 'none';
@@ -6789,7 +7202,7 @@ let attributeRowCounter = 0;
 
 // Navigate to Product Groups List Page
 function navigateToProductGroups() {
-  console.log('📁 Navigating to Product Groups');
+  console.log('ðŸ“ Navigating to Product Groups');
   
   // Hide navbar
   const navbar = document.querySelector('.navbar');
@@ -6806,7 +7219,7 @@ function navigateToProductGroups() {
       <!-- Header -->
       <div class="modal-header-mobile">
         <button class="btn-cancel-modal" onclick="navigateToHome()">
-          ← Back
+          â† Back
         </button>
         <h3>Products in Group</h3>
         <button class="btn-primary-bottom" onclick="openCreateGroupModal()" style="padding: 8px 16px; min-height: auto; flex: none; font-size: 14px;">
@@ -6819,7 +7232,7 @@ function navigateToProductGroups() {
         <input 
           type="text" 
           id="searchGroupsInput" 
-          placeholder="🔍 Search groups..."
+          placeholder="ðŸ” Search groups..."
           style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px;"
           onkeyup="filterProductGroups(this.value)">
       </div>
@@ -6837,7 +7250,7 @@ function navigateToProductGroups() {
       
       <!-- Empty State -->
       <div id="groupsEmptyState" class="empty-state" style="display: none;">
-        <div class="empty-state-icon">📁</div>
+        <div class="empty-state-icon">ðŸ“</div>
         <h3>No Product Groups Yet</h3>
         <p>Create your first product group to manage variants</p>
         <button class="btn-primary-bottom" onclick="openCreateGroupModal()" style="max-width: 200px; margin: 0 auto;">
@@ -6855,7 +7268,7 @@ function navigateToProductGroups() {
 
 // Navigate to Group Variants (Detail Page)
 function navigateToGroupVariants(groupId, groupName) {
-  console.log('📦 Opening variants for:', groupName);
+  console.log('ðŸ“¦ Opening variants for:', groupName);
   
   currentGroupId = groupId;
   currentGroupName = groupName;
@@ -6871,7 +7284,7 @@ function navigateToGroupVariants(groupId, groupName) {
       <!-- Header -->
       <div class="modal-header-mobile">
         <button class="btn-cancel-modal" onclick="closeGroupVariantsPage()">
-          ← Back
+          â† Back
         </button>
         <h3>${groupName}</h3>
         <div style="width: 80px;"></div>
@@ -6882,7 +7295,7 @@ function navigateToGroupVariants(groupId, groupName) {
         <input 
           type="text" 
           id="searchVariantsInput" 
-          placeholder="🔍 Search variants..."
+          placeholder="ðŸ” Search variants..."
           style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px;"
           onkeyup="filterGroupVariants(this.value)">
       </div>
@@ -6900,7 +7313,7 @@ function navigateToGroupVariants(groupId, groupName) {
       
       <!-- Empty State -->
       <div id="variantsEmptyState" class="empty-state" style="display: none;">
-        <div class="empty-state-icon">📦</div>
+        <div class="empty-state-icon">ðŸ“¦</div>
         <h3>No Variants Yet</h3>
         <p>This group doesn't have any variants</p>
       </div>
@@ -6932,7 +7345,7 @@ function closeGroupVariantsPage() {
 // Load Product Groups from Backend
 async function loadProductGroups() {
   try {
-    console.log('📡 Fetching product groups...');
+    console.log('ðŸ“¡ Fetching product groups...');
     
     const url = `${GOOGLE_SCRIPT_URL}?action=getProductGroups&email=${encodeURIComponent(userEmail)}&hash=${encodeURIComponent(userHash)}&t=${Date.now()}`;
     
@@ -6941,7 +7354,7 @@ async function loadProductGroups() {
     
     if (data.success && data.groups) {
       cachedProductGroups = data.groups;
-      console.log('✅ Loaded', data.groups.length, 'groups');
+      console.log('âœ… Loaded', data.groups.length, 'groups');
       
       // Hide loading
       const loadingState = document.getElementById('groupsLoadingState');
@@ -6959,17 +7372,17 @@ async function loadProductGroups() {
     }
     
   } catch (error) {
-    console.error('❌ Error loading groups:', error);
+    console.error('âŒ Error loading groups:', error);
     
     const loadingState = document.getElementById('groupsLoadingState');
     if (loadingState) {
       loadingState.innerHTML = `
         <div class="empty-state">
-          <div class="empty-state-icon">⚠️</div>
+          <div class="empty-state-icon">âš ï¸</div>
           <h3>Error Loading Groups</h3>
           <p>${error.message}</p>
           <button class="btn-primary-bottom" onclick="loadProductGroups()" style="max-width: 200px; margin: 16px auto 0;">
-            🔄 Retry
+            ðŸ”„ Retry
           </button>
         </div>
       `;
@@ -6981,7 +7394,7 @@ async function loadProductGroups() {
 // Load Group Variants from Backend
 async function loadGroupVariants(groupId) {
   try {
-    console.log('📡 Fetching variants for group:', groupId);
+    console.log('ðŸ“¡ Fetching variants for group:', groupId);
     
     const url = `${GOOGLE_SCRIPT_URL}?action=getGroupVariants&groupId=${encodeURIComponent(groupId)}&email=${encodeURIComponent(userEmail)}&hash=${encodeURIComponent(userHash)}&t=${Date.now()}`;
     
@@ -6990,7 +7403,7 @@ async function loadGroupVariants(groupId) {
     
     if (data.success && data.variants) {
       cachedGroupVariants = data.variants;
-      console.log('✅ Loaded', data.variants.length, 'variants');
+      console.log('âœ… Loaded', data.variants.length, 'variants');
       
       // Hide loading
       const loadingState = document.getElementById('variantsLoadingState');
@@ -7008,17 +7421,17 @@ async function loadGroupVariants(groupId) {
     }
     
   } catch (error) {
-    console.error('❌ Error loading variants:', error);
+    console.error('âŒ Error loading variants:', error);
     
     const loadingState = document.getElementById('variantsLoadingState');
     if (loadingState) {
       loadingState.innerHTML = `
         <div class="empty-state">
-          <div class="empty-state-icon">⚠️</div>
+          <div class="empty-state-icon">âš ï¸</div>
           <h3>Error Loading Variants</h3>
           <p>${error.message}</p>
           <button class="btn-primary-bottom" onclick="loadGroupVariants('${groupId}')" style="max-width: 200px; margin: 16px auto 0;">
-            🔄 Retry
+            ðŸ”„ Retry
           </button>
         </div>
       `;
@@ -7046,20 +7459,20 @@ function renderProductGroups(groups) {
     
     html += `
       <div class="group-card" onclick="navigateToGroupVariants('${group.groupId}', '${escapeHtml(group.groupName)}')">
-        <div class="group-icon">📁</div>
+        <div class="group-icon">ðŸ“</div>
         
         <div class="group-info">
           <div class="group-name">${escapeHtml(group.groupName)}</div>
           <div class="group-description">${escapeHtml(group.description || 'No description')}</div>
           <div class="group-meta">
-            <span class="group-meta-item">📦 ${variantText}</span>
-            <span class="group-meta-item">🏷️ ${categoryText}</span>
+            <span class="group-meta-item">ðŸ“¦ ${variantText}</span>
+            <span class="group-meta-item">ðŸ·ï¸ ${categoryText}</span>
           </div>
         </div>
         
         <div class="group-actions" onclick="event.stopPropagation()">
           <button class="btn-icon-small btn-delete-small" onclick="confirmDeleteGroup('${group.groupId}', '${escapeHtml(group.groupName)}')">
-            🗑️
+            ðŸ—‘ï¸
           </button>
         </div>
       </div>
@@ -7071,36 +7484,48 @@ function renderProductGroups(groups) {
 }
 
 
-// Render Group Variants List
+// Render Group Variants List - FIXED
 function renderGroupVariants(variants) {
   const container = document.getElementById('variantsListContainer');
   if (!container) return;
-  
+
+  if (!variants || variants.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">ðŸ“¦</div>
+        <h3>No Variants Yet</h3>
+        <p>This group doesn't have any variants</p>
+      </div>
+    `;
+    return;
+  }
+
   let html = '';
   
   variants.forEach(variant => {
     // Parse attributes
     let attributesText = '';
     try {
-      const attrs = typeof variant.attributes === 'string' ? JSON.parse(variant.attributes) : variant.attributes;
+      const attrs = typeof variant.attributes === 'string' 
+        ? JSON.parse(variant.attributes) 
+        : variant.attributes;
       const attrArray = Object.entries(attrs).map(([key, value]) => `${key}: ${value}`);
-      attributesText = attrArray.join(' • ');
+      attributesText = attrArray.join(' â€¢ ');
     } catch (e) {
       attributesText = '';
     }
-    
+
     // Stock status
     const stockClass = variant.stock <= variant.minStock ? 'low' : 'good';
-    const stockIcon = variant.stock <= variant.minStock ? '⚠️' : '✓';
+    const stockIcon = variant.stock <= variant.minStock ? 'âš ï¸' : 'âœ…';
     const stockText = `${stockIcon} ${variant.stock}`;
-    
+
     // Price
-    const priceText = variant.sellingPrice > 0 ? `₹${variant.sellingPrice.toFixed(2)}` : '₹0.00';
-    
+    const priceText = variant.sellingPrice > 0 ? `â‚¹${variant.sellingPrice.toFixed(2)}` : 'â‚¹0.00';
+
     html += `
       <div class="variant-card">
-        <div class="variant-icon">📦</div>
-        
+        <div class="variant-icon">ðŸ“¦</div>
         <div class="variant-info">
           <div class="variant-name">${escapeHtml(variant.variantName)}</div>
           ${attributesText ? `<div class="variant-attributes">${attributesText}</div>` : ''}
@@ -7109,19 +7534,18 @@ function renderGroupVariants(variants) {
             <span class="variant-price">${priceText}</span>
           </div>
         </div>
-        
         <div class="variant-actions">
           <button class="btn-icon-small btn-edit-small" onclick="openEditVariantModal('${variant.variantId}')">
-            ✏️
+            <i class="bi bi-pencil"></i>
           </button>
           <button class="btn-icon-small btn-delete-small" onclick="confirmDeleteVariant('${variant.variantId}', '${escapeHtml(variant.variantName)}')">
-            🗑️
+            <i class="bi bi-trash"></i>
           </button>
         </div>
       </div>
     `;
   });
-  
+
   container.innerHTML = html;
   container.style.display = 'block';
 }
@@ -7172,7 +7596,7 @@ function filterGroupVariants(searchText) {
  */
 
 function openCreateGroupModal() {
-  console.log('📝 Opening Create Group Modal');
+  console.log('ðŸ“ Opening Create Group Modal');
 
   // Remove any existing injected modal to avoid duplicates
   const existing = document.getElementById('createGroupModal');
@@ -7182,7 +7606,7 @@ function openCreateGroupModal() {
     <div id="createGroupModal" class="fullscreen-modal active keep-in-dom-remove"
          style="display:block!important;position:fixed;top:0;left:0;width:100%;height:100vh;background:#fff;z-index:9999999;overflow-y:auto">
       <div class="modal-header-mobile" style="position:sticky;top:0;background:#fff;padding:12px 16px;border-bottom:1px solid #e0e0e0;z-index:100;display:flex;justify-content:space-between;align-items:center">
-        <button class="btn-cancel-modal" onclick="closeCreateGroupModal()" style="background:#dc3545;color:#fff;border:none;padding:8px 12px;border-radius:6px;cursor:pointer">✕ Cancel</button>
+        <button class="btn-cancel-modal" onclick="closeCreateGroupModal()" style="background:#dc3545;color:#fff;border:none;padding:8px 12px;border-radius:6px;cursor:pointer">âœ• Cancel</button>
         <h3 style="margin:0;font-size:18px;font-weight:600">New Item Group</h3>
         <div style="width:80px"></div>
       </div>
@@ -7214,7 +7638,7 @@ function openCreateGroupModal() {
           <div class="section-title" style="font-size:16px;font-weight:600;margin-bottom:8px">Create Attributes</div>
           <div class="section-description" style="font-size:13px;color:#666;margin-bottom:12px">Add attributes like Size, Color, Material</div>
           <div id="attributesContainer"></div>
-          <button type="button" onclick="addAttributeRow()" style="width:100%;padding:12px;background:#007bff;color:#fff;border:none;border-radius:8px;font-weight:600;margin-top:8px">➕ Add Attribute</button>
+          <button type="button" onclick="addAttributeRow()" style="width:100%;padding:12px;background:#007bff;color:#fff;border:none;border-radius:8px;font-weight:600;margin-top:8px">âž• Add Attribute</button>
         </div>
 
         <div class="form-section" style="background:#fff;padding:16px;border-radius:12px;border:2px solid #e3f2fd">
@@ -7228,7 +7652,7 @@ function openCreateGroupModal() {
 
         <div style="position:fixed;bottom:0;left:0;right:0;background:#fff;padding:12px 16px;box-shadow:0 -2px 8px rgba(0,0,0,.1);display:flex;gap:12px;z-index:1000">
           <button type="button" onclick="closeCreateGroupModal()" style="flex:1;padding:12px;background:#6c757d;color:#fff;border:none;border-radius:8px;font-weight:600">Cancel</button>
-          <button type="submit" id="btnSaveGroup" style="flex:2;padding:12px;background:#28a745;color:#fff;border:none;border-radius:8px;font-weight:600">💾 Save & Generate</button>
+          <button type="submit" id="btnSaveGroup" style="flex:2;padding:12px;background:#28a745;color:#fff;border:none;border-radius:8px;font-weight:600">ðŸ’¾ Save & Generate</button>
         </div>
       </form>
     </div>
@@ -7255,7 +7679,7 @@ function openCreateGroupModal() {
     }
   }
 
-  console.log('✅ Create Group Modal injected and opened');
+  console.log('âœ… Create Group Modal injected and opened');
 }
 
 
@@ -7263,59 +7687,105 @@ function openCreateGroupModal() {
 
 
 
-// Close Create Group Modal
+// Close Create Group Modal - FIXED
 function closeCreateGroupModal() {
+  console.log('ðŸ”’ Closing Create Group Modal');
+  
   const modal = document.getElementById('createGroupModal');
   if (modal) {
+    // Remove active class
     modal.classList.remove('active');
+    
+    // Hide with inline styles
+    modal.style.display = 'none';
   }
+  
+  // Restore body scroll
   document.body.style.overflow = '';
+  
+  // Reset form
+  const form = document.getElementById('createGroupForm');
+  if (form) {
+    form.reset();
+  }
+  
+  // Clear attributes container
+  const container = document.getElementById('attributesContainer');
+  if (container) {
+    container.innerHTML = '';
+  }
+  
+  // Reset attribute counter
+  attributeRowCounter = 0;
+  
+  // Reset button
+  const submitBtn = document.getElementById('btnSaveGroup');
+  if (submitBtn) {
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = 'ðŸ’¾ Save & Generate';
+  }
+  
+  console.log('âœ… Modal closed and reset');
 }
 
-// Add Attribute Row
+
+    
+// Add Attribute Row - MOBILE OPTIMIZED
 function addAttributeRow() {
-  attributeRowCounter++;
-  
   const container = document.getElementById('attributesContainer');
-  if (!container) {
-    console.error('❌ Attributes container not found');
-    return;
-  }
+  if (!container) return;
   
-  const rowHtml = `
-    <div class="attribute-row" id="attributeRow${attributeRowCounter}" style="background: white; padding: 16px; border-radius: 8px; margin-bottom: 12px; border: 2px solid #e0e0e0;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-        <span style="font-weight: 600; color: #333;">Attribute ${attributeRowCounter}</span>
-        ${attributeRowCounter > 1 ? `<button type="button" onclick="removeAttributeRow(${attributeRowCounter})" style="background: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 13px;">🗑️ Remove</button>` : ''}
-      </div>
-      
-      <label style="display: block; font-size: 14px; font-weight: 600; color: #333; margin-bottom: 8px;">
-        Attribute Name <span style="color: #dc3545;">*</span>
-      </label>
-      <input 
-        type="text" 
-        class="attr-name" 
-        placeholder="e.g., Size, Color"
-        style="width: 100%; padding: 12px; font-size: 16px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 12px;"
-        oninput="updateVariantPreview()">
-      
-      <label style="display: block; font-size: 14px; font-weight: 600; color: #333; margin-bottom: 8px;">
-        Options <span style="color: #dc3545;">*</span> 
-        <span style="font-weight: normal; font-size: 12px; color: #666;">(comma separated)</span>
-      </label>
-      <input 
-        type="text" 
-        class="attr-options" 
-        placeholder="e.g., Small, Medium, Large"
-        style="width: 100%; padding: 12px; font-size: 16px; border: 1px solid #ddd; border-radius: 8px;"
-        oninput="updateVariantPreview()">
-    </div>
+  const rowId = `attributeRow${Date.now()}`;
+  
+  const row = document.createElement('div');
+  row.className = 'attribute-row';
+  row.id = rowId;
+  row.style.cssText = 'display: flex; gap: 8px; margin-bottom: 12px; align-items: center;';
+  
+  row.innerHTML = `
+    <input 
+      type="text" 
+      class="attr-name" 
+      placeholder="Attribute (e.g., Size)" 
+      style="flex: 1; padding: 12px; font-size: 16px; border: 1px solid #ddd; border-radius: 8px;"
+      autocomplete="off"
+      autocorrect="off"
+      autocapitalize="words"
+      oninput="updateVariantPreview()"
+    >
+    <input 
+      type="text" 
+      class="attr-options" 
+      placeholder="Options (e.g., Small, Large)" 
+      style="flex: 2; padding: 12px; font-size: 16px; border: 1px solid #ddd; border-radius: 8px;"
+      autocomplete="off"
+      autocorrect="off"
+      autocapitalize="words"
+      oninput="updateVariantPreview()"
+    >
+    <button 
+      type="button" 
+      onclick="removeAttributeRow('${rowId}')" 
+      style="padding: 10px 12px; background: #dc3545; color: #fff; border: none; border-radius: 8px; font-size: 18px;"
+      aria-label="Remove attribute"
+    >
+      Ã—
+    </button>
   `;
   
-  container.insertAdjacentHTML('beforeend', rowHtml);
+  container.appendChild(row);
+  
+  // Focus on the attribute name input (mobile-friendly)
+  setTimeout(() => {
+    const nameInput = row.querySelector('.attr-name');
+    if (nameInput) {
+      nameInput.focus();
+    }
+  }, 100);
+  
   updateVariantPreview();
   
-  console.log('✅ Added attribute row', attributeRowCounter);
+  console.log(`âœ… Added attribute row: ${rowId}`);
 }
 
 // Remove Attribute Row
@@ -7342,34 +7812,63 @@ function removeAttributeRow(rowId) {
  * VARIANT GENERATION & PREVIEW
  * ==========================================
  */
-
+// Parse Attributes from Form - MOBILE OPTIMIZED
 function parseAttributesFromForm() {
-  const attributeRows = document.querySelectorAll('.attribute-row');
-  const attributes = {};
+  console.log('ðŸ” Parsing attributes from form...');
   
-  attributeRows.forEach(row => {
-    const nameInput = row.querySelector('.attr-name');
-    const optionsInput = row.querySelector('.attr-options');
+  const attributes = {};
+  const rows = document.querySelectorAll('.attribute-row');
+  
+  console.log(`Found ${rows.length} attribute rows`);
+  
+  rows.forEach((row, index) => {
+    // Try multiple selector strategies for mobile compatibility
+    const nameInput = row.querySelector('.attr-name') || 
+                     row.querySelector('input[placeholder*="Size"]') ||
+                     row.querySelector('input[type="text"]:first-child');
+    
+    const optionsInput = row.querySelector('.attr-options') || 
+                        row.querySelector('input[placeholder*="Small"]') ||
+                        row.querySelector('input[type="text"]:last-child');
     
     if (nameInput && optionsInput) {
-      const name = nameInput.value.trim();
-      const optionsText = optionsInput.value.trim();
+      // Get values with fallback for mobile
+      const attrName = (nameInput.value || '').trim();
+      const optionsText = (optionsInput.value || '').trim();
       
-      if (name && optionsText) {
-        const options = optionsText
-          .split(',')
+      console.log(`Row ${index + 1}:`, {
+        name: attrName,
+        options: optionsText
+      });
+      
+      if (attrName && optionsText) {
+        // Parse options - handle multiple separators
+        const attrOptions = optionsText
+          .split(/[,;|]/) // Split by comma, semicolon, or pipe
           .map(opt => opt.trim())
           .filter(opt => opt.length > 0);
         
-        if (options.length > 0) {
-          attributes[name] = options;
+        if (attrOptions.length > 0) {
+          attributes[attrName] = attrOptions;
+          console.log(`âœ… Added attribute: ${attrName} = [${attrOptions.join(', ')}]`);
+        } else {
+          console.warn(`âš ï¸ No valid options for attribute: ${attrName}`);
         }
+      } else {
+        console.warn(`âš ï¸ Row ${index + 1} - Empty name or options`);
       }
+    } else {
+      console.error(`âŒ Row ${index + 1} - Could not find inputs`);
     }
   });
   
+  console.log('ðŸ“¦ Final parsed attributes:', attributes);
+  console.log('ðŸ“Š Total attributes:', Object.keys(attributes).length);
+  
   return attributes;
 }
+
+
 
 // Generate Variant Combinations
 function generateVariantCombinations(attributes) {
@@ -7420,52 +7919,55 @@ function generateVariantName(groupName, attributes) {
 }
 
 
-// Update variant preview
+// Update Variant Preview (Real-time)
 function updateVariantPreview() {
+  const groupName = document.getElementById('groupName').value.trim() || 'Product';
   const attributes = parseAttributesFromForm();
-  const previewContainer = document.getElementById('variantPreview');
+  const variants = generateVariantCombinations(attributes);
   
-  if (!previewContainer) return;
+  // Update count
+  document.getElementById('variantCount').textContent = variants.length;
   
-  const attributeKeys = Object.keys(attributes);
+  // Update preview list
+  const container = document.getElementById('variantPreviewContainer');
+  if (!container) return;
   
-  if (attributeKeys.length === 0) {
-    previewContainer.innerHTML = '<p style="color: #999;">Add attributes to see variant preview</p>';
+  if (variants.length === 0) {
+    container.innerHTML = `
+      <div class="variant-preview-item">
+        Add attributes to see preview...
+      </div>
+    `;
     return;
   }
   
-  // Calculate total variants (cartesian product)
-  let totalVariants = 1;
-  attributeKeys.forEach(key => {
-    totalVariants *= attributes[key].length;
+  // Show first 10 variants
+  const previewLimit = 10;
+  let html = '';
+  
+  variants.slice(0, previewLimit).forEach(attr => {
+    const variantName = generateVariantName(groupName, attr);
+    html += `
+      <div class="variant-preview-item">
+        <span class="icon">âœ“</span>
+        ${escapeHtml(variantName)}
+      </div>
+    `;
   });
   
-  // Generate preview (show first few)
-  const groupName = document.getElementById('groupName')?.value.trim() || 'Product';
-  const previewList = [];
-  
-  // Show first attribute options as examples
-  if (attributeKeys.length > 0) {
-    const firstAttr = attributeKeys[0];
-    attributes[firstAttr].slice(0, 3).forEach(opt => {
-      previewList.push(`${groupName}-${opt}`);
-    });
+  // Show "and X more" if needed
+  if (variants.length > previewLimit) {
+    html += `
+      <div class="variant-preview-more">
+        ... and ${variants.length - previewLimit} more
+      </div>
+    `;
   }
   
-  previewContainer.innerHTML = `
-    <div style="background: #e3f2fd; padding: 12px; border-radius: 8px;">
-      <div style="font-weight: 600; color: #1976d2; margin-bottom: 8px;">
-        ${totalVariants} Variants Will Be Created
-      </div>
-      ${previewList.map(name => `<div style="padding: 4px 0;">✓ ${name}</div>`).join('')}
-      ${totalVariants > 3 ? `<div style="padding: 4px 0; color: #666;">... and ${totalVariants - 3} more</div>` : ''}
-    </div>
-  `;
+  container.innerHTML = html;
 }
 
 
-
-// Continue in next message...
 
 /**
  * ==========================================
@@ -7473,37 +7975,67 @@ function updateVariantPreview() {
  * ==========================================
  */
 
-// Handle Create Group Form Submission - SEND AS SEPARATE PARAMETERS
+// Handle Create Group Form Submission - MOBILE FIX
 async function handleCreateGroup(event) {
   event.preventDefault();
-  
-  console.log('📝 Creating product group...');
+  console.log('ðŸ“ Creating product group...');
   
   const submitBtn = document.getElementById('btnSaveGroup');
   const originalText = submitBtn.innerHTML;
+  
+  // Prevent double submission
+  if (submitBtn.disabled) {
+    console.log('âš ï¸ Already submitting...');
+    return;
+  }
+  
   submitBtn.disabled = true;
-  submitBtn.innerHTML = '⏳ Creating...';
+  submitBtn.innerHTML = 'â³ Creating...';
   
   try {
+    // Collect form data
     const groupName = document.getElementById('groupName').value.trim();
     const description = document.getElementById('groupDescription').value.trim();
     const manufacturer = document.getElementById('groupManufacturer').value.trim();
     const category = document.getElementById('groupCategory').value;
+    
+    console.log('ðŸ“‹ Form data:', {
+      groupName,
+      description,
+      manufacturer,
+      category
+    });
+    
+    // Parse attributes with detailed logging
     const attributes = parseAttributesFromForm();
     
-    console.log('🔍 COLLECTED DATA:');
-    console.log('  groupName:', groupName);
-    console.log('  attributes:', attributes);
-    
+    // ENHANCED VALIDATION with specific error messages
     if (!groupName) {
-      throw new Error('Group name is required');
+      throw new Error('âŒ Group name is required');
+    }
+    
+    if (groupName.length < 2) {
+      throw new Error('âŒ Group name must be at least 2 characters');
     }
     
     if (Object.keys(attributes).length === 0) {
-      throw new Error('Please add at least one attribute');
+      throw new Error('âŒ Please add at least one attribute with options.\n\nExample:\nAttribute: Size\nOptions: Small, Large');
     }
     
-    // ✅ SEND DATA AS INDIVIDUAL PARAMETERS (not as nested JSON)
+    // Validate each attribute has options
+    for (const [attrName, attrOptions] of Object.entries(attributes)) {
+      if (attrOptions.length === 0) {
+        throw new Error(`âŒ Attribute "${attrName}" has no options.\n\nPlease enter options separated by commas.\n\nExample: Small, Medium, Large`);
+      }
+    }
+    
+    console.log('âœ… Validation passed!');
+    
+    // Calculate expected variant count
+    const variantCount = Object.values(attributes).reduce((total, options) => total * options.length, 1);
+    console.log(`ðŸ“Š Will create ${variantCount} variants`);
+    
+    // Send data as individual parameters (mobile-friendly)
     const postBody = new URLSearchParams({
       action: 'createProductGroup',
       email: userEmail,
@@ -7517,35 +8049,55 @@ async function handleCreateGroup(event) {
       createdBy: userEmail
     });
     
-    console.log('📤 Sending POST body:', postBody.toString());
+    console.log('ðŸ“¤ Sending request...');
     
     const response = await fetch(GOOGLE_SCRIPT_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
       body: postBody
     });
     
-    console.log('📥 Response status:', response.status);
+    console.log('ðŸ“¥ Response status:', response.status);
     
     const result = await response.json();
-    console.log('📥 Response data:', result);
+    console.log('ðŸ“¦ Response data:', result);
     
-    if (result.success) {
-      console.log('✅ Group created:', result);
-      showSuccessMessage(`Created "${groupName}" with ${result.totalVariants || 'multiple'} variants!`);
+    // Check for success
+    if (result.success || result.ok) {
+      console.log('âœ… Group created successfully!');
+      
+      const createdCount = result.totalVariants || variantCount;
+      
+      // Show success message
+      showSuccessToast(`âœ… Created "${groupName}" with ${createdCount} variants!`);
+      
+      // Close modal
       closeCreateGroupModal();
-      setTimeout(() => loadProductGroups(), 500);
+      
+      // Reload groups list
+      setTimeout(() => {
+        loadProductGroups();
+      }, 500);
+      
     } else {
-      throw new Error(result.error || 'Failed to create group');
+      throw new Error(result.error || result.message || 'Failed to create product group');
     }
     
   } catch (error) {
-    console.error('❌ Error creating group:', error);
-    alert('Error: ' + error.message);
+    console.error('âŒ Error creating product group:', error);
+    
+    // Show user-friendly error
+    alert(`Error: ${error.message}`);
+    
+    // Re-enable button
     submitBtn.disabled = false;
     submitBtn.innerHTML = originalText;
   }
 }
+
+
 
 
 /**
@@ -7554,9 +8106,9 @@ async function handleCreateGroup(event) {
  * ==========================================
  */
 
-// Open Edit Variant Modal
+// Open Edit Variant Modal - AGGRESSIVE FORCE SHOW VERSION
 function openEditVariantModal(variantId) {
-  console.log('✏️ Opening edit modal for variant:', variantId);
+  console.log('ðŸ” Opening edit modal for variant:', variantId);
   
   // Find variant in cache
   const variant = cachedGroupVariants.find(v => v.variantId === variantId);
@@ -7565,60 +8117,209 @@ function openEditVariantModal(variantId) {
     alert('Variant not found');
     return;
   }
+
+  // Use the existing Bootstrap product modal
+  const modal = document.getElementById('productModal');
   
-  // Populate form
-  document.getElementById('editVariantId').value = variant.variantId;
-  document.getElementById('editVariantGroupId').value = variant.groupId;
-  document.getElementById('editVariantName').value = variant.variantName;
-  document.getElementById('editVariantCostPrice').value = variant.costPrice || 0;
-  document.getElementById('editVariantSellingPrice').value = variant.sellingPrice || 0;
-  document.getElementById('editVariantStock').value = variant.stock || 0;
-  document.getElementById('editVariantMinStock').value = variant.minStock || 0;
-  document.getElementById('editVariantUnitType').value = variant.unitType || 'Piece';
+  if (!modal) {
+    console.error('âŒ productModal not found in DOM!');
+    alert('Error: Edit modal not found. Please refresh the page.');
+    return;
+  }
+
+  // Set modal title
+  const modalTitle = document.getElementById('productModalLabel');
+  if (modalTitle) {
+    modalTitle.textContent = 'Edit Variant';
+  }
+
+  // âœ… SAFE FIELD POPULATION
+  const setFieldValue = (id, value) => {
+    const field = document.getElementById(id);
+    if (field) {
+      field.value = value;
+      return true;
+    } else {
+      console.warn(`âš ï¸ Field not found: ${id}`);
+      return false;
+    }
+  };
+
+  // Populate form fields
+  setFieldValue('productId', variant.variantId);
+  setFieldValue('productName', variant.variantName);
+  setFieldValue('brand', variant.manufacturer || variant.brand || '');
+  setFieldValue('size', extractAttributeValue(variant.attributes, 'Size') || '');
+  setFieldValue('category', variant.category || 'Tiles');
+  setFieldValue('unitType', variant.unitType || 'Piece');
+  setFieldValue('piecesPerBox', 0);
+  setFieldValue('sftPerBox', 0);
+  setFieldValue('price', variant.sellingPrice || 0);
+  setFieldValue('stock', variant.stock || 0);
+  setFieldValue('minStock', variant.minStock || 0);
+
+  // Store that this is a variant edit
+  const form = document.getElementById('productForm');
+  if (form) {
+    form.dataset.isVariant = 'true';
+    form.dataset.groupId = variant.groupId;
+  }
+
+  // Make fields readonly
+  const makeReadonly = (id) => {
+    const field = document.getElementById(id);
+    if (field) {
+      field.readOnly = true;
+      field.style.background = '#f8f9fa';
+      field.style.color = '#6c757d';
+    }
+  };
+
+  makeReadonly('productName');
+  makeReadonly('brand');
+  makeReadonly('size');
+
+  // âœ… FORCE SHOW MODAL - Multiple methods
+  console.log('Attempting to show modal...');
   
-  // Display attributes (read-only)
-  const attributesContainer = document.getElementById('editVariantAttributes');
-  if (attributesContainer) {
-    try {
-      const attrs = typeof variant.attributes === 'string' ? JSON.parse(variant.attributes) : variant.attributes;
-      const attrHtml = Object.entries(attrs)
-        .map(([key, value]) => `<strong>${key}:</strong> ${value}`)
-        .join(' • ');
-      attributesContainer.innerHTML = attrHtml || 'No attributes';
-    } catch (e) {
-      attributesContainer.innerHTML = 'No attributes';
+  // Method 1: Try Bootstrap 5 Modal API
+  try {
+    let bootstrapModal = bootstrap.Modal.getInstance(modal);
+    if (!bootstrapModal) {
+      bootstrapModal = new bootstrap.Modal(modal);
+    }
+    bootstrapModal.show();
+    console.log('âœ… Bootstrap modal.show() called');
+  } catch (e) {
+    console.error('âŒ Bootstrap Modal failed:', e);
+    
+    // Method 2: Manual show with jQuery (fallback)
+    if (typeof $ !== 'undefined' && $.fn.modal) {
+      $(modal).modal('show');
+      console.log('âœ… jQuery modal.show() called');
+    } else {
+      // Method 3: Direct CSS manipulation (last resort)
+      modal.classList.add('show');
+      modal.style.display = 'block';
+      modal.setAttribute('aria-modal', 'true');
+      modal.removeAttribute('aria-hidden');
+      document.body.classList.add('modal-open');
+      
+      // Add backdrop manually
+      const backdrop = document.createElement('div');
+      backdrop.className = 'modal-backdrop fade show';
+      backdrop.id = 'variantModalBackdrop';
+      document.body.appendChild(backdrop);
+      
+      console.log('âœ… Manual modal display applied');
     }
   }
-  
-  // Show modal
-  const modal = document.getElementById('editVariantModal');
-  if (modal) {
-    modal.classList.add('active');
-    document.body.style.overflow = 'hidden';
+
+  // âœ… AGGRESSIVE FORCE TO FOREGROUND (Works regardless of Bootstrap method)
+  setTimeout(() => {
+    // Force modal container
+    modal.style.cssText = `
+      display: block !important;
+      z-index: 999999 !important;
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      overflow-y: auto !important;
+      background: rgba(0, 0, 0, 0.5) !important;
+    `;
+    
+    // Force modal dialog
+    const modalDialog = modal.querySelector('.modal-dialog');
+    if (modalDialog) {
+      modalDialog.style.cssText = `
+        z-index: 1000000 !important;
+        position: relative !important;
+        margin: 1.75rem auto !important;
+        max-width: 500px !important;
+        pointer-events: auto !important;
+      `;
+    }
+    
+    // Force modal content
+    const modalContent = modal.querySelector('.modal-content');
+    if (modalContent) {
+      modalContent.style.cssText = `
+        background: white !important;
+        border-radius: 8px !important;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
+        position: relative !important;
+        display: flex !important;
+        flex-direction: column !important;
+      `;
+    }
+    
+    // Force backdrop if exists
+    const backdrop = document.querySelector('.modal-backdrop');
+    if (backdrop) {
+      backdrop.style.cssText = `
+        z-index: 999998 !important;
+        opacity: 0.5 !important;
+      `;
+    }
+    
+    // Lower z-index of page views
+    const pageViews = document.querySelectorAll('.page-view');
+    pageViews.forEach(view => {
+      view.style.zIndex = '1';
+    });
+    
+    console.log('âœ… Modal FORCED to foreground with inline styles');
+  }, 100);
+
+  console.log('âœ… Edit variant modal opened for:', variant.variantName);
+}
+
+// Helper function to extract attribute value from JSON
+function extractAttributeValue(attributes, key) {
+  try {
+    const attrs = typeof attributes === 'string' 
+      ? JSON.parse(attributes) 
+      : attributes;
+    return attrs[key] || '';
+  } catch (e) {
+    return '';
   }
 }
 
-
-// Close Edit Variant Modal
+// Close Edit Variant Modal - COMPLETE FIX
 function closeEditVariantModal() {
+  console.log('Closing edit variant modal');
+  
   const modal = document.getElementById('editVariantModal');
   if (modal) {
     modal.classList.remove('active');
+    modal.style.display = 'none'; // Hide it
+    
+    // Restore body scroll
+    document.body.style.overflow = '';
   }
-  document.body.style.overflow = '';
-}
 
+  // Reset form
+  const form = document.getElementById('editVariantForm');
+  if (form) {
+    form.reset();
+  }
+  
+  console.log('Modal closed');
+}
 
 // Handle Update Variant Form Submission
 async function handleUpdateVariant(event) {
   event.preventDefault();
   
-  console.log('💾 Updating variant...');
+  console.log('ðŸ’¾ Updating variant...');
   
   const submitBtn = event.target.querySelector('button[type="submit"]');
   const originalText = submitBtn.innerHTML;
   submitBtn.disabled = true;
-  submitBtn.innerHTML = '⏳ Saving...';
+  submitBtn.innerHTML = 'â³ Saving...';
   
   try {
     // Collect form data
@@ -7644,7 +8345,7 @@ async function handleUpdateVariant(event) {
       unitType: unitType
     };
     
-    console.log('📤 Sending update:', updateData);
+    console.log('ðŸ“¤ Sending update:', updateData);
     
     // Send to backend
     const response = await fetch(GOOGLE_SCRIPT_URL, {
@@ -7663,7 +8364,7 @@ async function handleUpdateVariant(event) {
     const result = await response.json();
     
     if (result.success) {
-      console.log('✅ Variant updated');
+      console.log('âœ… Variant updated');
       
       // Show success message
       showSuccessMessage('Variant updated successfully!');
@@ -7681,7 +8382,7 @@ async function handleUpdateVariant(event) {
     }
     
   } catch (error) {
-    console.error('❌ Error updating variant:', error);
+    console.error('âŒ Error updating variant:', error);
     alert('Error: ' + error.message);
     
     // Re-enable button
@@ -7700,7 +8401,7 @@ async function handleUpdateVariant(event) {
 // Confirm Delete Group
 function confirmDeleteGroup(groupId, groupName) {
   const confirmed = confirm(
-    `⚠️ Delete "${groupName}"?\n\n` +
+    `âš ï¸ Delete "${groupName}"?\n\n` +
     `This will also delete ALL VARIANTS in this group.\n\n` +
     `This action cannot be undone!`
   );
@@ -7713,7 +8414,7 @@ function confirmDeleteGroup(groupId, groupName) {
 
 // Delete Product Group
 async function deleteProductGroup(groupId, groupName) {
-  console.log('🗑️ Deleting group:', groupId);
+  console.log('ðŸ—‘ï¸ Deleting group:', groupId);
   
   try {
     // Show loading overlay
@@ -7738,7 +8439,7 @@ async function deleteProductGroup(groupId, groupName) {
     hideLoadingOverlay();
     
     if (result.success) {
-      console.log('✅ Group deleted');
+      console.log('âœ… Group deleted');
       
       // Show success message
       showSuccessMessage(`Deleted "${groupName}" and all its variants`);
@@ -7754,7 +8455,7 @@ async function deleteProductGroup(groupId, groupName) {
     
   } catch (error) {
     hideLoadingOverlay();
-    console.error('❌ Error deleting group:', error);
+    console.error('âŒ Error deleting group:', error);
     alert('Error: ' + error.message);
   }
 }
@@ -7763,7 +8464,7 @@ async function deleteProductGroup(groupId, groupName) {
 // Confirm Delete Variant
 function confirmDeleteVariant(variantId, variantName) {
   const confirmed = confirm(
-    `⚠️ Delete "${variantName}"?\n\n` +
+    `âš ï¸ Delete "${variantName}"?\n\n` +
     `This action cannot be undone!`
   );
   
@@ -7775,7 +8476,7 @@ function confirmDeleteVariant(variantId, variantName) {
 
 // Delete Variant
 async function deleteVariant(variantId, variantName) {
-  console.log('🗑️ Deleting variant:', variantId);
+  console.log('ðŸ—‘ï¸ Deleting variant:', variantId);
   
   try {
     // Show loading overlay
@@ -7800,7 +8501,7 @@ async function deleteVariant(variantId, variantName) {
     hideLoadingOverlay();
     
     if (result.success) {
-      console.log('✅ Variant deleted');
+      console.log('âœ… Variant deleted');
       
       // Show success message
       showSuccessMessage(`Deleted "${variantName}"`);
@@ -7816,7 +8517,7 @@ async function deleteVariant(variantId, variantName) {
     
   } catch (error) {
     hideLoadingOverlay();
-    console.error('❌ Error deleting variant:', error);
+    console.error('âŒ Error deleting variant:', error);
     alert('Error: ' + error.message);
   }
 }
@@ -7912,7 +8613,7 @@ function escapeHtml(text) {
 
 // Add event listeners when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('🎨 Product Groups UI initialized');
+  console.log('ðŸŽ¨ Product Groups UI initialized');
   
   // Add event listener for group name input (real-time preview)
   const groupNameInput = document.getElementById('groupName');
@@ -7946,7 +8647,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Update navigateToHome to handle product groups page
 function navigateToHome() {
-  console.log('🏠 Navigating to Home');
+  console.log('ðŸ  Navigating to Home');
   
   // Remove product groups pages if they exist
   const groupsPage = document.getElementById('productGroupsPageContainer');
@@ -7973,12 +8674,12 @@ function navigateToHome() {
 }
 
 
-console.log('✅ Product Groups module loaded successfully');
+console.log('âœ… Product Groups module loaded successfully');
 
 async function createProductGroup(groupData) {
   try {                                                                          // [attached_file:29]
     const btn = document.getElementById('btnSaveGroup');                         // [attached_file:29]
-    if (btn) { btn.disabled = true; btn.innerHTML = '⏳ Creating...'; }          // [attached_file:29]
+    if (btn) { btn.disabled = true; btn.innerHTML = 'â³ Creating...'; }          // [attached_file:29]
 
     const body = new URLSearchParams({                                           // [attached_file:29]
       action: 'createProductGroup',                                              // [attached_file:29]
@@ -7998,11 +8699,11 @@ async function createProductGroup(groupData) {
       throw new Error(result.error || 'Failed to create product group');         // [attached_file:29]
     }
   } catch (error) {
-    console.error('❌ Error creating product group:', error);                    // [attached_file:29]
+    console.error('âŒ Error creating product group:', error);                    // [attached_file:29]
     alert('Error: ' + error.message);                                            // [attached_file:29]
   } finally {
     const btn = document.getElementById('btnSaveGroup');                         // [attached_file:29]
-    if (btn) { btn.disabled = false; btn.innerHTML = '💾 Save & Generate'; }     // [attached_file:29]
+    if (btn) { btn.disabled = false; btn.innerHTML = 'ðŸ’¾ Save & Generate'; }     // [attached_file:29]
   }
 }
 
@@ -8022,7 +8723,7 @@ async function createProductGroup(groupData) {
 
 // Navigate back to Home - FIXED
 function navigateToHome() {
-  console.log('🏠 Navigating to Home');
+  console.log('ðŸ  Navigating to Home');
   
   currentPage = 'home';
   
@@ -8035,7 +8736,7 @@ function navigateToHome() {
     mainApp.style.display = 'block';
   }
   
-  // ✅ SHOW THE BLUE NAVBAR AGAIN
+  // âœ… SHOW THE BLUE NAVBAR AGAIN
   const navbar = document.querySelector('.navbar');
   if (navbar) {
     navbar.style.display = 'block';
@@ -8058,7 +8759,7 @@ function navigateToHome() {
 
 // Navigate to Group Detail - FIXED
 function navigateToGroupDetail(groupId, groupName) {
-  console.log('📦 Navigating to Group Detail:', groupName);
+  console.log('ðŸ“¦ Navigating to Group Detail:', groupName);
   
   currentPage = 'groupDetail';
   currentGroupId = groupId;
@@ -8073,7 +8774,7 @@ function navigateToGroupDetail(groupId, groupName) {
     mainApp.style.display = 'none';
   }
   
-  // ✅ HIDE THE BLUE NAVBAR
+  // âœ… HIDE THE BLUE NAVBAR
   const navbar = document.querySelector('.navbar');
   if (navbar) {
     navbar.style.display = 'none';
@@ -8107,7 +8808,6 @@ function navigateToGroupDetail(groupId, groupName) {
 
 
 
-
     
 
     
@@ -8121,7 +8821,7 @@ function navigateToGroupDetail(groupId, groupName) {
     
     </script>
 
-  <!-- Ã¢Å“â€¦ NEW: Change Password Modal -->
+  <!-- ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ NEW: Change Password Modal -->
   <div id="changePasswordModal" class="modal fade" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
@@ -8188,7 +8888,7 @@ function navigateToGroupDetail(groupId, groupName) {
     </div>
   </div>
 
-<!-- âœ… NEW: WhatsApp Number Input Modal -->
+<!-- Ã¢Å“â€¦ NEW: WhatsApp Number Input Modal -->
 <div class="modal fade" id="whatsappNumberModal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -8262,6 +8962,18 @@ function navigateToGroupDetail(groupId, groupName) {
 
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
