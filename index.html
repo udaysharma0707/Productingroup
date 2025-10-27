@@ -1838,6 +1838,10 @@ body.modal-open {
 
     
   </style>
+
+ <script src="customers.js"></script>
+  
+  
 </head>
 <body>
 
@@ -1895,11 +1899,12 @@ body.modal-open {
   <!-- SALES Section -->
   <div class="sidebar-section-title">SALES</div>
   
-  <div class="sidebar-item disabled" onclick="sidebarAction('customer')">
-    <i class="bi bi-person"></i>
-    <span>Customer</span>
-  </div>
-  
+<!-- Customer -->
+<div class="sidebar-item" onclick="navigateToCustomers()">
+  <i class="bi bi-people"></i>
+  <span>Customer</span>
+</div>
+
   <div class="sidebar-item disabled" onclick="sidebarAction('invoices')">
     <i class="bi bi-receipt"></i>
     <span>Invoices</span>
@@ -2321,6 +2326,46 @@ body.modal-open {
   </div>
 </div>
 
+<!-- ✅✅✅ CUSTOMERS PAGE ✅✅✅ -->
+<div class="page-view" id="customersPage">
+  <!-- Header -->
+  <div class="page-header">
+    <button class="back-btn" onclick="navigateToHome()">
+      <i class="bi bi-arrow-left"></i> Back
+    </button>
+    <h3>Customers</h3>
+    <button class="btn btn-success" onclick="openAddCustomerModal()">
+      <i class="bi bi-plus-lg"></i> Add
+    </button>
+  </div>
+  
+  <!-- Search Box -->
+  <div class="container-fluid" style="padding: 20px;">
+    <input 
+      type="text" 
+      class="form-control mb-3" 
+      id="searchCustomersInput" 
+      placeholder="🔍 Search customers..." 
+      onkeyup="filterCustomers(this.value)"
+      style="max-width: 600px; margin: 0 auto;"
+    >
+    
+    <!-- Customers List Container -->
+    <div id="customersListContainer">
+      <!-- Customer cards will be rendered here by JavaScript -->
+    </div>
+    
+    <!-- Empty State -->
+    <div id="customersEmptyState" style="display:none; text-align:center; padding:60px 20px;">
+      <i class="bi bi-people" style="font-size:64px; color:#ccc;"></i>
+      <h4 style="margin-top:20px;">No Customers Yet</h4>
+      <p>Add your first customer to get started</p>
+      <button class="btn btn-primary mt-3" onclick="openAddCustomerModal()">
+        <i class="bi bi-plus-lg"></i> Add First Customer
+      </button>
+    </div>
+  </div>
+</div>
 
 
 
@@ -3256,8 +3301,8 @@ body.modal-open {
   /***********************
    * CONFIG
    ***********************/
-  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyP-xPP4wme1MQwChtCu86tPpR2EWpwz8jLxsYDJQOAo4sHmt6B2oOvXj83B_Jpqsw/exec'; // <-- replace with your deployed URL
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyP-xPP4wme1MQwChtCu86tPpR2EWpwz8jLxsYDJQOAo4sHmt6B2oOvXj83B_Jpqsw/exec'
+  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxW9Pp61t0fHjikXKupiyXZD3GWX7iL0Cz7cuzKKx81GRJdDuCL9KrXN4GpC81wyRza/exec'; // <-- replace with your deployed URL
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxW9Pp61t0fHjikXKupiyXZD3GWX7iL0Cz7cuzKKx81GRJdDuCL9KrXN4GpC81wyRza/exec'
   let cachedProducts = [];
   let cachedSales = [];
 
@@ -9336,6 +9381,160 @@ function getProductIcon(category) {
   </div>
 </div>
 
+<!-- ✅✅✅ CUSTOMER MODAL (Add/Edit) ✅✅✅ -->
+<div class="modal fade" id="customerModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="customerFormTitle">Add Customer</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="customerForm">
+          <input type="hidden" id="customerId">
+          
+          <!-- Customer Type -->
+          <div class="mb-3">
+            <label class="form-label">Customer Type *</label>
+            <div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="customerType" id="typeBusiness" value="Business" checked>
+                <label class="form-check-label" for="typeBusiness">
+                  🏢 Business
+                </label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="customerType" id="typeIndividual" value="Individual">
+                <label class="form-check-label" for="typeIndividual">
+                  👤 Individual
+                </label>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Customer Name -->
+          <div class="mb-3">
+            <label for="customerName" class="form-label">Customer Name *</label>
+            <input type="text" class="form-control" id="customerName" required>
+          </div>
+          
+          <!-- Advanced Options Toggle -->
+          <div class="mb-3">
+            <a href="javascript:void(0)" onclick="toggleAdvancedOptions()" class="text-primary">
+              <i class="bi bi-chevron-down"></i> Advanced Options
+            </a>
+          </div>
+          
+          <!-- Advanced Options Container (Hidden by default) -->
+          <div id="advancedOptionsContainer" style="display:none;">
+            <!-- Phone Number -->
+            <div class="mb-3">
+              <label for="customerPhone" class="form-label">Phone Number</label>
+              <input type="tel" class="form-control" id="customerPhone" placeholder="+91-9876543210">
+            </div>
+            
+            <!-- Email -->
+            <div class="mb-3">
+              <label for="customerEmail" class="form-label">Email Address</label>
+              <input type="email" class="form-control" id="customerEmail" placeholder="customer@example.com">
+            </div>
+            
+            <!-- Address -->
+            <div class="mb-3">
+              <label for="customerAddress" class="form-label">Billing/Shipping Address</label>
+              <textarea class="form-control" id="customerAddress" rows="3" placeholder="Enter complete address"></textarea>
+            </div>
+            
+            <!-- Other Info -->
+            <div class="mb-3">
+              <label for="customerOtherInfo" class="form-label">Any Other Information</label>
+              <textarea class="form-control" id="customerOtherInfo" rows="2" placeholder="Additional notes, preferences, etc."></textarea>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="saveCustomer()">Save Customer</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ✅✅✅ CUSTOMER DETAIL MODAL ✅✅✅ -->
+<div class="modal fade" id="customerDetailModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="detailCustomerName">Customer Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Tab Navigation -->
+        <ul class="nav nav-tabs mb-3">
+          <li class="nav-item">
+            <a class="nav-link active customer-tab-btn" href="javascript:void(0)" onclick="showCustomerTab('info')">
+              <i class="bi bi-info-circle"></i> Info
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link customer-tab-btn" href="javascript:void(0)" onclick="showCustomerTab('transactions')">
+              <i class="bi bi-receipt"></i> Transactions
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link customer-tab-btn" href="javascript:void(0)" onclick="showCustomerTab('invoices')">
+              <i class="bi bi-file-text"></i> Invoices
+            </a>
+          </li>
+        </ul>
+        
+        <!-- Tab Content -->
+        <div id="customerInfoTab">
+          <table class="table">
+            <tr>
+              <th width="30%">Type:</th>
+              <td id="detailCustomerType">-</td>
+            </tr>
+            <tr>
+              <th>Phone:</th>
+              <td id="detailCustomerPhone">-</td>
+            </tr>
+            <tr>
+              <th>Email:</th>
+              <td id="detailCustomerEmail">-</td>
+            </tr>
+            <tr>
+              <th>Address:</th>
+              <td id="detailCustomerAddress">-</td>
+            </tr>
+          </table>
+        </div>
+        
+        <div id="customerTransactionsTab" style="display:none;">
+          <div id="customerTransactionsList">
+            <p class="text-center text-muted">Loading transactions...</p>
+          </div>
+        </div>
+        
+        <div id="customerInvoicesTab" style="display:none;">
+          <div id="customerInvoicesList">
+            <p class="text-center text-muted">No invoices yet</p>
+          </div>
+          <button class="btn btn-success mt-3" onclick="createInvoiceForCustomer()">
+            <i class="bi bi-plus-lg"></i> Create New Invoice
+          </button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="openEditCustomerModal(currentCustomerId)">
+          <i class="bi bi-pencil"></i> Edit
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 
     
@@ -9344,6 +9543,7 @@ function getProductIcon(category) {
 
 </body>
 </html>
+
 
 
 
