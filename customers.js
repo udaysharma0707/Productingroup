@@ -355,12 +355,6 @@ function toggleAdvancedOptions() {
   }
 }
 
-/**
- * ==========================================
- * SECTION 5: SAVE & DELETE FUNCTIONS
- * ==========================================
- */
-
 // Save Customer (Add or Update)
 async function saveCustomer() {
   console.log('💾 Saving customer...');
@@ -378,16 +372,16 @@ async function saveCustomer() {
   // Get customer type (which radio button is checked)
   const customerType = document.getElementById('typeBusiness').checked ? 'Business' : 'Individual';
   
-  // Build customer data object
+  // ✅ FIX: Rename customer email field to avoid conflict
   const customerData = {
     action: currentCustomerId ? 'updateCustomer' : 'addCustomer',
-    email: userEmail,
-    hash: userHash,
+    email: userEmail,                    // User email for authentication
+    hash: userHash,                      // User hash for authentication
     customerId: currentCustomerId || '',
     customerType: customerType,
     customerName: customerName,
     phoneNumber: document.getElementById('customerPhone').value.trim(),
-    email: document.getElementById('customerEmail').value.trim(),
+    customerEmail: document.getElementById('customerEmail').value.trim(),  // ✅ Changed to customerEmail
     address: document.getElementById('customerAddress').value.trim(),
     otherInfo: document.getElementById('customerOtherInfo').value.trim()
   };
@@ -401,12 +395,16 @@ async function saveCustomer() {
     
     // Send to backend
     console.log('Sending customer data to server...');
+    console.log('Data being sent:', Object.fromEntries(formData));
+    
     const response = await fetch(GOOGLE_SCRIPT_URL, {
       method: 'POST',
       body: formData
     });
     
     const result = await response.json();
+    
+    console.log('Server response:', result);
     
     // Check result
     if (result.success) {
@@ -433,6 +431,7 @@ async function saveCustomer() {
     alert('Error saving customer: ' + error.message);
   }
 }
+
 
 // Confirm Delete Customer
 function confirmDeleteCustomer(customerId, customerName) {
@@ -732,3 +731,4 @@ function escapeHtml(text) {
  */
 
 console.log('✅ Customer Management Module Loaded');
+
