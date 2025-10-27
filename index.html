@@ -9174,7 +9174,17 @@ function navigateToGroupDetail(groupId, groupName) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-
+// Get product icon based on category
+function getProductIcon(category) {
+  const icons = {
+    'Tiles': '🔲',
+    'Sanitaryware': '🚿',
+    'Accessories': '🔧',
+    'Custom': '📦',
+    'Photo Products': '📸'
+  };
+  return icons[category] || '📦';
+}
 
 
 
@@ -9334,6 +9344,7 @@ function navigateToGroupDetail(groupId, groupName) {
 
 </body>
 </html>
+
 
 
 
