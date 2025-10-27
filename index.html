@@ -5330,92 +5330,6 @@ function showSuccessToast(message) {
     displayProducts(filteredProducts);
 }
 
-   // Filter All Products by Category - FIXED
-function filterByCategory(category) {
-  console.log('Filtering by category:', category);
-  
-  const searchInput = document.getElementById('allProductsSearch');
-  
-  if (category === 'all') {
-    // Show all products
-    if (searchInput) searchInput.value = '';
-    displayAllProducts();  // ✅ CORRECT FUNCTION
-    
-    // Update button states
-    document.querySelectorAll('[onclick*="filterByCategory"]').forEach(btn => {
-      btn.classList.remove('active');
-    });
-    if (event && event.target) event.target.classList.add('active');
-    return;
-  }
-  
-  // Filter products by category
-  const filtered = cachedProducts.filter(p => p.category === category);
-  
-  console.log(`Found ${filtered.length} products in category: ${category}`);
-  
-  // Render filtered products
-  displayProducts(filtered);  // ✅ CORRECT FUNCTION
-  
-  // Update button states
-  document.querySelectorAll('[onclick*="filterByCategory"]').forEach(btn => {
-    btn.classList.remove('active');
-  });
-  if (event && event.target) {
-    event.target.classList.add('active');
-  }
-}
-
-// Render custom product list (filtered)
-function renderAllProductsListCustom(products) {
-  const container = document.getElementById('allProductsList');
-  if (!container) return;
-  
-  if (products.length === 0) {
-    container.innerHTML = `
-      <div class="empty-state">
-        <div class="empty-state-icon">📦</div>
-        <h3>No Products Found</h3>
-        <p>No products in this category</p>
-      </div>
-    `;
-    return;
-  }
-  
-  let html = '';
-  products.forEach(product => {
-    const stockClass = product.stock >= product.minStock ? 'good' : 'low';
-    const stockIcon = product.stock >= product.minStock ? '✅' : '⚠️';
-    const priceText = product.price > 0 ? `₹${product.price.toFixed(2)}/${product.unitType}` : 'N/A';
-    
-    html += `
-      <div class="product-item-compact">
-        <div class="product-icon">📦</div>
-        <div class="product-info">
-          <div class="product-name">${escapeHtml(product.name)}</div>
-          <div class="product-meta">
-            ${escapeHtml(product.category)} • ${escapeHtml(product.brand || 'N/A')} • ${escapeHtml(product.size || 'N/A')}
-          </div>
-          <div class="product-meta">
-            <span class="stock-${stockClass}">${stockIcon} ${product.stock} ${product.unitType}</span> • ${priceText}
-          </div>
-        </div>
-        <div class="product-actions">
-          <button class="btn-icon-small" onclick="editProduct('${product.id}')">
-            <i class="bi bi-pencil"></i>
-          </button>
-          <button class="btn-icon-small" onclick="deleteProduct('${product.id}')">
-            <i class="bi bi-trash"></i>
-          </button>
-        </div>
-      </div>
-    `;
-  });
-  
-  container.innerHTML = html;
-}
-
-
 function displayProducts(products) {
     const tbody = document.getElementById('productsTableBody');
     
@@ -7251,8 +7165,9 @@ function navigateToAllProducts() {
   if (productGroupsPage) productGroupsPage.classList.remove('active');
   if (groupDetailPage) groupDetailPage.classList.remove('active');
   
-  // ✅ CALL THE CORRECT FUNCTION
-  displayAllProducts();
+  if (typeof renderAllProductsList === 'function') {
+    renderAllProductsList();
+  }
   
   closeSidebar();
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -7285,44 +7200,70 @@ let attributeRowCounter = 0;
  * ==========================================
  */
 
-// Navigate to Product Groups page - FIXED
+// Navigate to Product Groups List Page
 function navigateToProductGroups() {
   console.log('📁 Navigating to Product Groups');
   
-  currentPage = 'productGroups';
-  
-  const mainApp = document.getElementById('mainApp');
-  const allProductsPage = document.getElementById('allProductsPage');
-  const productGroupsPage = document.getElementById('productGroupsPage');
-  const groupDetailPage = document.getElementById('groupDetailPage');
-  
-  // HIDE the main dashboard
-  if (mainApp) {
-    mainApp.style.display = 'none';
-  }
-  
-  // ✅ HIDE THE BLUE NAVBAR
+  // Hide navbar
   const navbar = document.querySelector('.navbar');
-  if (navbar) {
-    navbar.style.display = 'none';
-  }
+  if (navbar) navbar.style.display = 'none';
   
-  // SHOW Product Groups page
-  if (productGroupsPage) {
-    productGroupsPage.classList.add('active');
-  }
+  // Hide main app
+  const mainApp = document.getElementById('mainApp');
+  if (mainApp) mainApp.style.display = 'none';
   
-  if (allProductsPage) allProductsPage.classList.remove('active');
-  if (groupDetailPage) groupDetailPage.classList.remove('active');
+  // Build full-screen page
+  document.body.innerHTML += `
+    <div id="productGroupsPageContainer" style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #f8f9fa; z-index: 99999; overflow-y: auto;">
+      
+      <!-- Header -->
+      <div class="modal-header-mobile">
+        <button class="btn-cancel-modal" onclick="navigateToHome()">
+          ← Back
+        </button>
+        <h3>Products in Group</h3>
+        <button class="btn-primary-bottom" onclick="openCreateGroupModal()" style="padding: 8px 16px; min-height: auto; flex: none; font-size: 14px;">
+          + Create
+        </button>
+      </div>
+      
+      <!-- Search -->
+      <div style="padding: 16px;">
+        <input 
+          type="text" 
+          id="searchGroupsInput" 
+          placeholder="🔍 Search groups..."
+          style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px;"
+          onkeyup="filterProductGroups(this.value)">
+      </div>
+      
+      <!-- Loading State -->
+      <div id="groupsLoadingState" class="loading-spinner">
+        <div class="spinner"></div>
+        <p>Loading product groups...</p>
+      </div>
+      
+      <!-- Groups List -->
+      <div id="groupsListContainer" style="display: none;">
+        <!-- Groups will be rendered here -->
+      </div>
+      
+      <!-- Empty State -->
+      <div id="groupsEmptyState" class="empty-state" style="display: none;">
+        <div class="empty-state-icon">📁</div>
+        <h3>No Product Groups Yet</h3>
+        <p>Create your first product group to manage variants</p>
+        <button class="btn-primary-bottom" onclick="openCreateGroupModal()" style="max-width: 200px; margin: 0 auto;">
+          + Create First Group
+        </button>
+      </div>
+      
+    </div>
+  `;
   
-  if (typeof syncProductGroups === 'function') {
-    syncProductGroups();
-  }
-  
-  closeSidebar();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  // Load data
+  loadProductGroups();
 }
-
 
 
 // Navigate to Group Variants (Detail Page)
@@ -8704,40 +8645,36 @@ document.addEventListener('DOMContentLoaded', function() {
  * ==========================================
  */
 
+// Update navigateToHome to handle product groups page
 function navigateToHome() {
   console.log('🏠 Navigating to Home');
   
-  currentPage = 'home';
+  // Remove product groups pages if they exist
+  const groupsPage = document.getElementById('productGroupsPageContainer');
+  const variantsPage = document.getElementById('groupVariantsPageContainer');
   
-  const mainApp = document.getElementById('mainApp');
-  const allProductsPage = document.getElementById('allProductsPage');
-  const productGroupsPage = document.getElementById('productGroupsPage');
-  const groupDetailPage = document.getElementById('groupDetailPage');
+  if (groupsPage) groupsPage.remove();
+  if (variantsPage) variantsPage.remove();
   
-  if (mainApp) {
-    mainApp.style.display = 'block';
-  }
-  
-  // ✅ SHOW THE BLUE NAVBAR AGAIN
+  // Show navbar
   const navbar = document.querySelector('.navbar');
-  if (navbar) {
-    navbar.style.display = 'block';
+  if (navbar) navbar.style.display = 'block';
+  
+  // Show main app
+  const mainApp = document.getElementById('mainApp');
+  if (mainApp) mainApp.style.display = 'block';
+  
+  // Close sidebar
+  if (typeof closeSidebar === 'function') {
+    closeSidebar();
   }
   
-  if (allProductsPage) allProductsPage.classList.remove('active');
-  if (productGroupsPage) productGroupsPage.classList.remove('active');
-  if (groupDetailPage) groupDetailPage.classList.remove('active');
-  
-  closeSidebar();
+  // Scroll to top
   window.scrollTo({ top: 0, behavior: 'smooth' });
-  
-  const btnPhotoView = document.getElementById('btnPhotoView');
-  if (btnPhotoView && btnPhotoView.classList.contains('active')) {
-    if (typeof showAllProducts === 'function') {
-      showAllProducts();
-    }
-  }
 }
+
+
+console.log('✅ Product Groups module loaded successfully');
 
 async function createProductGroup(groupData) {
   try {                                                                          // [attached_file:29]
@@ -9025,8 +8962,6 @@ function navigateToGroupDetail(groupId, groupName) {
 
 </body>
 </html>
-
-
 
 
 
