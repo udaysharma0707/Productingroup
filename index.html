@@ -7455,76 +7455,41 @@ async function loadProductGroups() {
     }
   }
 }
-
-    // Render Product Groups in UI - COMPLETE VERSION
+// Render Product Groups - SIMPLE WORKING VERSION
 function renderProductGroups() {
-  console.log('🎨 Rendering product groups - START');
-  console.log('cachedProductGroups:', cachedProductGroups);
+  console.log('🎨 Rendering groups...');
   
-  const listContainer = document.getElementById('productGroupsList');
-  console.log('listContainer found:', !!listContainer);
+  const container = document.getElementById('productGroupsList');
   
-  if (!listContainer) {
-    console.error('❌ productGroupsList container NOT FOUND!');
+  if (!container) {
+    console.error('Container not found!');
     return;
   }
   
   if (!cachedProductGroups || cachedProductGroups.length === 0) {
-    console.log('No groups to display');
-    listContainer.innerHTML = '<div style="padding:40px; text-align:center; color:#999;">No groups yet</div>';
+    container.innerHTML = '<p style="padding:40px; text-align:center; color:#999;">No groups</p>';
+    console.log('No groups to show');
     return;
   }
   
-  console.log(`Rendering ${cachedProductGroups.length} groups...`);
+  console.log('Rendering', cachedProductGroups.length, 'groups');
   
-  let html = '<div style="padding: 20px; max-width: 1200px; margin: 0 auto;">';
+  let html = '';
   
-  cachedProductGroups.forEach((group, index) => {
-    console.log(`Group ${index}:`, group);
-    
-    const groupId = group.groupId || '';
-    const groupName = group.groupName || 'Unnamed Group';
-    const description = group.description || '';
-    const category = group.category || '';
-    const manufacturer = group.manufacturer || '';
-    const variantCount = group.totalVariants || 0;
-    
+  cachedProductGroups.forEach(group => {
     html += `
-      <div class="card mb-3 shadow-sm" style="cursor:pointer; transition: transform 0.2s;" 
-           onmouseover="this.style.transform='scale(1.02)'" 
-           onmouseout="this.style.transform='scale(1)'"
-           onclick="navigateToGroupDetail('${groupId}', '${groupName.replace(/'/g, "\\'")}')">
+      <div class="card mb-3" onclick="navigateToGroupDetail('${group.groupId}', '${group.groupName}')">
         <div class="card-body">
-          <div style="display: flex; justify-content: space-between; align-items: start;">
-            <div style="flex: 1;">
-              <h5 class="mb-2">
-                <i class="bi bi-collection" style="color: #0d6efd; margin-right: 8px;"></i>
-                ${groupName}
-              </h5>
-              ${description ? `<p class="text-muted small mb-2">${description}</p>` : ''}
-              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                <span class="badge bg-primary">
-                  <i class="bi bi-box"></i> ${variantCount} variant${variantCount !== 1 ? 's' : ''}
-                </span>
-                ${category ? `<span class="badge bg-info">${category}</span>` : ''}
-                ${manufacturer ? `<span class="badge bg-secondary">${manufacturer}</span>` : ''}
-              </div>
-            </div>
-            <button class="btn btn-sm btn-danger" 
-                    onclick="event.stopPropagation(); if(confirm('Delete ${groupName.replace(/'/g, "\\'")}?')) deleteProductGroup('${groupId}')">
-              <i class="bi bi-trash"></i>
-            </button>
-          </div>
+          <h5>${group.groupName}</h5>
+          <p class="text-muted">${group.description || 'No description'}</p>
+          <span class="badge bg-primary">${group.totalVariants || 0} variants</span>
         </div>
       </div>
     `;
   });
   
-  html += '</div>';
-  
-  listContainer.innerHTML = html;
-  console.log('✅ Rendered HTML to container');
-  console.log('Container innerHTML length:', listContainer.innerHTML.length);
+  container.innerHTML = html;
+  console.log('✅ Rendered!');
 }
 
 
@@ -9104,6 +9069,7 @@ function navigateToGroupDetail(groupId, groupName) {
 
 </body>
 </html>
+
 
 
 
