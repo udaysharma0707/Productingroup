@@ -7443,50 +7443,61 @@ function closeGroupVariantsPage() {
  * ==========================================
  */
 
-// Load Product Groups from Backend
 async function loadProductGroups() {
   try {
     console.log('📡 Fetching product groups...');
     
-    const url = `${GOOGLE_SCRIPT_URL}?action=getProductGroups&email=${encodeURIComponent(userEmail)}&hash=${encodeURIComponent(userHash)}&t=${Date.now()}`;
+    const loadingState = document.getElementById('groupsLoadingState');
+    const listContainer = document.getElementById('groupsListContainer');
+    const emptyState = document.getElementById('groupsEmptyState');
     
+    // Show loading, hide others
+    if (loadingState) {
+      loadingState.style.display = 'block';
+      loadingState.style.position = 'relative'; // Don't let it overlay
+    }
+    if (listContainer) listContainer.style.display = 'none';
+    if (emptyState) emptyState.style.display = 'none';
+    
+    const url = `${GOOGLE_SCRIPT_URL}?action=getProductGroups&t=${Date.now()}`;
     const response = await fetch(url);
     const data = await response.json();
     
-    if (data.success && data.groups) {
+    console.log('Response:', data);
+    
+    // ✅ IMPORTANT: Hide loading BEFORE showing content
+    if (loadingState) loadingState.style.display = 'none';
+    
+    if (data.ok && data.groups) {
       cachedProductGroups = data.groups;
       console.log('✅ Loaded', data.groups.length, 'groups');
       
-      // Hide loading
-      const loadingState = document.getElementById('groupsLoadingState');
-      if (loadingState) loadingState.style.display = 'none';
-      
-      // Show appropriate view
       if (data.groups.length === 0) {
-        const emptyState = document.getElementById('groupsEmptyState');
-        if (emptyState) emptyState.style.display = 'flex';
+        if (emptyState) emptyState.style.display = 'block';
       } else {
-        renderProductGroups(data.groups);
+        renderProductGroups();
+        if (listContainer) {
+          listContainer.style.display = 'block';
+          listContainer.style.position = 'relative';
+          listContainer.style.zIndex = '100000';
+        }
       }
     } else {
-      throw new Error(data.error || 'Failed to load groups');
+      throw new Error(data.error || 'Failed to load');
     }
     
   } catch (error) {
-    console.error('❌ Error loading groups:', error);
-    
+    console.error('❌ Error:', error);
     const loadingState = document.getElementById('groupsLoadingState');
     if (loadingState) {
       loadingState.innerHTML = `
-        <div class="empty-state">
-          <div class="empty-state-icon">⚠️</div>
-          <h3>Error Loading Groups</h3>
+        <div style="text-align:center; padding:40px; color:#dc3545;">
+          <h4>Error Loading Groups</h4>
           <p>${error.message}</p>
-          <button class="btn-primary-bottom" onclick="loadProductGroups()" style="max-width: 200px; margin: 16px auto 0;">
-            🔄 Retry
-          </button>
+          <button class="btn btn-primary" onclick="loadProductGroups()">Retry</button>
         </div>
       `;
+      loadingState.style.display = 'block';
     }
   }
 }
@@ -9521,6 +9532,7 @@ function getProductIcon(category) {
 
 </body>
 </html>
+
 
 
 
