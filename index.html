@@ -8039,41 +8039,6 @@ function updateVariantPreview() {
 }
 
     
-// Navigate back to Home - FIXED
-function navigateToHome() {
-  console.log('🏠 Navigating to Home');
-  
-  currentPage = 'home';
-  
-  const mainApp = document.getElementById('mainApp');
-  const allProductsPage = document.getElementById('allProductsPage');
-  const productGroupsPage = document.getElementById('productGroupsPage');
-  const groupDetailPage = document.getElementById('groupDetailPage');
-  
-  if (mainApp) {
-    mainApp.style.display = 'block';
-  }
-  
-  // ✅ SHOW THE BLUE NAVBAR AGAIN
-  const navbar = document.querySelector('.navbar');
-  if (navbar) {
-    navbar.style.display = 'block';
-  }
-  
-  if (allProductsPage) allProductsPage.classList.remove('active');
-  if (productGroupsPage) productGroupsPage.classList.remove('active');
-  if (groupDetailPage) groupDetailPage.classList.remove('active');
-  
-  closeSidebar();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-  
-  const btnPhotoView = document.getElementById('btnPhotoView');
-  if (btnPhotoView && btnPhotoView.classList.contains('active')) {
-    if (typeof showAllProducts === 'function') {
-      showAllProducts();
-    }
-  }
-}
 
 // Navigate to Group Detail - FIXED
 function navigateToGroupDetail(groupId, groupName) {
@@ -9062,36 +9027,7 @@ document.addEventListener('DOMContentLoaded', function() {
  * ==========================================
  */
 
-// Update navigateToHome to handle product groups page
-function navigateToHome() {
-  console.log('🏠 Navigating to Home');
-  
-  // Remove product groups pages if they exist
-  const groupsPage = document.getElementById('productGroupsPageContainer');
-  const variantsPage = document.getElementById('groupVariantsPageContainer');
-  
-  if (groupsPage) groupsPage.remove();
-  if (variantsPage) variantsPage.remove();
-  
-  // Show navbar
-  const navbar = document.querySelector('.navbar');
-  if (navbar) navbar.style.display = 'block';
-  
-  // Show main app
-  const mainApp = document.getElementById('mainApp');
-  if (mainApp) mainApp.style.display = 'block';
-  
-  // Close sidebar
-  if (typeof closeSidebar === 'function') {
-    closeSidebar();
-  }
-  
-  // Scroll to top
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
 
-
-console.log('✅ Product Groups module loaded successfully');
 
 async function createProductGroup(groupData) {
   try {                                                                          // [attached_file:29]
@@ -9543,6 +9479,7 @@ function getProductIcon(category) {
 
 </body>
 </html>
+
 
 
 
