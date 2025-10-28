@@ -127,14 +127,27 @@ function hideAllPages() {
  * @param {string} page - Page identifier
  */
 function showPage(page) {
-  console.log(`👁️ Showing page: ${page}`);
+  console.log(`👁️ Attempting to show page: ${page}`);
   
-  // Try new page structure first: page-{pageName}
-  let pageElement = document.getElementById(`page-${page}`);
+  let pageElement = null;
   
-  // Fallback to old ID structure for backward compatibility
+  // Strategy 1: Try new format page-{pageName}
+  pageElement = document.getElementById(`page-${page}`);
+  if (pageElement) {
+    console.log(`✅ Found using new format: page-${page}`);
+  }
+  
+  // Strategy 2: Try exact page name
   if (!pageElement) {
-    const oldIdMap = {
+    pageElement = document.getElementById(page);
+    if (pageElement) {
+      console.log(`✅ Found using exact ID: ${page}`);
+    }
+  }
+  
+  // Strategy 3: Try known mappings
+  if (!pageElement) {
+    const idMappings = {
       'dashboard': 'mainApp',
       'allProducts': 'allProductsPage',
       'productGroups': 'productGroupsPage',
@@ -142,9 +155,12 @@ function showPage(page) {
       'groupDetail': 'groupDetailPage'
     };
     
-    const oldId = oldIdMap[page];
-    if (oldId) {
-      pageElement = document.getElementById(oldId);
+    const mappedId = idMappings[page];
+    if (mappedId) {
+      pageElement = document.getElementById(mappedId);
+      if (pageElement) {
+        console.log(`✅ Found using mapping: ${mappedId}`);
+      }
     }
   }
   
@@ -152,11 +168,17 @@ function showPage(page) {
   if (pageElement) {
     pageElement.classList.add('active');
     pageElement.style.display = 'block';
-    console.log(`✅ Page displayed: ${page}`);
+    console.log(`✅ Successfully displayed page: ${page}`);
   } else {
-    console.error(`❌ Page element not found: ${page}`);
+    console.error(`❌ Could not find page element for: ${page}`);
+    console.error('Available page elements:', 
+      Array.from(document.querySelectorAll('[id*="Page"], [id*="page"], [id="mainApp"]'))
+        .map(el => el.id)
+    );
   }
 }
+
+
 
 /**
  * Removes any dynamically created page containers
@@ -460,3 +482,4 @@ function closeGroupVariantsPage() {
 // ==========================================
 
 console.log('📦 navigation.js loaded successfully');
+
