@@ -30,13 +30,23 @@ function navigateToCustomers() {
   
   // Hide all other pages
   if (mainApp) mainApp.style.display = 'none';
-  if (allProductsPage) allProductsPage.classList.remove('active');
-  if (productGroupsPage) productGroupsPage.classList.remove('active');
-  if (groupDetailPage) groupDetailPage.classList.remove('active');
+  if (allProductsPage) {
+    allProductsPage.classList.remove('active');
+    allProductsPage.style.display = 'none';
+  }
+  if (productGroupsPage) {
+    productGroupsPage.classList.remove('active');
+    productGroupsPage.style.display = 'none';
+  }
+  if (groupDetailPage) {
+    groupDetailPage.classList.remove('active');
+    groupDetailPage.style.display = 'none';
+  }
   
   // Show customers page
   if (customersPage) {
     customersPage.classList.add('active');
+    customersPage.style.display = 'block';
   } else {
     console.error('customersPage not found!');
     return;
@@ -731,4 +741,5 @@ function escapeHtml(text) {
  */
 
 console.log('✅ Customer Management Module Loaded');
+
 
