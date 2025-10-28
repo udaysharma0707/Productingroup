@@ -7259,7 +7259,13 @@ let attributeRowCounter = 0;
  * ==========================================
  */
 
-// Navigate to Product Groups List Page - FIXED
+/**
+ * ==========================================
+ * NAVIGATION - PRODUCT GROUPS
+ * ==========================================
+ */
+
+// Navigate to Product Groups List Page
 function navigateToProductGroups() {
   console.log('📁 Navigating to Product Groups');
   
@@ -7272,45 +7278,96 @@ function navigateToProductGroups() {
   const groupDetailPage = document.getElementById('groupDetailPage');
   
   // HIDE the main dashboard
-  if (mainApp) {
-    mainApp.style.display = 'none';
-  }
-  
-  // ✅ HIDE THE BLUE NAVBAR
-  const navbar = document.querySelector('.navbar');
-  if (navbar) {
-    navbar.style.display = 'none';
-  }
-  
-  // SHOW Product Groups page
-  if (productGroupsPage) {
-    productGroupsPage.classList.add('active');
-    productGroupsPage.style.display = 'block';
-  }
+  if (mainApp) mainApp.style.display = 'none';
   
   // HIDE other pages
   if (allProductsPage) {
     allProductsPage.classList.remove('active');
     allProductsPage.style.display = 'none';
   }
-  
+  if (productGroupsPage) {
+    productGroupsPage.classList.remove('active');
+    productGroupsPage.style.display = 'none';
+  }
   if (customersPage) {
     customersPage.classList.remove('active');
     customersPage.style.display = 'none';
   }
-  
   if (groupDetailPage) {
     groupDetailPage.classList.remove('active');
     groupDetailPage.style.display = 'none';
   }
   
-  // Load product groups data
+  // ✅ HIDE THE BLUE NAVBAR
+  const navbar = document.querySelector('.navbar');
+  if (navbar) navbar.style.display = 'none';
+  
+  // Remove old container if exists
+  const oldContainer = document.getElementById('productGroupsPageContainer');
+  if (oldContainer) {
+    oldContainer.remove();
+  }
+  
+  // Build full-screen page dynamically
+  document.body.insertAdjacentHTML('beforeend', `
+    <div id="productGroupsPageContainer" style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #f8f9fa; z-index: 99999; overflow-y: auto;">
+      
+      <!-- Header -->
+      <div class="page-header">
+        <button class="back-btn" onclick="navigateToHome()">
+          <i class="bi bi-arrow-left"></i> Back
+        </button>
+        <h3>Product Groups</h3>
+        <button class="btn-primary-bottom" onclick="openCreateGroupModal()" style="padding: 8px 16px; min-height: auto; flex: none; font-size: 14px;">
+          + Create
+        </button>
+      </div>
+      
+      <!-- Search -->
+      <div style="padding: 16px;">
+        <input 
+          type="text" 
+          id="searchGroupsInput" 
+          placeholder="🔍 Search groups..."
+          style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px;"
+          onkeyup="filterProductGroups(this.value)">
+      </div>
+      
+      <!-- Loading State -->
+      <div id="groupsLoadingState" class="loading-spinner">
+        <div class="spinner"></div>
+        <p>Loading product groups...</p>
+      </div>
+      
+      <!-- Groups List -->
+      <div id="groupsListContainer" style="display: none;">
+        <!-- Groups will be rendered here -->
+      </div>
+      
+      <!-- Empty State -->
+      <div id="groupsEmptyState" class="empty-state" style="display: none;">
+        <div class="empty-state-icon">📁</div>
+        <h3>No Product Groups Yet</h3>
+        <p>Create your first product group to manage variants</p>
+        <button class="btn-primary-bottom" onclick="openCreateGroupModal()" style="max-width: 200px; margin: 0 auto;">
+          + Create First Group
+        </button>
+      </div>
+      
+    </div>
+  `);
+  
+  // Load data
   loadProductGroups();
   
-  closeSidebar();
+  // Close sidebar
+  if (typeof closeSidebar === 'function') {
+    closeSidebar();
+  }
+  
+  // Scroll to top
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
-
 
 // Navigate to Group Variants (Detail Page)
 function navigateToGroupVariants(groupId, groupName) {
@@ -9466,6 +9523,7 @@ function getProductIcon(category) {
 
 </body>
 </html>
+
 
 
 
