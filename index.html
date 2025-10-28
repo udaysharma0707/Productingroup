@@ -9083,32 +9083,44 @@ function navigateToHome() {
   const mainApp = document.getElementById('mainApp');
   const allProductsPage = document.getElementById('allProductsPage');
   const productGroupsPage = document.getElementById('productGroupsPage');
+  const customersPage = document.getElementById('customersPage');  // ✅ ADD THIS
   const groupDetailPage = document.getElementById('groupDetailPage');
   
-  if (mainApp) {
-    mainApp.style.display = 'block';
+  // Show main app
+  if (mainApp) mainApp.style.display = 'block';
+  
+  // Hide all other pages
+  if (allProductsPage) {
+    allProductsPage.classList.remove('active');
+    allProductsPage.style.display = 'none';
   }
   
-  // ✅ SHOW THE BLUE NAVBAR AGAIN
+  if (productGroupsPage) {
+    productGroupsPage.classList.remove('active');
+    productGroupsPage.style.display = 'none';
+  }
+  
+  // ✅✅✅ ADD THIS BLOCK FOR CUSTOMERS PAGE ✅✅✅
+  if (customersPage) {
+    customersPage.classList.remove('active');
+    customersPage.style.display = 'none';
+  }
+  
+  if (groupDetailPage) {
+    groupDetailPage.classList.remove('active');
+    groupDetailPage.style.display = 'none';
+  }
+  
+  // Show navbar
   const navbar = document.querySelector('.navbar');
-  if (navbar) {
-    navbar.style.display = 'block';
-  }
+  if (navbar) navbar.style.display = 'flex';
   
-  if (allProductsPage) allProductsPage.classList.remove('active');
-  if (productGroupsPage) productGroupsPage.classList.remove('active');
-  if (groupDetailPage) groupDetailPage.classList.remove('active');
-  
-  closeSidebar();
+  // Scroll to top
   window.scrollTo({ top: 0, behavior: 'smooth' });
   
-  const btnPhotoView = document.getElementById('btnPhotoView');
-  if (btnPhotoView && btnPhotoView.classList.contains('active')) {
-    if (typeof showAllProducts === 'function') {
-      showAllProducts();
-    }
-  }
+  console.log('✅ Home displayed');
 }
+
 
 // Navigate to Group Detail - FIXED
 function navigateToGroupDetail(groupId, groupName) {
@@ -9479,6 +9491,7 @@ function getProductIcon(category) {
 
 </body>
 </html>
+
 
 
 
