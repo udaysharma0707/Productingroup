@@ -2302,27 +2302,51 @@ body.modal-open {
   </div>
 </div>
 
-<!-- ✅ NEW: Group Detail Page (Variants List) -->
-<div class="page-view" id="groupDetailPage">
+<!-- ✅✅✅ PRODUCT GROUPS PAGE ✅✅✅ -->
+<div class="page-view" id="productGroupsPage">
+  <!-- Header -->
   <div class="page-header">
-    <button class="back-btn" onclick="navigateToProductGroups()">
+    <button class="back-btn" onclick="navigateToHome()">
       <i class="bi bi-arrow-left"></i> Back
     </button>
-    <h3 id="groupDetailTitle">Group Name</h3>
+    <h3>Product Groups</h3>
+    <button class="btn btn-success" onclick="openCreateGroupModal()">
+      <i class="bi bi-plus-lg"></i> Create
+    </button>
   </div>
   
-  <!-- Search Bar -->
-  <div class="mb-3">
-    <input type="text" 
-           class="form-control" 
-           id="groupVariantsSearch" 
-           placeholder="🔍 Search variants..." 
-           onkeyup="filterGroupVariants()">
+  <!-- Search -->
+  <div style="padding: 16px;">
+    <input 
+      type="text" 
+      id="searchGroupsInput" 
+      placeholder="🔍 Search groups..."
+      class="form-control"
+      style="max-width: 600px; margin: 0 auto;"
+      onkeyup="filterProductGroups(this.value)">
   </div>
   
-  <!-- Variants List -->
-  <div class="product-list-compact" id="groupVariantsList">
-    <!-- Variants will be rendered here -->
+  <!-- Loading State -->
+  <div id="groupsLoadingState" style="text-align:center; padding:40px;">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p style="margin-top:20px;">Loading product groups...</p>
+  </div>
+  
+  <!-- Groups List -->
+  <div id="groupsListContainer" style="display:none; padding:20px;">
+    <!-- Groups will be rendered here by JavaScript -->
+  </div>
+  
+  <!-- Empty State -->
+  <div id="groupsEmptyState" style="display:none; text-align:center; padding:60px 20px;">
+    <i class="bi bi-folder2" style="font-size:64px; color:#ccc;"></i>
+    <h4 style="margin-top:20px;">No Product Groups Yet</h4>
+    <p>Create your first product group to manage variants</p>
+    <button class="btn btn-primary mt-3" onclick="openCreateGroupModal()">
+      <i class="bi bi-plus-lg"></i> Create First Group
+    </button>
   </div>
 </div>
 
@@ -9442,6 +9466,7 @@ function getProductIcon(category) {
 
 </body>
 </html>
+
 
 
 
