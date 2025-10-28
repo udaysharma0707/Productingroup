@@ -7443,64 +7443,55 @@ function closeGroupVariantsPage() {
  * ==========================================
  */
 
+// Load Product Groups from Backend
 async function loadProductGroups() {
   try {
     console.log('📡 Fetching product groups...');
     
-    const loadingState = document.getElementById('groupsLoadingState');
-    const listContainer = document.getElementById('groupsListContainer');
-    const emptyState = document.getElementById('groupsEmptyState');
+    const url = `${GOOGLE_SCRIPT_URL}?action=getProductGroups&email=${encodeURIComponent(userEmail)}&hash=${encodeURIComponent(userHash)}&t=${Date.now()}`;
     
-    // Show loading, hide others
-    if (loadingState) {
-      loadingState.style.display = 'block';
-      loadingState.style.position = 'relative'; // Don't let it overlay
-    }
-    if (listContainer) listContainer.style.display = 'none';
-    if (emptyState) emptyState.style.display = 'none';
-    
-    const url = `${GOOGLE_SCRIPT_URL}?action=getProductGroups&t=${Date.now()}`;
     const response = await fetch(url);
     const data = await response.json();
     
-    console.log('Response:', data);
-    
-    // ✅ IMPORTANT: Hide loading BEFORE showing content
-    if (loadingState) loadingState.style.display = 'none';
-    
-    if (data.ok && data.groups) {
+    if (data.success && data.groups) {
       cachedProductGroups = data.groups;
       console.log('✅ Loaded', data.groups.length, 'groups');
       
+      // Hide loading
+      const loadingState = document.getElementById('groupsLoadingState');
+      if (loadingState) loadingState.style.display = 'none';
+      
+      // Show appropriate view
       if (data.groups.length === 0) {
-        if (emptyState) emptyState.style.display = 'block';
+        const emptyState = document.getElementById('groupsEmptyState');
+        if (emptyState) emptyState.style.display = 'flex';
       } else {
-        renderProductGroups();
-        if (listContainer) {
-          listContainer.style.display = 'block';
-          listContainer.style.position = 'relative';
-          listContainer.style.zIndex = '100000';
-        }
+        renderProductGroups(data.groups);
       }
     } else {
-      throw new Error(data.error || 'Failed to load');
+      throw new Error(data.error || 'Failed to load groups');
     }
     
   } catch (error) {
-    console.error('❌ Error:', error);
+    console.error('❌ Error loading groups:', error);
+    
     const loadingState = document.getElementById('groupsLoadingState');
     if (loadingState) {
       loadingState.innerHTML = `
-        <div style="text-align:center; padding:40px; color:#dc3545;">
-          <h4>Error Loading Groups</h4>
+        <div class="empty-state">
+          <div class="empty-state-icon">⚠️</div>
+          <h3>Error Loading Groups</h3>
           <p>${error.message}</p>
-          <button class="btn btn-primary" onclick="loadProductGroups()">Retry</button>
+          <button class="btn-primary-bottom" onclick="loadProductGroups()" style="max-width: 200px; margin: 16px auto 0;">
+            🔄 Retry
+          </button>
         </div>
       `;
-      loadingState.style.display = 'block';
     }
   }
 }
+
+
 
 
 // Load Group Variants from Backend
@@ -9115,7 +9106,6 @@ async function createProductGroup(groupData) {
 
     
 
-// Navigate back to Home - FIXED
 function navigateToHome() {
   console.log('🏠 Navigating to Home');
   
@@ -9124,8 +9114,14 @@ function navigateToHome() {
   const mainApp = document.getElementById('mainApp');
   const allProductsPage = document.getElementById('allProductsPage');
   const productGroupsPage = document.getElementById('productGroupsPage');
-  const customersPage = document.getElementById('customersPage');  // ✅ ADD THIS
+  const customersPage = document.getElementById('customersPage');
   const groupDetailPage = document.getElementById('groupDetailPage');
+  
+  // ✅ Remove dynamic Product Groups container
+  const dynamicContainer = document.getElementById('productGroupsPageContainer');
+  if (dynamicContainer) {
+    dynamicContainer.remove();
+  }
   
   // Show main app
   if (mainApp) mainApp.style.display = 'block';
@@ -9141,7 +9137,6 @@ function navigateToHome() {
     productGroupsPage.style.display = 'none';
   }
   
-  // ✅✅✅ ADD THIS BLOCK FOR CUSTOMERS PAGE ✅✅✅
   if (customersPage) {
     customersPage.classList.remove('active');
     customersPage.style.display = 'none';
@@ -9161,6 +9156,7 @@ function navigateToHome() {
   
   console.log('✅ Home displayed');
 }
+
 
 
 // Navigate to Group Detail - FIXED
@@ -9532,6 +9528,7 @@ function getProductIcon(category) {
 
 </body>
 </html>
+
 
 
 
