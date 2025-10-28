@@ -9,64 +9,7 @@
 let cachedCustomers = [];
 let currentCustomerId = null;
 
-/**
- * ==========================================
- * SECTION 1: NAVIGATION FUNCTIONS
- * ==========================================
- */
 
-// Navigate to Customers Page
-function navigateToCustomers() {
-  console.log('📇 Navigating to Customers');
-  
-  currentPage = 'customers';
-  
-  // Get page elements
-  const mainApp = document.getElementById('mainApp');
-  const allProductsPage = document.getElementById('allProductsPage');
-  const productGroupsPage = document.getElementById('productGroupsPage');
-  const customersPage = document.getElementById('customersPage');
-  const groupDetailPage = document.getElementById('groupDetailPage');
-  
-  // Hide all other pages
-  if (mainApp) mainApp.style.display = 'none';
-  if (allProductsPage) {
-    allProductsPage.classList.remove('active');
-    allProductsPage.style.display = 'none';
-  }
-  if (productGroupsPage) {
-    productGroupsPage.classList.remove('active');
-    productGroupsPage.style.display = 'none';
-  }
-  if (groupDetailPage) {
-    groupDetailPage.classList.remove('active');
-    groupDetailPage.style.display = 'none';
-  }
-  
-  // Show customers page
-  if (customersPage) {
-    customersPage.classList.add('active');
-    customersPage.style.display = 'block';
-  } else {
-    console.error('customersPage not found!');
-    return;
-  }
-  
-  // Hide navbar
-  const navbar = document.querySelector('.navbar');
-  if (navbar) navbar.style.display = 'none';
-  
-  // Load customers from backend
-  loadCustomers();
-  
-  // Close sidebar and scroll to top
-  if (typeof closeSidebar === 'function') {
-    closeSidebar();
-  }
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-  
-  console.log('✅ Customers page shown');
-}
 
 /**
  * ==========================================
@@ -741,5 +684,6 @@ function escapeHtml(text) {
  */
 
 console.log('✅ Customer Management Module Loaded');
+
 
 
