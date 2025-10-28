@@ -7256,11 +7256,24 @@ let attributeRowCounter = 0;
  * ==========================================
  */
 
+/**
+ * ==========================================
+ * NAVIGATION - PRODUCT GROUPS
+ * ==========================================
+ */
+
 // Navigate to Product Groups List Page
 function navigateToProductGroups() {
   console.log('📁 Navigating to Product Groups');
   
-currentPage = 'productGroups';
+  currentPage = 'productGroups';
+  
+  const mainApp = document.getElementById('mainApp');
+  const allProductsPage = document.getElementById('allProductsPage');
+  const productGroupsPage = document.getElementById('productGroupsPage');
+  const customersPage = document.getElementById('customersPage');
+  const groupDetailPage = document.getElementById('groupDetailPage');
+  
   // HIDE the main dashboard
   if (mainApp) mainApp.style.display = 'none';
   
@@ -7352,6 +7365,7 @@ currentPage = 'productGroups';
   // Scroll to top
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+
 
 // Navigate to Group Variants (Detail Page)
 function navigateToGroupVariants(groupId, groupName) {
@@ -9507,6 +9521,7 @@ function getProductIcon(category) {
 
 </body>
 </html>
+
 
 
 
