@@ -454,35 +454,35 @@
     /* ================================================
        INVOICES PAGE - JAVASCRIPT
        ================================================ */
+   
+ // ========================================
+    // CONFIGURATION - GOOGLE SHEETS API
+    // Check both localStorage and sessionStorage
     // ========================================
-// CONFIGURATION - GOOGLE SHEETS API
-// Check both localStorage and sessionStorage
-// ========================================
-
-const SCRIPT_URL = localStorage.getItem('scriptURL') || 
-                   sessionStorage.getItem('scriptURL') || '';
-const USER_EMAIL = localStorage.getItem('userEmail') || 
-                   sessionStorage.getItem('userEmail') || '';
-const USER_HASH = localStorage.getItem('hash') || 
-                  sessionStorage.getItem('hash') || '';
-
-console.log('📊 Google Sheets Config:', {
-  scriptURL: SCRIPT_URL ? 'Set ✓' : 'Missing ❌',
-  userEmail: USER_EMAIL ? 'Set ✓' : 'Missing ❌',
-  userHash: USER_HASH ? 'Set ✓' : 'Missing ❌'
-});
-
-// Debug: Show what we found
-if (!SCRIPT_URL || !USER_EMAIL || !USER_HASH) {
-  console.error('❌ Missing credentials!');
-  console.log('localStorage.scriptURL:', localStorage.getItem('scriptURL'));
-  console.log('localStorage.userEmail:', localStorage.getItem('userEmail'));
-  console.log('localStorage.hash:', localStorage.getItem('hash'));
-  console.log('sessionStorage.scriptURL:', sessionStorage.getItem('scriptURL'));
-  console.log('sessionStorage.userEmail:', sessionStorage.getItem('userEmail'));
-  console.log('sessionStorage.hash:', sessionStorage.getItem('hash'));
-}
-
+    
+    const SCRIPT_URL = localStorage.getItem('scriptURL') || 
+                       sessionStorage.getItem('scriptURL') || '';
+    const USER_EMAIL = localStorage.getItem('userEmail') || 
+                       sessionStorage.getItem('userEmail') || '';
+    const USER_HASH = localStorage.getItem('hash') || 
+                      sessionStorage.getItem('hash') || '';
+    
+    console.log('📊 Google Sheets Config:', {
+      scriptURL: SCRIPT_URL ? 'Set ✓' : 'Missing ❌',
+      userEmail: USER_EMAIL ? 'Set ✓' : 'Missing ❌',
+      userHash: USER_HASH ? 'Set ✓' : 'Missing ❌'
+    });
+    
+    // If credentials are missing, redirect to login immediately
+    if (!SCRIPT_URL || !USER_EMAIL || !USER_HASH) {
+      console.error('❌ Missing credentials - redirecting to login');
+      alert('⚠️ Session expired. Please log in again.');
+      window.location.href = 'index.html';
+      throw new Error('Credentials missing');
+    }
+    
+    console.log('✅ Credentials loaded - ready to use invoices');
+    
     // Global variables
     let currentEditingIndex = null;
     let currentViewingIndex = null;
@@ -1375,6 +1375,7 @@ async function shareInvoice(invoiceId) {
 
 </body>
 </html>
+
 
 
 
