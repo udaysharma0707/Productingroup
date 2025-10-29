@@ -9126,30 +9126,82 @@ function navigateToHome() {
  * All pages now use this system!
  * @param {string} page - Page name ('dashboard', 'allProducts', 'customers', 'productGroups')
  */
+/**
+ * Centralized navigation function - COMPLETE with page hiding
+ * Ensures all pages are properly hidden before showing target page
+ * @param {string} page - Page name ('dashboard', 'allProducts', 'customers', 'productGroups')
+ */
 function navigateTo(page) {
   console.log('🔷 navigateTo called with:', page);
   
-  // Phase 1: Dashboard
+  // STEP 1: Hide ALL pages first (this fixes the issue!)
+  hideAllPages();
+  
+  // STEP 2: Show the target page
   if (page === 'dashboard') {
     navigateToHome();
-  } 
-  // Phase 2: All Products
-  else if (page === 'allProducts') {
+  } else if (page === 'allProducts') {
     navigateToAllProducts();
-  } 
-  // Phase 3: Customers
-  else if (page === 'customers') {
+  } else if (page === 'customers') {
     navigateToCustomers();
-  } 
-  // Phase 4: Product Groups - FINAL!
-  else if (page === 'productGroups') {
+  } else if (page === 'productGroups') {
     navigateToProductGroups();
-  } 
-  // Unknown page
-  else {
+  } else {
     console.error('❌ Unknown page:', page);
   }
 }
+
+/**
+ * Helper function: Hide all pages
+ * Called before showing any page to ensure clean transitions
+ */
+function hideAllPages() {
+  console.log('🙈 Hiding all pages...');
+  
+  // Get all page elements
+  const mainApp = document.getElementById('mainApp');
+  const allProductsPage = document.getElementById('allProductsPage');
+  const productGroupsPage = document.getElementById('productGroupsPage');
+  const customersPage = document.getElementById('customersPage');
+  
+  // Hide each page
+  if (mainApp) {
+    mainApp.style.display = 'none';
+    mainApp.classList.remove('active');
+  }
+  
+  if (allProductsPage) {
+    allProductsPage.style.display = 'none';
+    allProductsPage.classList.remove('active');
+  }
+  
+  if (productGroupsPage) {
+    productGroupsPage.style.display = 'none';
+    productGroupsPage.classList.remove('active');
+  }
+  
+  if (customersPage) {
+    customersPage.style.display = 'none';
+    customersPage.classList.remove('active');
+  }
+  
+  // Also remove any dynamic page containers
+  const dynamicContainers = [
+    'productGroupsPageContainer',
+    'groupVariantsPageContainer'
+  ];
+  
+  dynamicContainers.forEach(containerId => {
+    const container = document.getElementById(containerId);
+    if (container) {
+      container.remove();
+      console.log('  Removed:', containerId);
+    }
+  });
+  
+  console.log('✅ All pages hidden');
+}
+
 
 
 // Navigate to Group Detail - FIXED
@@ -9521,6 +9573,7 @@ function getProductIcon(category) {
 
 </body>
 </html>
+
 
 
 
