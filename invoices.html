@@ -460,34 +460,14 @@
     // Check both localStorage and sessionStorage
     // ========================================
     
-    const SCRIPT_URL = localStorage.getItem('scriptURL') || 
-                       sessionStorage.getItem('scriptURL') || '';
-    const USER_EMAIL = localStorage.getItem('userEmail') || 
-                       sessionStorage.getItem('userEmail') || '';
-    const USER_HASH = localStorage.getItem('hash') || 
-                      sessionStorage.getItem('hash') || '';
+   const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzX7adKpSnleU47Av4also0qiwHdMTwctdcZA7KqfaMxuP4VYb1gaMxvjsiuVW-dRvw/exec';
     
-    console.log('📊 Google Sheets Config:', {
-      scriptURL: SCRIPT_URL ? 'Set ✓' : 'Missing ❌',
-      userEmail: USER_EMAIL ? 'Set ✓' : 'Missing ❌',
-      userHash: USER_HASH ? 'Set ✓' : 'Missing ❌'
-    });
-    
-    // If credentials are missing, redirect to login immediately
-    if (!SCRIPT_URL || !USER_EMAIL || !USER_HASH) {
-      console.error('❌ Missing credentials - redirecting to login');
-      alert('⚠️ Session expired. Please log in again.');
-      window.location.href = 'index.html';
-      throw new Error('Credentials missing');
-    }
-    
-    console.log('✅ Credentials loaded - ready to use invoices');
+    console.log('✅ Invoices page loaded');
     
     // Global variables
     let currentEditingIndex = null;
     let currentViewingIndex = null;
     let invoiceItemCounter = 0;
-    
     /* ========================================
        1. PAGE INITIALIZATION
        ======================================== */
@@ -1376,6 +1356,7 @@ async function shareInvoice(invoiceId) {
 
 </body>
 </html>
+
 
 
 
