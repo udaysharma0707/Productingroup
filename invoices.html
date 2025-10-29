@@ -502,10 +502,6 @@ if (!SCRIPT_URL || !USER_EMAIL || !USER_HASH) {
        2. LOAD AND DISPLAY INVOICES
        ======================================== */
     
-  /* ========================================
-   2. LOAD AND DISPLAY INVOICES - FROM GOOGLE SHEETS
-   ======================================== */
-
 async function loadInvoices() {
   console.log('🔄 Loading invoices from Google Sheets...');
   
@@ -538,8 +534,26 @@ async function loadInvoices() {
     // Fetch from Google Sheets
     const url = `${SCRIPT_URL}?action=getInvoices&email=${encodeURIComponent(USER_EMAIL)}&hash=${encodeURIComponent(USER_HASH)}`;
     
+    console.log('📤 Fetching from:', url);
+    
     const response = await fetch(url);
-    const data = await response.json();
+    
+    // DEBUG: Check what we got back
+    const contentType = response.headers.get('content-type');
+    console.log('📥 Response content-type:', contentType);
+    
+    const responseText = await response.text();
+    console.log('📥 Response text (first 500 chars):', responseText.substring(0, 500));
+    
+    // Try to parse as JSON
+    let data;
+    try {
+      data = JSON.parse(responseText);
+    } catch (parseError) {
+      console.error('❌ JSON parse error:', parseError);
+      console.error('Response was:', responseText);
+      throw new Error('Server returned HTML instead of JSON. Check Apps Script deployment.');
+    }
     
     if (!data.success) {
       throw new Error(data.error || 'Failed to load invoices');
@@ -578,7 +592,11 @@ async function loadInvoices() {
         <i class="bi bi-exclamation-triangle text-danger"></i>
         <h3>Error Loading Invoices</h3>
         <p>${escapeHtml(error.message)}</p>
-        <button class="btn btn-primary" onclick="loadInvoices()">
+        <details style="margin-top: 20px; text-align: left; max-width: 600px; margin-left: auto; margin-right: auto;">
+          <summary style="cursor: pointer; color: #007bff;">Show Technical Details</summary>
+          <pre style="background: #f5f5f5; padding: 15px; border-radius: 5px; overflow-x: auto; font-size: 12px; margin-top: 10px;">${escapeHtml(error.stack || error.toString())}</pre>
+        </details>
+        <button class="btn btn-primary mt-3" onclick="loadInvoices()">
           <i class="bi bi-arrow-clockwise"></i> Retry
         </button>
       </div>
@@ -1336,6 +1354,7 @@ async function shareInvoice(invoiceId) {
 
 </body>
 </html>
+
 
 
 
