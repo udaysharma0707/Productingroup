@@ -1908,10 +1908,11 @@ body.modal-open {
 </div>
 
 
-  <div class="sidebar-item disabled" onclick="sidebarAction('invoices')">
-    <i class="bi bi-receipt"></i>
-    <span>Invoices</span>
-  </div>
+  <div class="sidebar-item" onclick="navigateTo('invoices')">
+  <i class="bi bi-receipt"></i>
+  <span>Invoices</span>
+</div>
+
   
   <div class="sidebar-item disabled" onclick="sidebarAction('salesReceipts')">
     <i class="bi bi-cash-stack"></i>
@@ -9172,6 +9173,9 @@ function navigateTo(page) {
     navigateToCustomers();
   } else if (page === 'productGroups') {
     navigateToProductGroups();
+ } else if (page === 'invoices') {
+    // Navigate to invoices page
+    window.location.href = 'invoices.html';
   } else {
     console.error('❌ Unknown page:', page);
   }
@@ -9548,6 +9552,7 @@ function getProductIcon(category) {
 
 </body>
 </html>
+
 
 
 
