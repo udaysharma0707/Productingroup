@@ -1887,10 +1887,11 @@ body.modal-open {
 </div>
 
 
-<div class="sidebar-item" onclick="if(typeof navigateToProductGroups === 'function') navigateToProductGroups()">
+<div class="sidebar-item" onclick="navigateTo('productGroups')">
   <i class="bi bi-collection"></i>
   <span>Products in Group</span>
 </div>
+
   
   <div class="sidebar-item disabled" onclick="sidebarAction('inventoryAdjustments')">
     <i class="bi bi-sliders"></i>
@@ -2306,29 +2307,7 @@ body.modal-open {
   </div>
 </div>
 
-<!-- ✅ NEW: Group Detail Page (Variants List) -->
-<div class="page-view" id="groupDetailPage">
-  <div class="page-header">
-    <button class="back-btn" onclick="navigateToProductGroups()">
-      <i class="bi bi-arrow-left"></i> Back
-    </button>
-    <h3 id="groupDetailTitle">Group Name</h3>
-  </div>
-  
-  <!-- Search Bar -->
-  <div class="mb-3">
-    <input type="text" 
-           class="form-control" 
-           id="groupVariantsSearch" 
-           placeholder="🔍 Search variants..." 
-           onkeyup="filterGroupVariants()">
-  </div>
-  
-  <!-- Variants List -->
-  <div class="product-list-compact" id="groupVariantsList">
-    <!-- Variants will be rendered here -->
-  </div>
-</div>
+
 
 <!-- ✅✅✅ CUSTOMERS PAGE ✅✅✅ -->
 <div class="page-view" id="customersPage">
@@ -9142,6 +9121,11 @@ function navigateToHome() {
  * Phase 3: Handles dashboard, allProducts, AND customers
  * @param {string} page - Page name ('dashboard', 'allProducts', 'customers', etc.)
  */
+/**
+ * Centralized navigation function - COMPLETE
+ * All pages now use this system!
+ * @param {string} page - Page name ('dashboard', 'allProducts', 'customers', 'productGroups')
+ */
 function navigateTo(page) {
   console.log('🔷 navigateTo called with:', page);
   
@@ -9153,13 +9137,17 @@ function navigateTo(page) {
   else if (page === 'allProducts') {
     navigateToAllProducts();
   } 
-  // Phase 3: Customers - NEW!
+  // Phase 3: Customers
   else if (page === 'customers') {
     navigateToCustomers();
   } 
-  // Not migrated yet
+  // Phase 4: Product Groups - FINAL!
+  else if (page === 'productGroups') {
+    navigateToProductGroups();
+  } 
+  // Unknown page
   else {
-    console.warn('⚠️ Page not migrated yet:', page);
+    console.error('❌ Unknown page:', page);
   }
 }
 
@@ -9533,6 +9521,7 @@ function getProductIcon(category) {
 
 </body>
 </html>
+
 
 
 
