@@ -739,6 +739,11 @@ function viewInvoiceDetails(invoiceId) {
   // TODO: Implement invoice details view
 }
 
+/**
+ * ==========================================
+ * EDIT INVOICE FUNCTION
+ * ==========================================
+ */
 async function editInvoice(invoiceId) {
   console.log('✏️ Editing invoice:', invoiceId);
   
@@ -784,13 +789,14 @@ async function editInvoice(invoiceId) {
     console.error('❌ Error loading invoice for edit:', error);
     alert('Error loading invoice: ' + error.message);
   }
-}(invoiceId) {
-  console.log('✏️ Editing invoice:', invoiceId);
-  alert('Edit invoice: ' + invoiceId);
-  // TODO: Implement invoice edit
 }
 
-    async function saveEditedInvoice() {
+/**
+ * ==========================================
+ * SAVE EDITED INVOICE
+ * ==========================================
+ */
+async function saveEditedInvoice() {
   console.log('💾 Saving edited invoice...');
   
   const invoiceId = document.getElementById('editInvoiceId').value;
@@ -843,6 +849,7 @@ async function editInvoice(invoiceId) {
     alert('Error updating invoice: ' + error.message);
   }
 }
+
     
 function shareInvoice(invoiceId) {
   console.log('📤 Sharing invoice:', invoiceId);
@@ -1663,6 +1670,7 @@ function goBack() {
 
 </body>
 </html>
+
 
 
 
