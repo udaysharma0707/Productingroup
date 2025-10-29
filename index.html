@@ -1835,6 +1835,41 @@ body.modal-open {
   }
 }
 
+/* ==========================================
+   PHASE 1: New Navigation System CSS
+   Added: October 29, 2025
+   ========================================== */
+
+/* Base class for pages using new navigation system */
+.page {
+  display: none;          /* Hidden by default */
+  min-height: 100vh;      /* Full viewport height */
+  width: 100%;
+  position: relative;     /* Not fixed - prevents z-index issues */
+  background: #f8f9fa;    /* Light gray background */
+  overflow-y: auto;       /* Allow scrolling if content is long */
+}
+
+/* Show page when it has active class */
+.page.active {
+  display: block;         /* Visible */
+}
+
+/* Keep compatibility with existing page-view class */
+.page-view {
+  display: none;
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+  background: #f8f9fa;
+  overflow-y: auto;
+}
+
+.page-view.active {
+  display: block;
+}
+
+/* END OF PHASE 1 CSS */
 
     
   </style>
@@ -2101,6 +2136,7 @@ body.modal-open {
     </div>
   </nav>
 
+ <div id="mainApp" class="page active">
   <div class="container-fluid py-4">
     <!-- Actions -->
     <div class="row mb-4">
@@ -2238,7 +2274,7 @@ body.modal-open {
       </div>
     </div>
   </div>
-
+  </div>
 <!-- ✅ NEW: All Products Page -->
 <div class="page-view" id="allProductsPage">
   <div class="page-header">
@@ -9491,6 +9527,7 @@ function getProductIcon(category) {
 
 </body>
 </html>
+
 
 
 
