@@ -953,8 +953,7 @@ function viewInvoiceDetails(invoiceId) {
 }
 
 
-
-  /**
+/**
  * ==========================================
  * GENERATE INVOICE HTML - FIXED AMOUNT CALCULATION
  * ==========================================
@@ -1276,109 +1275,6 @@ function generateInvoiceHTML(invoice, items, subtotal, discount, tax, grandTotal
         <tr class="grand-total">
           <td>Grand Total:</td>
           <td>₹${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-        </tr>
-      </table>
-    </div>
-    
-    <!-- Footer -->
-    <div class="footer-section">
-      <div style="margin-bottom: 20px;">
-        <h3>Customer Notes:</h3>
-        <p>Thanks for your business.</p>
-      </div>
-      
-      <div>
-        <h3>Terms & Conditions:</h3>
-        <ol>
-          <li>Payment due within 14 days of invoice date</li>
-          <li>Late payments subject to 2% monthly interest charge</li>
-          <li>Goods once sold cannot be returned or exchanged</li>
-        </ol>
-      </div>
-    </div>
-    
-    <!-- Print Buttons -->
-    <div class="print-buttons no-print">
-      <button class="print-btn" onclick="window.print()">
-        🖨️ Print Invoice
-      </button>
-      <button class="close-btn" onclick="window.close()">
-        ✕ Close
-      </button>
-    </div>
-  </div>
-
-  `;
-}
-
-  </style>
-</head>
-<body>
-  <div class="invoice-container">
-    <!-- Header -->
-    <div class="invoice-header">
-      <h1>INVOICE</h1>
-      <p class="company-name">Tile & Sanitaryware Inventory</p>
-    </div>
-    
-    <!-- Invoice Details -->
-    <div class="invoice-details">
-      <div>
-        <div class="detail-group">
-          <h3>Invoice Number:</h3>
-          <p><strong>${invoice.invoiceNumber}</strong></p>
-        </div>
-        <div class="detail-group" style="margin-top: 20px;">
-          <h3>Customer Name:</h3>
-          <p>${invoice.customerName}</p>
-        </div>
-      </div>
-      <div>
-        <div class="detail-group">
-          <h3>Invoice Date:</h3>
-          <p>${cleanInvoiceDate}</p>
-        </div>
-        <div class="detail-group" style="margin-top: 20px;">
-          <h3>Due Date:</h3>
-          <p>${cleanDueDate}</p>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Items Table -->
-    <table class="items-table">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Item Description</th>
-          <th>Quantity</th>
-          <th>Rate</th>
-          <th>Amount</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${itemsHTML}
-      </tbody>
-    </table>
-    
-    <!-- Totals -->
-    <div class="totals-section">
-      <table>
-        <tr>
-          <td>Sub Total:</td>
-          <td>₹${subtotal.toFixed(2)}</td>
-        </tr>
-        <tr>
-          <td>Discount:</td>
-          <td>-₹${discount.toFixed(2)}</td>
-        </tr>
-        <tr>
-          <td>Tax:</td>
-          <td>₹${tax.toFixed(2)}</td>
-        </tr>
-        <tr class="grand-total">
-          <td>Grand Total:</td>
-          <td>₹${grandTotal.toFixed(2)}</td>
         </tr>
       </table>
     </div>
