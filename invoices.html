@@ -963,7 +963,7 @@ async function openEditInvoice(invoiceId) {
       document.getElementById('invoiceTotal').textContent = total.toFixed(2);
     }
     
-    /* ========================================
+  /* ========================================
    12. SAVE INVOICE - UPDATED FOR GOOGLE SHEETS
    ======================================== */
 
@@ -1013,9 +1013,16 @@ async function saveInvoice() {
   saveBtn.disabled = true;
   
   try {
+    // Check credentials
+    if (!SCRIPT_URL || !USER_EMAIL || !USER_HASH) {
+      throw new Error('Authentication credentials missing. Please log in again.');
+    }
+    
     // Prepare data
     const formData = new FormData();
     formData.append('action', currentEditingIndex ? 'updateInvoice' : 'saveInvoice');
+    formData.append('email', USER_EMAIL);        // ← ADDED
+    formData.append('hash', USER_HASH);          // ← ADDED
     formData.append('customerName', customerName);
     formData.append('invoiceNumber', invoiceNumber);
     formData.append('invoiceDate', invoiceDate);
@@ -1030,16 +1037,27 @@ async function saveInvoice() {
       formData.append('invoiceId', currentEditingIndex);
     }
     
+    console.log('📤 Sending invoice to Google Sheets...');
+    
     // Send to Google Sheets
     const response = await fetch(SCRIPT_URL, {
       method: 'POST',
       body: formData
     });
     
-    const data = await response.json();
+    const responseText = await response.text();
+    console.log('📥 Response:', responseText);
+    
+    let data;
+    try {
+      data = JSON.parse(responseText);
+    } catch (parseError) {
+      console.error('❌ Failed to parse response:', responseText);
+      throw new Error('Invalid response from server');
+    }
     
     if (!data.success) {
-      throw new Error(data.error || 'Failed to save invoice');
+      throw new Error(data.error || data.message || 'Failed to save invoice');
     }
     
     console.log('✅ Invoice saved successfully');
@@ -1064,6 +1082,7 @@ async function saveInvoice() {
     saveBtn.disabled = false;
   }
 }
+
 
     
     /* ========================================
@@ -1106,6 +1125,8 @@ async function deleteInvoice(invoiceId) {
   try {
     const formData = new FormData();
     formData.append('action', 'deleteInvoice');
+    formData.append('email', USER_EMAIL);      // ← ADD THIS
+    formData.append('hash', USER_HASH);        // ← ADD THIS
     formData.append('invoiceId', invoiceId);
     
     const response = await fetch(SCRIPT_URL, {
@@ -1354,6 +1375,7 @@ async function shareInvoice(invoiceId) {
 
 </body>
 </html>
+
 
 
 
