@@ -1901,10 +1901,11 @@ body.modal-open {
   <div class="sidebar-section-title">SALES</div>
   
 <!-- Customer -->
-<div class="sidebar-item" onclick="navigateToCustomers()">
+<div class="sidebar-item" onclick="navigateTo('customers')">
   <i class="bi bi-people"></i>
   <span>Customer</span>
 </div>
+
 
   <div class="sidebar-item disabled" onclick="sidebarAction('invoices')">
     <i class="bi bi-receipt"></i>
@@ -9136,6 +9137,11 @@ function navigateToHome() {
  * Phase 2: Handles dashboard AND allProducts
  * @param {string} page - Page name ('dashboard', 'allProducts', etc.)
  */
+/**
+ * Centralized navigation function
+ * Phase 3: Handles dashboard, allProducts, AND customers
+ * @param {string} page - Page name ('dashboard', 'allProducts', 'customers', etc.)
+ */
 function navigateTo(page) {
   console.log('🔷 navigateTo called with:', page);
   
@@ -9143,9 +9149,13 @@ function navigateTo(page) {
   if (page === 'dashboard') {
     navigateToHome();
   } 
-  // Phase 2: All Products - NEW!
+  // Phase 2: All Products
   else if (page === 'allProducts') {
     navigateToAllProducts();
+  } 
+  // Phase 3: Customers - NEW!
+  else if (page === 'customers') {
+    navigateToCustomers();
   } 
   // Not migrated yet
   else {
@@ -9523,6 +9533,7 @@ function getProductIcon(category) {
 
 </body>
 </html>
+
 
 
 
