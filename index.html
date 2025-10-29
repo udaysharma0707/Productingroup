@@ -9121,7 +9121,24 @@ function navigateToHome() {
   
   console.log('✅ Home displayed');
 }
-
+// ==========================================
+// NEW NAVIGATION WRAPPER - PHASE 1
+// ==========================================
+/**
+ * Centralized navigation function
+ * Phase 1: Only handles dashboard (calls navigateToHome)
+ * @param {string} page - Page name ('dashboard', 'allProducts', etc.)
+ */
+function navigateTo(page) {
+  console.log('🔷 navigateTo called with:', page);
+  
+  // Phase 1: Only dashboard is migrated
+  if (page === 'dashboard') {
+    navigateToHome();
+  } else {
+    console.warn('⚠️ Page not migrated to new navigation yet:', page);
+  }
+}
 
 // Navigate to Group Detail - FIXED
 function navigateToGroupDetail(groupId, groupName) {
@@ -9492,6 +9509,7 @@ function getProductIcon(category) {
 
 </body>
 </html>
+
 
 
 
