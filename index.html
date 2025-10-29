@@ -7163,43 +7163,73 @@ function sidebarAction(action) {
 }
 
 
-// Navigate to All Products page - FIXED
+// Navigate to All Products page - UPDATED FIX
 function navigateToAllProducts() {
   console.log('📦 Navigating to All Products');
   
   currentPage = 'allProducts';
   
+  // === STEP 1: Get all page elements ===
   const mainApp = document.getElementById('mainApp');
   const allProductsPage = document.getElementById('allProductsPage');
   const productGroupsPage = document.getElementById('productGroupsPage');
+  const customersPage = document.getElementById('customersPage');
   const groupDetailPage = document.getElementById('groupDetailPage');
   
-  // HIDE the main dashboard
+  // === STEP 2: HIDE ALL other pages ===
   if (mainApp) {
     mainApp.style.display = 'none';
+    mainApp.classList.remove('active');
   }
   
-  // ✅ HIDE THE BLUE NAVBAR
+  if (productGroupsPage) {
+    productGroupsPage.style.display = 'none';
+    productGroupsPage.classList.remove('active');
+  }
+  
+  if (customersPage) {
+    customersPage.style.display = 'none';  // ← THIS WAS MISSING!
+    customersPage.classList.remove('active');
+  }
+  
+  if (groupDetailPage) {
+    groupDetailPage.style.display = 'none';
+    groupDetailPage.classList.remove('active');
+  }
+  
+  // Remove dynamic containers
+  const dynamicContainers = ['productGroupsPageContainer', 'groupVariantsPageContainer'];
+  dynamicContainers.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.remove();
+  });
+  
+  // === STEP 3: SHOW All Products page ===
+  if (allProductsPage) {
+    allProductsPage.style.display = 'block';  // ← THIS WAS MISSING!
+    allProductsPage.classList.add('active');
+    console.log('✅ All Products page displayed');
+  }
+  
+  // === STEP 4: Hide the bottom blue navbar ===
   const navbar = document.querySelector('.navbar');
   if (navbar) {
     navbar.style.display = 'none';
   }
   
-  // SHOW All Products page
-  if (allProductsPage) {
-    allProductsPage.classList.add('active');
-  }
-  
-  if (productGroupsPage) productGroupsPage.classList.remove('active');
-  if (groupDetailPage) groupDetailPage.classList.remove('active');
-  
+  // === STEP 5: Render products list ===
   if (typeof renderAllProductsList === 'function') {
     renderAllProductsList();
   }
   
-  closeSidebar();
+  // === STEP 6: Close sidebar and scroll ===
+  if (typeof closeSidebar === 'function') {
+    closeSidebar();
+  }
+  
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+
 
 // Navigate to Product Groups page - FIXED
 function navigateToProductGroups() {
@@ -9134,10 +9164,6 @@ function navigateToHome() {
 function navigateTo(page) {
   console.log('🔷 navigateTo called with:', page);
   
-  // STEP 1: Hide ALL pages first (this fixes the issue!)
-  hideAllPages();
-  
-  // STEP 2: Show the target page
   if (page === 'dashboard') {
     navigateToHome();
   } else if (page === 'allProducts') {
@@ -9149,57 +9175,6 @@ function navigateTo(page) {
   } else {
     console.error('❌ Unknown page:', page);
   }
-}
-
-/**
- * Helper function: Hide all pages
- * Called before showing any page to ensure clean transitions
- */
-function hideAllPages() {
-  console.log('🙈 Hiding all pages...');
-  
-  // Get all page elements
-  const mainApp = document.getElementById('mainApp');
-  const allProductsPage = document.getElementById('allProductsPage');
-  const productGroupsPage = document.getElementById('productGroupsPage');
-  const customersPage = document.getElementById('customersPage');
-  
-  // Hide each page
-  if (mainApp) {
-    mainApp.style.display = 'none';
-    mainApp.classList.remove('active');
-  }
-  
-  if (allProductsPage) {
-    allProductsPage.style.display = 'none';
-    allProductsPage.classList.remove('active');
-  }
-  
-  if (productGroupsPage) {
-    productGroupsPage.style.display = 'none';
-    productGroupsPage.classList.remove('active');
-  }
-  
-  if (customersPage) {
-    customersPage.style.display = 'none';
-    customersPage.classList.remove('active');
-  }
-  
-  // Also remove any dynamic page containers
-  const dynamicContainers = [
-    'productGroupsPageContainer',
-    'groupVariantsPageContainer'
-  ];
-  
-  dynamicContainers.forEach(containerId => {
-    const container = document.getElementById(containerId);
-    if (container) {
-      container.remove();
-      console.log('  Removed:', containerId);
-    }
-  });
-  
-  console.log('✅ All pages hidden');
 }
 
 
@@ -9573,6 +9548,7 @@ function getProductIcon(category) {
 
 </body>
 </html>
+
 
 
 
