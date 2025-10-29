@@ -2243,7 +2243,7 @@ body.modal-open {
 <!-- ✅ NEW: All Products Page -->
 <div class="page-view" id="allProductsPage">
   <div class="page-header">
-    <button class="back-btn" onclick="navigateToHome()">
+    <button class="back-btn" onclick="navigateTo('dashboard')">
       <i class="bi bi-arrow-left"></i> Back
     </button>
     <h3>All Products</h3>
@@ -2278,9 +2278,10 @@ body.modal-open {
 <!-- ✅ NEW: Product Groups Page -->
 <div class="page-view" id="productGroupsPage">
   <div class="page-header">
-    <button class="back-btn" onclick="navigateToHome()">
+       <button class="back-btn" onclick="navigateTo('dashboard')">
       <i class="bi bi-arrow-left"></i> Back
     </button>
+
     <h3>Products in Group</h3>
     <button class="btn btn-success" onclick="openCreateGroupModal()">
       <i class="bi bi-plus-lg"></i> Create
@@ -9509,6 +9510,7 @@ function getProductIcon(category) {
 
 </body>
 </html>
+
 
 
 
