@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invoices | Tile & Sanitaryware Inventory</title>
+  
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+  
+  <!-- html2canvas for invoice sharing -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  
+  <style>
+    /* ================================================
+       INVOICES PAGE - EMBEDDED CSS
+       ================================================ */
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f8f9fa;
+      overflow-x: hidden;
+    }
+    
+    /* ========== HEADER ========== */
+    .invoice-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    
+    .invoice-header h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .back-btn {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .back-btn:hover {
+      background: rgba(255,255,255,0.3);
+      transform: translateX(-5px);
+    }
+    
+    .create-btn {
+      background: #28a745;
+      border: none;
+      color: white;
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(40,167,69,0.3);
+    }
+    
+    .create-btn:hover {
+      background: #218838;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(40,167,69,0.4);
+    }
+    
+    /* ========== MAIN CONTAINER ========== */
+    .container-fluid {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 30px 20px;
+    }
+    
+    /* ========== EMPTY STATE ========== */
+    .empty-state {
+      text-align: center;
+      padding: 80px 20px;
+      color: #6c757d;
+    }
+    
+    .empty-state i {
+      font-size: 80px;
+      color: #dee2e6;
+      margin-bottom: 20px;
+    }
+    
+    .empty-state h3 {
+      margin-bottom: 10px;
+      color: #495057;
+    }
+    
+    .empty-state p {
+      margin-bottom: 30px;
+    }
+    
+    /* ========== INVOICES GRID ========== */
+    .invoices-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 24px;
+      margin-top: 20px;
+    }
+    
+    /* ========== INVOICE CARD ========== */
+    .invoice-card {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 1px solid #e9ecef;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .invoice-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .invoice-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+      border-color: #667eea;
+    }
+    
+    .invoice-card:hover::before {
+      opacity: 1;
+    }
+    
+    .invoice-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #e9ecef;
+    }
+    
+    .invoice-number {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #495057;
+      font-family: 'Courier New', monospace;
+    }
+    
+    .status-badge {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .status-paid {
+      background: #d4edda;
+      color: #155724;
+    }
+    
+    .status-unpaid {
+      background: #fff3cd;
+      color: #856404;
+    }
+    
+    .status-overdue {
+      background: #f8d7da;
+      color: #721c24;
+    }
+    
+    .invoice-card-body {
+      margin-bottom: 20px;
+    }
+    
+    .invoice-card-body h5 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #212529;
+      margin-bottom: 12px;
+    }
+    
+    .invoice-date {
+      color: #6c757d;
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .invoice-amount {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #28a745;
+      margin: 12px 0 0 0;
+    }
+    
+    .invoice-card-footer {
+      display: flex;
+      gap: 8px;
+      padding-top: 16px;
+      border-top: 1px solid #e9ecef;
+    }
+    
+    .btn-icon {
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      color: #495057;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex: 1;
+      justify-content: center;
+    }
+    
+    .btn-icon:hover {
+      background: #e9ecef;
+      transform: translateY(-2px);
+    }
+    
+    .btn-icon i {
+      font-size: 1rem;
+    }
+    
+    .btn-icon.btn-edit:hover {
+      background: #007bff;
+      color: white;
+      border-color: #007bff;
+    }
+    
+    .btn-icon.btn-share:hover {
+      background: #17a2b8;
+      color: white;
+      border-color: #17a2b8;
+    }
+    
+    .btn-icon.btn-delete:hover {
+      background: #dc3545;
+      color: white;
+      border-color: #dc3545;
+    }
+    
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 768px) {
+      .invoice-header {
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px;
+      }
+      
+      .invoice-header h1 {
+        font-size: 1.2rem;
+      }
+      
+      .invoices-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+      
+      .back-btn, .create-btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+    
+  </style>
+</head>
+<body>
+
+  <!-- ========================================
+       TOP HEADER WITH BACK & CREATE BUTTONS
+       ======================================== -->
+  <div class="invoice-header">
+    <button class="back-btn" onclick="goBackToDashboard()">
+      <i class="bi bi-arrow-left"></i> Back
+    </button>
+    
+    <h1>
+      <i class="bi bi-receipt"></i>
+      Invoices
+    </h1>
+    
+    <button class="create-btn" onclick="openCreateInvoiceModal()">
+      <i class="bi bi-plus-circle"></i> Create Invoice
+    </button>
+  </div>
+
+  <!-- ========================================
+       MAIN CONTAINER - INVOICES LIST
+       ======================================== -->
+  <div class="container-fluid">
+    <div id="invoicesListContainer">
+      <!-- JavaScript will populate this -->
+      <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-3 text-muted">Loading invoices...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================
+       INVOICE VIEW MODAL (For viewing full invoice)
+       ======================================== -->
+  <div class="modal fade" id="invoiceViewModal" tabindex="-1" aria-labelledby="invoiceViewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-fullscreen-md-down">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title" id="invoiceViewModalLabel">
+            <i class="bi bi-receipt"></i> Invoice Details
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="invoiceViewContent">
+          <!-- Invoice preview will be rendered here -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" onclick="editCurrentInvoice()">
+            <i class="bi bi-pencil"></i> Edit
+          </button>
+          <button type="button" class="btn btn-success" onclick="shareCurrentInvoice()">
+            <i class="bi bi-share"></i> Share
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================
+       INVOICE CREATE/EDIT MODAL
+       ======================================== -->
+  <div class="modal fade" id="invoiceModal" tabindex="-1" aria-labelledby="invoiceModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title" id="invoiceModalLabel">
+            <i class="bi bi-receipt"></i> <span id="invoiceModalTitle">Create Invoice</span>
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        
+        <div class="modal-body">
+          <form id="invoiceForm">
+            
+            <!-- Customer Name -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="invoiceCustomerName" class="form-label">Customer Name *</label>
+                <input type="text" class="form-control" id="invoiceCustomerName" required>
+              </div>
+              
+              <div class="col-md-6">
+                <label for="invoiceNumber" class="form-label">Invoice Number *</label>
+                <input type="text" class="form-control" id="invoiceNumber" required>
+              </div>
+            </div>
+            
+            <!-- Dates -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="invoiceDate" class="form-label">Invoice Date *</label>
+                <input type="date" class="form-control" id="invoiceDate" required>
+              </div>
+              
+              <div class="col-md-6">
+                <label for="invoiceDueDate" class="form-label">Due Date *</label>
+                <input type="date" class="form-control" id="invoiceDueDate" required>
+              </div>
+            </div>
+            
+            <!-- Items Section -->
+            <div class="mb-3">
+              <label class="form-label fw-bold">Invoice Items</label>
+              <div id="invoiceItemsContainer">
+                <!-- Items will be added here -->
+              </div>
+              <button type="button" class="btn btn-outline-primary btn-sm mt-2" onclick="addInvoiceItem()">
+                <i class="bi bi-plus-circle"></i> Add Item
+              </button>
+            </div>
+            
+            <!-- Total -->
+            <div class="row">
+              <div class="col-md-8"></div>
+              <div class="col-md-4">
+                <div class="card bg-light">
+                  <div class="card-body">
+                    <h5 class="mb-0">Total: ₹<span id="invoiceTotal">0.00</span></h5>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+          </form>
+        </div>
+        
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" onclick="saveInvoice()">
+            <i class="bi bi-save"></i> Save Invoice
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    /* ================================================
+       INVOICES PAGE - JAVASCRIPT
+       ================================================ */
+    
+    // Global variables
+    let currentEditingIndex = null;
+    let currentViewingIndex = null;
+    let invoiceItemCounter = 0;
+    
+    /* ========================================
+       1. PAGE INITIALIZATION
+       ======================================== */
+    
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('📄 Invoices page loaded');
+      loadInvoices();
+      setDefaultDates();
+    });
+    
+    /* ========================================
+       2. LOAD AND DISPLAY INVOICES
+       ======================================== */
+    
+    function loadInvoices() {
+      console.log('🔄 Loading invoices from localStorage...');
+      
+      const invoices = JSON.parse(localStorage.getItem('invoices') || '[]');
+      const container = document.getElementById('invoicesListContainer');
+      
+      if (invoices.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <i class="bi bi-inbox"></i>
+            <h3>No Invoices Yet</h3>
+            <p>Click "Create Invoice" to generate your first invoice</p>
+            <button class="btn btn-primary btn-lg" onclick="openCreateInvoiceModal()">
+              <i class="bi bi-plus-circle"></i> Create Your First Invoice
+            </button>
+          </div>
+        `;
+        return;
+      }
+      
+      console.log(`✅ Found ${invoices.length} invoices`);
+      
+      let html = '<div class="invoices-grid">';
+      invoices.forEach((invoice, index) => {
+        html += renderInvoiceCard(invoice, index);
+      });
+      html += '</div>';
+      
+      container.innerHTML = html;
+    }
+    
+    /* ========================================
+       3. RENDER SINGLE INVOICE CARD
+       ======================================== */
+    
+    function renderInvoiceCard(invoice, index) {
+      const status = getInvoiceStatus(invoice);
+      const statusClass = getStatusClass(status);
+      const formattedDate = formatDate(invoice.invoiceDate);
+      const total = invoice.total || calculateTotal(invoice.items || []);
+      
+      return `
+        <div class="invoice-card" onclick="openInvoiceView(${index})">
+          <div class="invoice-card-header">
+            <span class="invoice-number">${escapeHtml(invoice.invoiceNumber || 'N/A')}</span>
+            <span class="status-badge ${statusClass}">${status}</span>
+          </div>
+          
+          <div class="invoice-card-body">
+            <h5>${escapeHtml(invoice.customerName || 'Unknown Customer')}</h5>
+            <p class="invoice-date">
+              <i class="bi bi-calendar"></i> ${formattedDate}
+            </p>
+            <p class="invoice-amount">₹${total.toFixed(2)}</p>
+          </div>
+          
+          <div class="invoice-card-footer">
+            <button class="btn-icon btn-edit" onclick="event.stopPropagation(); openEditInvoice(${index})" title="Edit">
+              <i class="bi bi-pencil"></i> Edit
+            </button>
+            <button class="btn-icon btn-share" onclick="event.stopPropagation(); shareInvoice(${index})" title="Share">
+              <i class="bi bi-share"></i> Share
+            </button>
+            <button class="btn-icon btn-delete" onclick="event.stopPropagation(); deleteInvoice(${index})" title="Delete">
+              <i class="bi bi-trash"></i> Delete
+            </button>
+          </div>
+        </div>
+      `;
+    }
+    
+    /* ========================================
+       4. INVOICE STATUS HELPERS
+       ======================================== */
+    
+    function getInvoiceStatus(invoice) {
+      if (!invoice.dueDate) return 'Unpaid';
+      
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      const dueDate = new Date(invoice.dueDate);
+      dueDate.setHours(0, 0, 0, 0);
+      
+      if (invoice.paid) return 'Paid';
+      if (dueDate < today) return 'Overdue';
+      return 'Unpaid';
+    }
+    
+    function getStatusClass(status) {
+      switch(status) {
+        case 'Paid': return 'status-paid';
+        case 'Overdue': return 'status-overdue';
+        case 'Unpaid': return 'status-unpaid';
+        default: return 'status-unpaid';
+      }
+    }
+    
+    /* ========================================
+       5. OPEN INVOICE VIEW (Full screen like Zoho)
+       ======================================== */
+    
+    function openInvoiceView(index) {
+      console.log('👁️ Opening invoice view:', index);
+      
+      currentViewingIndex = index;
+      const invoices = JSON.parse(localStorage.getItem('invoices') || '[]');
+      const invoice = invoices[index];
+      
+      if (!invoice) {
+        alert('❌ Invoice not found');
+        return;
+      }
+      
+      // Generate invoice preview HTML
+      const invoiceHTML = generateInvoiceViewHTML(invoice);
+      
+      // Display in modal
+      document.getElementById('invoiceViewContent').innerHTML = invoiceHTML;
+      document.getElementById('invoiceViewModalLabel').innerHTML = 
+        `<i class="bi bi-receipt"></i> Invoice ${escapeHtml(invoice.invoiceNumber || 'N/A')}`;
+      
+      // Show modal
+      const modal = new bootstrap.Modal(document.getElementById('invoiceViewModal'));
+      modal.show();
+    }
+    
+    /* ========================================
+       6. GENERATE INVOICE VIEW HTML
+       ======================================== */
+    
+    function generateInvoiceViewHTML(invoice) {
+      const items = invoice.items || [];
+      const total = invoice.total || calculateTotal(items);
+      
+      let itemsHTML = '';
+      items.forEach((item, idx) => {
+        const itemTotal = (item.quantity || 0) * (item.rate || 0);
+        itemsHTML += `
+          <tr>
+            <td>${idx + 1}</td>
+            <td>${escapeHtml(item.description || 'N/A')}</td>
+            <td>${item.quantity || 0}</td>
+            <td>₹${(item.rate || 0).toFixed(2)}</td>
+            <td>₹${itemTotal.toFixed(2)}</td>
+          </tr>
+        `;
+      });
+      
+      return `
+        <div class="invoice-preview" style="max-width: 800px; margin: 0 auto; padding: 20px; background: white;">
+          <div style="text-align: center; margin-bottom: 30px;">
+            <h2 style="color: #667eea; margin-bottom: 5px;">TAX INVOICE</h2>
+            <p style="color: #6c757d; margin: 0;">Tile & Sanitaryware Inventory</p>
+          </div>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
+            <div>
+              <p style="margin: 5px 0;"><strong>Customer:</strong> ${escapeHtml(invoice.customerName || 'N/A')}</p>
+              <p style="margin: 5px 0;"><strong>Invoice #:</strong> ${escapeHtml(invoice.invoiceNumber || 'N/A')}</p>
+            </div>
+            <div style="text-align: right;">
+              <p style="margin: 5px 0;"><strong>Invoice Date:</strong> ${formatDate(invoice.invoiceDate)}</p>
+              <p style="margin: 5px 0;"><strong>Due Date:</strong> ${formatDate(invoice.dueDate)}</p>
+            </div>
+          </div>
+          
+          <table class="table table-bordered">
+            <thead style="background: #f8f9fa;">
+              <tr>
+                <th style="width: 50px;">#</th>
+                <th>Description</th>
+                <th style="width: 100px;">Qty</th>
+                <th style="width: 120px;">Rate</th>
+                <th style="width: 120px;">Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${itemsHTML}
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="4" style="text-align: right; font-weight: bold;">Total</td>
+                <td style="font-weight: bold;">₹${total.toFixed(2)}</td>
+              </tr>
+            </tfoot>
+          </table>
+          
+          <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #dee2e6; text-align: center; color: #6c757d;">
+            <p>Thank you for your business!</p>
+          </div>
+        </div>
+      `;
+    }
+    
+    /* ========================================
+       7. OPEN CREATE INVOICE MODAL
+       ======================================== */
+    
+    function openCreateInvoiceModal() {
+      console.log('➕ Opening create invoice modal');
+      
+      // Reset form
+      currentEditingIndex = null;
+      document.getElementById('invoiceForm').reset();
+      document.getElementById('invoiceModalTitle').textContent = 'Create Invoice';
+      
+      // Generate new invoice number
+      const invoices = JSON.parse(localStorage.getItem('invoices') || '[]');
+      const newInvoiceNumber = generateInvoiceNumber(invoices.length);
+      document.getElementById('invoiceNumber').value = newInvoiceNumber;
+      
+      // Set default dates
+      setDefaultDates();
+      
+      // Clear items and add one empty item
+      document.getElementById('invoiceItemsContainer').innerHTML = '';
+      invoiceItemCounter = 0;
+      addInvoiceItem();
+      
+      // Show modal
+      const modal = new bootstrap.Modal(document.getElementById('invoiceModal'));
+      modal.show();
+    }
+    
+    /* ========================================
+       8. OPEN EDIT INVOICE
+       ======================================== */
+    
+    function openEditInvoice(index) {
+      console.log('✏️ Opening edit invoice:', index);
+      
+      const invoices = JSON.parse(localStorage.getItem('invoices') || '[]');
+      const invoice = invoices[index];
+      
+      if (!invoice) {
+        alert('❌ Invoice not found');
+        return;
+      }
+      
+      currentEditingIndex = index;
+      document.getElementById('invoiceModalTitle').textContent = 'Edit Invoice';
+      
+      // Populate form
+      document.getElementById('invoiceCustomerName').value = invoice.customerName || '';
+      document.getElementById('invoiceNumber').value = invoice.invoiceNumber || '';
+      document.getElementById('invoiceDate').value = invoice.invoiceDate || '';
+      document.getElementById('invoiceDueDate').value = invoice.dueDate || '';
+      
+      // Populate items
+      document.getElementById('invoiceItemsContainer').innerHTML = '';
+      invoiceItemCounter = 0;
+      
+      if (invoice.items && invoice.items.length > 0) {
+        invoice.items.forEach(item => {
+          addInvoiceItem(item);
+        });
+      } else {
+        addInvoiceItem();
+      }
+      
+      calculateInvoiceTotal();
+      
+      // Show modal
+      const modal = new bootstrap.Modal(document.getElementById('invoiceModal'));
+      modal.show();
+    }
+    
+    /* ========================================
+       9. ADD INVOICE ITEM ROW
+       ======================================== */
+    
+    function addInvoiceItem(item = null) {
+      invoiceItemCounter++;
+      const itemId = `item-${invoiceItemCounter}`;
+      
+      const itemHTML = `
+        <div class="invoice-item mb-2" id="${itemId}">
+          <div class="row g-2">
+            <div class="col-md-4">
+              <input type="text" class="form-control" placeholder="Description" 
+                     value="${item ? escapeHtml(item.description || '') : ''}"
+                     onchange="calculateInvoiceTotal()">
+            </div>
+            <div class="col-md-2">
+              <input type="number" class="form-control" placeholder="Quantity" min="1"
+                     value="${item ? (item.quantity || 1) : 1}"
+                     onchange="calculateInvoiceTotal()">
+            </div>
+            <div class="col-md-2">
+              <input type="number" class="form-control" placeholder="Rate" min="0" step="0.01"
+                     value="${item ? (item.rate || 0) : 0}"
+                     onchange="calculateInvoiceTotal()">
+            </div>
+            <div class="col-md-3">
+              <input type="text" class="form-control" placeholder="Amount" readonly
+                     value="0.00">
+            </div>
+            <div class="col-md-1">
+              <button type="button" class="btn btn-danger btn-sm w-100" onclick="removeInvoiceItem('${itemId}')">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      document.getElementById('invoiceItemsContainer').insertAdjacentHTML('beforeend', itemHTML);
+      calculateInvoiceTotal();
+    }
+    
+    /* ========================================
+       10. REMOVE INVOICE ITEM
+       ======================================== */
+    
+    function removeInvoiceItem(itemId) {
+      const itemElement = document.getElementById(itemId);
+      if (itemElement) {
+        itemElement.remove();
+        calculateInvoiceTotal();
+      }
+    }
+    
+    /* ========================================
+       11. CALCULATE INVOICE TOTAL
+       ======================================== */
+    
+    function calculateInvoiceTotal() {
+      const items = document.querySelectorAll('.invoice-item');
+      let total = 0;
+      
+      items.forEach(item => {
+        const inputs = item.querySelectorAll('input');
+        const quantity = parseFloat(inputs[1].value) || 0;
+        const rate = parseFloat(inputs[2].value) || 0;
+        const amount = quantity * rate;
+        
+        inputs[3].value = amount.toFixed(2);
+        total += amount;
+      });
+      
+      document.getElementById('invoiceTotal').textContent = total.toFixed(2);
+    }
+    
+    /* ========================================
+       12. SAVE INVOICE (Create or Update)
+       ======================================== */
+    
+    function saveInvoice() {
+      console.log('💾 Saving invoice...');
+      
+      // Validate form
+      const customerName = document.getElementById('invoiceCustomerName').value.trim();
+      const invoiceNumber = document.getElementById('invoiceNumber').value.trim();
+      const invoiceDate = document.getElementById('invoiceDate').value;
+      const dueDate = document.getElementById('invoiceDueDate').value;
+      
+      if (!customerName) {
+        alert('❌ Please enter customer name');
+        return;
+      }
+      
+      if (!invoiceNumber) {
+        alert('❌ Please enter invoice number');
+        return;
+      }
+      
+      if (!invoiceDate) {
+        alert('❌ Please select invoice date');
+        return;
+      }
+      
+      if (!dueDate) {
+        alert('❌ Please select due date');
+        return;
+      }
+      
+      // Collect items
+      const items = collectInvoiceItems();
+      
+      if (items.length === 0) {
+        alert('❌ Please add at least one item');
+        return;
+      }
+      
+      const total = calculateTotal(items);
+      
+      // Create invoice object
+      const invoice = {
+        customerName: customerName,
+        invoiceNumber: invoiceNumber,
+        invoiceDate: invoiceDate,
+        dueDate: dueDate,
+        items: items,
+        total: total,
+        paid: false,
+        createdAt: new Date().toISOString()
+      };
+      
+      // Get existing invoices
+      let invoices = JSON.parse(localStorage.getItem('invoices') || '[]');
+      
+      if (currentEditingIndex !== null) {
+        // Update existing
+        invoices[currentEditingIndex] = invoice;
+        console.log('✅ Invoice updated');
+        alert('✅ Invoice updated successfully!');
+      } else {
+        // Create new
+        invoices.push(invoice);
+        console.log('✅ Invoice created');
+        alert('✅ Invoice created successfully!');
+      }
+      
+      // Save to localStorage
+      localStorage.setItem('invoices', JSON.stringify(invoices));
+      
+      // Close modal
+      const modal = bootstrap.Modal.getInstance(document.getElementById('invoiceModal'));
+      modal.hide();
+      
+      // Reload invoices list
+      loadInvoices();
+      
+      // Reset editing index
+      currentEditingIndex = null;
+    }
+    
+    /* ========================================
+       13. COLLECT INVOICE ITEMS FROM FORM
+       ======================================== */
+    
+    function collectInvoiceItems() {
+      const items = [];
+      const itemElements = document.querySelectorAll('.invoice-item');
+      
+      itemElements.forEach(item => {
+        const inputs = item.querySelectorAll('input');
+        const description = inputs[0].value.trim();
+        const quantity = parseFloat(inputs[1].value) || 0;
+        const rate = parseFloat(inputs[2].value) || 0;
+        
+        if (description && quantity > 0 && rate > 0) {
+          items.push({
+            description: description,
+            quantity: quantity,
+            rate: rate
+          });
+        }
+      });
+      
+      return items;
+    }
+    
+    /* ========================================
+       14. DELETE INVOICE
+       ======================================== */
+    
+    function deleteInvoice(index) {
+      if (!confirm('⚠️ Are you sure you want to delete this invoice? This action cannot be undone.')) {
+        return;
+      }
+      
+      console.log('🗑️ Deleting invoice:', index);
+      
+      let invoices = JSON.parse(localStorage.getItem('invoices') || '[]');
+      invoices.splice(index, 1);
+      localStorage.setItem('invoices', JSON.stringify(invoices));
+      
+      alert('✅ Invoice deleted successfully');
+      loadInvoices();
+    }
+    
+    /* ========================================
+       15. SHARE INVOICE
+       ======================================== */
+    
+    async function shareInvoice(index) {
+      console.log('📤 Sharing invoice:', index);
+      
+      const invoices = JSON.parse(localStorage.getItem('invoices') || '[]');
+      const invoice = invoices[index];
+      
+      if (!invoice) {
+        alert('❌ Invoice not found');
+        return;
+      }
+      
+      // Generate invoice HTML for sharing
+      const invoiceHTML = generateInvoiceViewHTML(invoice);
+      
+      // Create temporary container
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = invoiceHTML;
+      tempDiv.style.position = 'absolute';
+      tempDiv.style.left = '-9999px';
+      document.body.appendChild(tempDiv);
+      
+      try {
+        // Convert to canvas using html2canvas
+        const canvas = await html2canvas(tempDiv.querySelector('.invoice-preview'), {
+          scale: 2,
+          logging: false,
+          useCORS: true
+        });
+        
+        // Convert canvas to blob
+        canvas.toBlob(async (blob) => {
+          const file = new File([blob], `Invoice-${invoice.invoiceNumber}.png`, { type: 'image/png' });
+          
+          // Check if Web Share API is available
+          if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+            try {
+              await navigator.share({
+                title: `Invoice ${invoice.invoiceNumber}`,
+                text: `Invoice for ${invoice.customerName}`,
+                files: [file]
+              });
+              console.log('✅ Invoice shared successfully');
+            } catch (err) {
+              if (err.name !== 'AbortError') {
+                console.error('Share failed:', err);
+                downloadInvoiceImage(canvas, invoice.invoiceNumber);
+              }
+            }
+          } else {
+            // Fallback: Download image
+            downloadInvoiceImage(canvas, invoice.invoiceNumber);
+          }
+          
+          // Remove temporary div
+          document.body.removeChild(tempDiv);
+        });
+        
+      } catch (error) {
+        console.error('Error generating invoice image:', error);
+        alert('❌ Failed to generate invoice image');
+        document.body.removeChild(tempDiv);
+      }
+    }
+    
+    /* ========================================
+       16. DOWNLOAD INVOICE AS IMAGE
+       ======================================== */
+    
+    function downloadInvoiceImage(canvas, invoiceNumber) {
+      const link = document.createElement('a');
+      link.download = `Invoice-${invoiceNumber}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      alert('✅ Invoice downloaded as image');
+    }
+    
+    /* ========================================
+       17. EDIT CURRENT INVOICE (from view modal)
+       ======================================== */
+    
+    function editCurrentInvoice() {
+      if (currentViewingIndex !== null) {
+        // Close view modal
+        const viewModal = bootstrap.Modal.getInstance(document.getElementById('invoiceViewModal'));
+        if (viewModal) viewModal.hide();
+        
+        // Open edit modal
+        setTimeout(() => {
+          openEditInvoice(currentViewingIndex);
+        }, 300);
+      }
+    }
+    
+    /* ========================================
+       18. SHARE CURRENT INVOICE (from view modal)
+       ======================================== */
+    
+    function shareCurrentInvoice() {
+      if (currentViewingIndex !== null) {
+        shareInvoice(currentViewingIndex);
+      }
+    }
+    
+    /* ========================================
+       19. GO BACK TO DASHBOARD
+       ======================================== */
+    
+    function goBackToDashboard() {
+      console.log('🏠 Returning to dashboard');
+      window.location.href = 'index.html';
+    }
+    
+    /* ========================================
+       20. HELPER: GENERATE INVOICE NUMBER
+       ======================================== */
+    
+    function generateInvoiceNumber(count) {
+      const paddedNumber = String(count + 1).padStart(6, '0');
+      return `INV-${paddedNumber}`;
+    }
+    
+    /* ========================================
+       21. HELPER: FORMAT DATE
+       ======================================== */
+    
+    function formatDate(dateString) {
+      if (!dateString) return 'N/A';
+      
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return 'Invalid Date';
+      
+      const options = { year: 'numeric', month: 'short', day: 'numeric' };
+      return date.toLocaleDateString('en-IN', options);
+    }
+    
+    /* ========================================
+       22. HELPER: SET DEFAULT DATES
+       ======================================== */
+    
+    function setDefaultDates() {
+      const today = new Date();
+      const todayString = today.toISOString().split('T')[0];
+      
+      // Set invoice date to today
+      const invoiceDateInput = document.getElementById('invoiceDate');
+      if (invoiceDateInput && !invoiceDateInput.value) {
+        invoiceDateInput.value = todayString;
+      }
+      
+      // Set due date to 30 days from today
+      const dueDate = new Date(today);
+      dueDate.setDate(dueDate.getDate() + 30);
+      const dueDateString = dueDate.toISOString().split('T')[0];
+      
+      const dueDateInput = document.getElementById('invoiceDueDate');
+      if (dueDateInput && !dueDateInput.value) {
+        dueDateInput.value = dueDateString;
+      }
+    }
+    
+    /* ========================================
+       23. HELPER: CALCULATE TOTAL FROM ITEMS
+       ======================================== */
+    
+    function calculateTotal(items) {
+      if (!items || items.length === 0) return 0;
+      
+      return items.reduce((sum, item) => {
+        const quantity = parseFloat(item.quantity) || 0;
+        const rate = parseFloat(item.rate) || 0;
+        return sum + (quantity * rate);
+      }, 0);
+    }
+    
+    /* ========================================
+       24. HELPER: ESCAPE HTML (Security)
+       ======================================== */
+    
+    function escapeHtml(text) {
+      if (!text) return '';
+      
+      const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+      };
+      
+      return text.toString().replace(/[&<>"']/g, function(m) { return map[m]; });
+    }
+    
+    /* ========================================
+       25. HELPER: SAFE JSON PARSE
+       ======================================== */
+    
+    function safeJSONParse(str, defaultValue = []) {
+      try {
+        return JSON.parse(str);
+      } catch (e) {
+        console.error('JSON parse error:', e);
+        return defaultValue;
+      }
+    }
+    
+    /* ========================================
+       END OF JAVASCRIPT
+       ======================================== */
+    
+    console.log('✅ Invoices page JavaScript loaded successfully');
+    
+  </script>
+
+</body>
+</html>
+
