@@ -967,6 +967,10 @@ async function openEditInvoice(invoiceId) {
    12. SAVE INVOICE - UPDATED FOR GOOGLE SHEETS
    ======================================== */
 
+/* ========================================
+   12. SAVE INVOICE - SIMPLIFIED (NO AUTH)
+   ======================================== */
+
 async function saveInvoice() {
   console.log('💾 Saving invoice...');
   
@@ -1013,16 +1017,14 @@ async function saveInvoice() {
   saveBtn.disabled = true;
   
   try {
-    // Check credentials
-    if (!SCRIPT_URL || !USER_EMAIL || !USER_HASH) {
-      throw new Error('Authentication credentials missing. Please log in again.');
+    // Check script URL
+    if (!SCRIPT_URL) {
+      throw new Error('Script URL not configured. Please check settings.');
     }
     
-    // Prepare data
+    // Prepare data - NO EMAIL/HASH NEEDED
     const formData = new FormData();
     formData.append('action', currentEditingIndex ? 'updateInvoice' : 'saveInvoice');
-    formData.append('email', USER_EMAIL);        // ← ADDED
-    formData.append('hash', USER_HASH);          // ← ADDED
     formData.append('customerName', customerName);
     formData.append('invoiceNumber', invoiceNumber);
     formData.append('invoiceDate', invoiceDate);
@@ -1111,8 +1113,8 @@ async function saveInvoice() {
       return items;
     }
     
-  /* ========================================
-   14. DELETE INVOICE - UPDATED FOR GOOGLE SHEETS
+ /* ========================================
+   14. DELETE INVOICE - SIMPLIFIED (NO AUTH)
    ======================================== */
 
 async function deleteInvoice(invoiceId) {
@@ -1123,10 +1125,9 @@ async function deleteInvoice(invoiceId) {
   console.log('🗑️ Deleting invoice:', invoiceId);
   
   try {
+    // NO EMAIL/HASH NEEDED
     const formData = new FormData();
     formData.append('action', 'deleteInvoice');
-    formData.append('email', USER_EMAIL);      // ← ADD THIS
-    formData.append('hash', USER_HASH);        // ← ADD THIS
     formData.append('invoiceId', invoiceId);
     
     const response = await fetch(SCRIPT_URL, {
@@ -1375,6 +1376,7 @@ async function shareInvoice(invoiceId) {
 
 </body>
 </html>
+
 
 
 
