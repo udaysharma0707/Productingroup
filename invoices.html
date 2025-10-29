@@ -917,11 +917,7 @@ Status: ${invoice.status}
  * EDIT INVOICE FUNCTION
  * ==========================================
  */
-/**
- * ==========================================
- * EDIT INVOICE - WITH PROPER DATE FORMAT
- * ==========================================
- */
+
 async function editInvoice(invoiceId) {
   console.log('✏️ Editing invoice:', invoiceId);
   
@@ -935,7 +931,7 @@ async function editInvoice(invoiceId) {
   
   console.log('📋 Original invoice data:', invoice);
   
-  // ✅ FORMAT DATES PROPERLY FOR DATE INPUT
+  // ✅ FORMAT DATES PROPERLY FOR DATE INPUT (uses global helper function)
   const formattedInvoiceDate = formatDateForInput(invoice.invoiceDate);
   const formattedDueDate = formatDateForInput(invoice.dueDate);
   
@@ -947,44 +943,6 @@ async function editInvoice(invoiceId) {
   document.getElementById('editCustomerName').value = invoice.customerName || '';
   document.getElementById('editInvoiceDate').value = formattedInvoiceDate;
   document.getElementById('editDueDate').value = formattedDueDate;
-  document.getElementById('editTotal').value = invoice.total || 0;
-  document.getElementById('editStatus').value = invoice.status || 'unpaid';
-  
-  // Show modal
-  const modal = new bootstrap.Modal(document.getElementById('editInvoiceModal'));
-  modal.show();
-}
-
-  // Helper function to convert DD-MM-YYYY or YYYY-MM-DD to YYYY-MM-DD
-  function formatDateForInput(dateStr) {
-    if (!dateStr) return '';
-    
-    // If already in YYYY-MM-DD format
-    if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
-      return dateStr;
-    }
-    
-    // If in DD-MM-YYYY format
-    if (/^\d{2}-\d{2}-\d{4}$/.test(dateStr)) {
-      const [day, month, year] = dateStr.split('-');
-      return `${year}-${month}-${day}`;
-    }
-    
-    // If in DD/MM/YYYY format
-    if (/^\d{2}\/\d{2}\/\d{4}$/.test(dateStr)) {
-      const [day, month, year] = dateStr.split('/');
-      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-    }
-    
-    return dateStr;
-  }
-  
-  // Populate form
-  document.getElementById('editInvoiceId').value = invoice.invoiceId;
-  document.getElementById('editInvoiceNumber').value = invoice.invoiceNumber || '';
-  document.getElementById('editCustomerName').value = invoice.customerName || '';
-  document.getElementById('editInvoiceDate').value = formatDateForInput(invoice.invoiceDate);
-  document.getElementById('editDueDate').value = formatDateForInput(invoice.dueDate);
   document.getElementById('editTotal').value = invoice.total || 0;
   document.getElementById('editStatus').value = invoice.status || 'unpaid';
   
@@ -1935,6 +1893,7 @@ function goBack() {
 
 </body>
 </html>
+
 
 
 
