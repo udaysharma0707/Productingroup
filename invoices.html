@@ -897,7 +897,66 @@ function displayInvoices(invoices) {
  * VIEW INVOICE - OPEN IN NEW TAB/WINDOW
  * ==========================================
  */
+/**
+ * ==========================================
+ * VIEW INVOICE - OPEN IN NEW TAB/WINDOW
+ * ==========================================
+ */
 function viewInvoiceDetails(invoiceId) {
+  console.log('👁️ Viewing invoice:', invoiceId);
+  
+  const invoice = window.invoicesCache?.find(inv => inv.invoiceId === invoiceId);
+  
+  if (!invoice) {
+    alert('Invoice not found');
+    return;
+  }
+  
+  console.log('📄 Invoice data:', invoice);
+  
+  // Parse items if stored as JSON string
+  let items = [];
+  if (invoice.items) {
+    try {
+      items = typeof invoice.items === 'string' ? JSON.parse(invoice.items) : invoice.items;
+      console.log('📦 Parsed items:', items);
+    } catch (e) {
+      console.error('Error parsing items:', e);
+      console.log('Raw items data:', invoice.items);
+      items = [];
+    }
+  }
+  
+  // ✅ USE VALUES FROM SHEET OR CALCULATE FROM ITEMS
+  let subtotal = parseFloat(invoice.subtotal) || 0;
+  let discount = parseFloat(invoice.discount) || 0;
+  let tax = parseFloat(invoice.tax) || 0;
+  let grandTotal = parseFloat(invoice.total) || 0;
+  
+  // If no subtotal in sheet, calculate from items
+  if (subtotal === 0 && items.length > 0) {
+    subtotal = items.reduce((sum, item) => {
+      const amount = parseFloat(item.amount) || parseFloat(item.total) || (parseFloat(item.quantity) * parseFloat(item.rate));
+      return sum + amount;
+    }, 0);
+  }
+  
+  // If no grand total in sheet, calculate it
+  if (grandTotal === 0) {
+    grandTotal = subtotal - discount + tax;
+  }
+  
+  console.log('💰 Totals - Subtotal:', subtotal, 'Discount:', discount, 'Tax:', tax, 'Grand Total:', grandTotal);
+  
+  // Generate invoice HTML
+  const invoiceHTML = generateInvoiceHTML(invoice, items, subtotal, discount, tax, grandTotal);
+  
+  // Open in new window
+  const printWindow = window.open('', '_blank', 'width=800,height=600');
+  printWindow.document.write(invoiceHTML);
+  printWindow.document.close();
+}
+
   console.log('👁️ Viewing invoice:', invoiceId);
   
   const invoice = window.invoicesCache?.find(inv => inv.invoiceId === invoiceId);
@@ -934,7 +993,7 @@ function viewInvoiceDetails(invoiceId) {
 }
 
 
-    /**
+   /**
  * ==========================================
  * GENERATE INVOICE HTML FOR PRINTING
  * ==========================================
@@ -944,17 +1003,35 @@ function generateInvoiceHTML(invoice, items, subtotal, discount, tax, grandTotal
   const cleanDueDate = formatDateForDisplay(invoice.dueDate);
   
   let itemsHTML = '';
-  items.forEach((item, index) => {
-    itemsHTML += `
+  
+  if (items && items.length > 0) {
+    items.forEach((item, index) => {
+      // Handle different field name variations
+      const description = item.description || item.name || item.itemName || 'Item';
+      const quantity = parseFloat(item.quantity || item.qty || 0);
+      const rate = parseFloat(item.rate || item.price || item.unitPrice || 0);
+      const amount = parseFloat(item.amount || item.total) || (quantity * rate);
+      
+      itemsHTML += `
+        <tr>
+          <td style="padding: 12px; border-bottom: 1px solid #e0e0e0; text-align: center;">${index + 1}</td>
+          <td style="padding: 12px; border-bottom: 1px solid #e0e0e0;">${description}</td>
+          <td style="padding: 12px; border-bottom: 1px solid #e0e0e0; text-align: center;">${quantity}</td>
+          <td style="padding: 12px; border-bottom: 1px solid #e0e0e0; text-align: right;">₹${rate.toFixed(2)}</td>
+          <td style="padding: 12px; border-bottom: 1px solid #e0e0e0; text-align: right;">₹${amount.toFixed(2)}</td>
+        </tr>
+      `;
+    });
+  } else {
+    // If no items, show a placeholder row
+    itemsHTML = `
       <tr>
-        <td style="padding: 12px; border-bottom: 1px solid #e0e0e0; text-align: center;">${index + 1}</td>
-        <td style="padding: 12px; border-bottom: 1px solid #e0e0e0;">${item.description || item.name || 'Item'}</td>
-        <td style="padding: 12px; border-bottom: 1px solid #e0e0e0; text-align: center;">${item.quantity || 0}</td>
-        <td style="padding: 12px; border-bottom: 1px solid #e0e0e0; text-align: right;">₹${parseFloat(item.rate || 0).toFixed(2)}</td>
-        <td style="padding: 12px; border-bottom: 1px solid #e0e0e0; text-align: right;">₹${parseFloat(item.amount || 0).toFixed(2)}</td>
+        <td colspan="5" style="padding: 20px; text-align: center; color: #999;">
+          No items available
+        </td>
       </tr>
     `;
-  });
+  }
   
   return `
 <!DOCTYPE html>
@@ -1162,6 +1239,110 @@ function generateInvoiceHTML(invoice, items, subtotal, discount, tax, grandTotal
     .close-btn:hover {
       background: #7f8c8d;
     }
+  </style>
+</head>
+<body>
+  <div class="invoice-container">
+    <!-- Header -->
+    <div class="invoice-header">
+      <h1>INVOICE</h1>
+      <p class="company-name">Tile & Sanitaryware Inventory</p>
+    </div>
+    
+    <!-- Invoice Details -->
+    <div class="invoice-details">
+      <div>
+        <div class="detail-group">
+          <h3>Invoice Number:</h3>
+          <p><strong>${invoice.invoiceNumber}</strong></p>
+        </div>
+        <div class="detail-group" style="margin-top: 20px;">
+          <h3>Customer Name:</h3>
+          <p>${invoice.customerName}</p>
+        </div>
+      </div>
+      <div>
+        <div class="detail-group">
+          <h3>Invoice Date:</h3>
+          <p>${cleanInvoiceDate}</p>
+        </div>
+        <div class="detail-group" style="margin-top: 20px;">
+          <h3>Due Date:</h3>
+          <p>${cleanDueDate}</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Items Table -->
+    <table class="items-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Item Description</th>
+          <th>Quantity</th>
+          <th>Rate</th>
+          <th>Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${itemsHTML}
+      </tbody>
+    </table>
+    
+    <!-- Totals -->
+    <div class="totals-section">
+      <table>
+        <tr>
+          <td>Sub Total:</td>
+          <td>₹${subtotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+        </tr>
+        <tr>
+          <td>Discount:</td>
+          <td>-₹${discount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+        </tr>
+        <tr>
+          <td>Tax:</td>
+          <td>₹${tax.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+        </tr>
+        <tr class="grand-total">
+          <td>Grand Total:</td>
+          <td>₹${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+        </tr>
+      </table>
+    </div>
+    
+    <!-- Footer -->
+    <div class="footer-section">
+      <div style="margin-bottom: 20px;">
+        <h3>Customer Notes:</h3>
+        <p>Thanks for your business.</p>
+      </div>
+      
+      <div>
+        <h3>Terms & Conditions:</h3>
+        <ol>
+          <li>Payment due within 14 days of invoice date</li>
+          <li>Late payments subject to 2% monthly interest charge</li>
+          <li>Goods once sold cannot be returned or exchanged</li>
+        </ol>
+      </div>
+    </div>
+    
+    <!-- Print Buttons -->
+    <div class="print-buttons no-print">
+      <button class="print-btn" onclick="window.print()">
+        🖨️ Print Invoice
+      </button>
+      <button class="close-btn" onclick="window.close()">
+        ✕ Close
+      </button>
+    </div>
+  </div>
+</body>
+</html>
+  `;
+}
+
   </style>
 </head>
 <body>
@@ -2249,6 +2430,7 @@ function goBack() {
 
 </body>
 </html>
+
 
 
 
