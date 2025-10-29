@@ -585,6 +585,117 @@
     let currentEditingIndex = null;
     let currentViewingIndex = null;
     let invoiceItemCounter = 0;
+
+    /**
+ * ==========================================
+ * DATE FORMATTING UTILITIES
+ * ==========================================
+ */
+
+// Convert any date format to YYYY-MM-DD for date input
+function formatDateForInput(dateStr) {
+  if (!dateStr) return '';
+  
+  try {
+    // Handle ISO timestamp (2025-10-28T18:30:00.000Z)
+    if (dateStr.includes('T')) {
+      const date = new Date(dateStr);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+    
+    // If already in YYYY-MM-DD format
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+      return dateStr;
+    }
+    
+    // If in DD-MM-YYYY format
+    if (/^\d{2}-\d{2}-\d{4}$/.test(dateStr)) {
+      const [day, month, year] = dateStr.split('-');
+      return `${year}-${month}-${day}`;
+    }
+    
+    // If in DD/MM/YYYY format
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(dateStr)) {
+      const [day, month, year] = dateStr.split('/');
+      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    }
+    
+    return dateStr;
+  } catch (error) {
+    console.error('Error formatting date for input:', error);
+    return '';
+  }
+}
+
+// Convert any date format to readable display (DD MMM YYYY)
+function formatDateForDisplay(dateStr) {
+  if (!dateStr) return 'N/A';
+  
+  try {
+    let date;
+    
+    // Handle ISO timestamp (2025-10-28T18:30:00.000Z)
+    if (dateStr.includes('T') || dateStr.includes('Z')) {
+      date = new Date(dateStr);
+    } 
+    // Handle YYYY-MM-DD
+    else if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+      date = new Date(dateStr + 'T00:00:00');
+    }
+    // Handle DD-MM-YYYY
+    else if (/^\d{2}-\d{2}-\d{4}$/.test(dateStr)) {
+      const [day, month, year] = dateStr.split('-');
+      date = new Date(`${year}-${month}-${day}T00:00:00`);
+    }
+    // Handle DD/MM/YYYY
+    else if (/^\d{2}\/\d{2}\/\d{4}$/.test(dateStr)) {
+      const [day, month, year] = dateStr.split('/');
+      date = new Date(`${year}-${month}-${day}T00:00:00`);
+    }
+    else {
+      return dateStr; // Return as-is if unknown format
+    }
+    
+    // Format as DD MMM YYYY (e.g., 29 Oct 2025)
+    const day = date.getDate();
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const month = months[date.getMonth()];
+    const year = date.getFullYear();
+    
+    return `${day} ${month} ${year}`;
+  } catch (error) {
+    console.error('Error formatting date for display:', error);
+    return dateStr;
+  }
+}
+
+// Get simple YYYY-MM-DD format
+function getSimpleDateString(dateStr) {
+  if (!dateStr) return '';
+  
+  try {
+    if (dateStr.includes('T') || dateStr.includes('Z')) {
+      const date = new Date(dateStr);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+    
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+      return dateStr;
+    }
+    
+    return formatDateForInput(dateStr);
+  } catch (error) {
+    console.error('Error getting simple date string:', error);
+    return dateStr;
+  }
+}
+
     /* ========================================
        1. PAGE INITIALIZATION
        ======================================== */
@@ -711,6 +822,10 @@ function displayInvoices(invoices) {
     
     const statusText = invoice.status || 'unpaid';
     
+    // ✅ CLEAN DATE FORMATTING
+    const cleanInvoiceDate = formatDateForDisplay(invoice.invoiceDate);
+    const cleanDueDate = formatDateForDisplay(invoice.dueDate);
+    
     html += `
       <div class="col-12 col-md-6 col-lg-4">
         <div class="card h-100 shadow-sm hover-shadow" style="transition: all 0.3s ease;" id="invoice-card-${invoice.invoiceId}">
@@ -727,13 +842,13 @@ function displayInvoices(invoices) {
             <!-- Invoice Date -->
             <div class="text-muted small mb-2" id="date-${invoice.invoiceId}">
               <i class="bi bi-calendar3"></i> 
-              ${invoice.invoiceDate || 'N/A'}
+              ${cleanInvoiceDate}
             </div>
             
             <!-- Due Date -->
             <div class="text-muted small mb-3" id="due-${invoice.invoiceId}">
               <i class="bi bi-calendar-check"></i> 
-              Due: ${invoice.dueDate || 'N/A'}
+              Due: ${cleanDueDate}
             </div>
             
             <!-- Total Amount -->
@@ -766,6 +881,7 @@ function displayInvoices(invoices) {
   container.innerHTML = html;
   console.log('✅ Invoices displayed successfully');
 }
+
 
 
 /**
@@ -817,6 +933,28 @@ async function editInvoice(invoiceId) {
     return;
   }
   
+  console.log('📋 Original invoice data:', invoice);
+  
+  // ✅ FORMAT DATES PROPERLY FOR DATE INPUT
+  const formattedInvoiceDate = formatDateForInput(invoice.invoiceDate);
+  const formattedDueDate = formatDateForInput(invoice.dueDate);
+  
+  console.log('📅 Formatted dates - Invoice:', formattedInvoiceDate, 'Due:', formattedDueDate);
+  
+  // Populate form
+  document.getElementById('editInvoiceId').value = invoice.invoiceId;
+  document.getElementById('editInvoiceNumber').value = invoice.invoiceNumber || '';
+  document.getElementById('editCustomerName').value = invoice.customerName || '';
+  document.getElementById('editInvoiceDate').value = formattedInvoiceDate;
+  document.getElementById('editDueDate').value = formattedDueDate;
+  document.getElementById('editTotal').value = invoice.total || 0;
+  document.getElementById('editStatus').value = invoice.status || 'unpaid';
+  
+  // Show modal
+  const modal = new bootstrap.Modal(document.getElementById('editInvoiceModal'));
+  modal.show();
+}
+
   // Helper function to convert DD-MM-YYYY or YYYY-MM-DD to YYYY-MM-DD
   function formatDateForInput(dateStr) {
     if (!dateStr) return '';
@@ -879,12 +1017,16 @@ async function saveEditedInvoice() {
   const statusClass = status === 'paid' ? 'bg-success' : 
                       status === 'unpaid' ? 'bg-warning' : 'bg-danger';
   
+  // ✅ FORMAT DATES FOR DISPLAY
+  const displayInvoiceDate = formatDateForDisplay(invoiceDate);
+  const displayDueDate = formatDateForDisplay(dueDate);
+  
   // Update the card immediately
   document.getElementById(`status-badge-${invoiceId}`).className = `badge ${statusClass} text-white`;
   document.getElementById(`status-badge-${invoiceId}`).textContent = status.toUpperCase();
   document.getElementById(`customer-${invoiceId}`).textContent = customerName;
-  document.getElementById(`date-${invoiceId}`).innerHTML = `<i class="bi bi-calendar3"></i> ${invoiceDate}`;
-  document.getElementById(`due-${invoiceId}`).innerHTML = `<i class="bi bi-calendar-check"></i> Due: ${dueDate}`;
+  document.getElementById(`date-${invoiceId}`).innerHTML = `<i class="bi bi-calendar3"></i> ${displayInvoiceDate}`;
+  document.getElementById(`due-${invoiceId}`).innerHTML = `<i class="bi bi-calendar-check"></i> Due: ${displayDueDate}`;
   document.getElementById(`total-${invoiceId}`).textContent = `₹${total.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   
   // Update cache
@@ -937,6 +1079,7 @@ async function saveEditedInvoice() {
     showToast('⚠️ Network error. Changes may not be saved.', 'danger');
   }
 }
+
 
 
     
@@ -1792,6 +1935,7 @@ function goBack() {
 
 </body>
 </html>
+
 
 
 
