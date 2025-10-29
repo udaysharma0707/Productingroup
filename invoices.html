@@ -478,62 +478,34 @@
       setDefaultDates();
     });
     
-    /* ========================================
-       2. LOAD AND DISPLAY INVOICES
-       ======================================== */
     
+    
+/* ========================================
+   LOAD INVOICES FROM GOOGLE SHEETS
+   ======================================== */
+
 async function loadInvoices() {
-  console.log('🔄 Loading invoices from Google Sheets...');
+  console.log('📊 Loading invoices from Google Sheets...');
   
-  const container = document.getElementById('invoicesListContainer');
+  const container = document.getElementById('invoicesContainer');
   
-  // Show loading
+  // Show loading state
   container.innerHTML = `
-    <div class="text-center py-5">
+    <div class="loading-state">
       <div class="spinner-border text-primary" role="status">
         <span class="visually-hidden">Loading...</span>
       </div>
-      <p class="mt-3 text-muted">Loading invoices from cloud...</p>
+      <p>Loading invoices...</p>
     </div>
   `;
   
   try {
-    // Check if we have credentials
-    if (!SCRIPT_URL || !USER_EMAIL || !USER_HASH) {
-      container.innerHTML = `
-        <div class="empty-state">
-          <i class="bi bi-exclamation-triangle"></i>
-          <h3>Authentication Required</h3>
-          <p>Please log in first</p>
-          <button class="btn btn-primary" onclick="goBackToDashboard()">Go to Login</button>
-        </div>
-      `;
-      return;
-    }
+    // Fetch from Google Sheets (no auth needed)
+    const response = await fetch(`${SCRIPT_URL}?action=getInvoices`);
     
-    // Fetch from Google Sheets
-    const url = `${SCRIPT_URL}?action=getInvoices&email=${encodeURIComponent(USER_EMAIL)}&hash=${encodeURIComponent(USER_HASH)}`;
+    const data = await response.json();
     
-    console.log('📤 Fetching from:', url);
-    
-    const response = await fetch(url);
-    
-    // DEBUG: Check what we got back
-    const contentType = response.headers.get('content-type');
-    console.log('📥 Response content-type:', contentType);
-    
-    const responseText = await response.text();
-    console.log('📥 Response text (first 500 chars):', responseText.substring(0, 500));
-    
-    // Try to parse as JSON
-    let data;
-    try {
-      data = JSON.parse(responseText);
-    } catch (parseError) {
-      console.error('❌ JSON parse error:', parseError);
-      console.error('Response was:', responseText);
-      throw new Error('Server returned HTML instead of JSON. Check Apps Script deployment.');
-    }
+    console.log('📥 Response:', data);
     
     if (!data.success) {
       throw new Error(data.error || 'Failed to load invoices');
@@ -541,42 +513,30 @@ async function loadInvoices() {
     
     const invoices = data.invoices || [];
     
-    console.log(`✅ Loaded ${invoices.length} invoices from Google Sheets`);
+    console.log(`✅ Loaded ${invoices.length} invoices`);
     
     if (invoices.length === 0) {
       container.innerHTML = `
         <div class="empty-state">
           <i class="bi bi-inbox"></i>
           <h3>No Invoices Yet</h3>
-          <p>Click "Create Invoice" to generate your first invoice</p>
-          <button class="btn btn-primary btn-lg" onclick="openCreateInvoiceModal()">
-            <i class="bi bi-plus-circle"></i> Create Your First Invoice
-          </button>
+          <p>Click "Create Invoice" to add your first invoice</p>
         </div>
       `;
       return;
     }
     
-    let html = '<div class="invoices-grid">';
-    invoices.forEach((invoice, index) => {
-      html += renderInvoiceCard(invoice, index);
-    });
-    html += '</div>';
-    
-    container.innerHTML = html;
+    // Display invoices
+    displayInvoices(invoices);
     
   } catch (error) {
     console.error('❌ Error loading invoices:', error);
     container.innerHTML = `
       <div class="empty-state">
-        <i class="bi bi-exclamation-triangle text-danger"></i>
+        <i class="bi bi-exclamation-triangle"></i>
         <h3>Error Loading Invoices</h3>
-        <p>${escapeHtml(error.message)}</p>
-        <details style="margin-top: 20px; text-align: left; max-width: 600px; margin-left: auto; margin-right: auto;">
-          <summary style="cursor: pointer; color: #007bff;">Show Technical Details</summary>
-          <pre style="background: #f5f5f5; padding: 15px; border-radius: 5px; overflow-x: auto; font-size: 12px; margin-top: 10px;">${escapeHtml(error.stack || error.toString())}</pre>
-        </details>
-        <button class="btn btn-primary mt-3" onclick="loadInvoices()">
+        <p>${error.message}</p>
+        <button class="btn btn-primary" onclick="loadInvoices()">
           <i class="bi bi-arrow-clockwise"></i> Retry
         </button>
       </div>
@@ -585,9 +545,6 @@ async function loadInvoices() {
 }
 
     
-    /* ========================================
-       3. RENDER SINGLE INVOICE CARD
-       ======================================== */
     
    /* ========================================
    3. RENDER SINGLE INVOICE CARD - UPDATED FOR GOOGLE SHEETS
@@ -1356,6 +1313,7 @@ async function shareInvoice(invoiceId) {
 
 </body>
 </html>
+
 
 
 
