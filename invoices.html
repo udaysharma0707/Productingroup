@@ -454,20 +454,35 @@
     /* ================================================
        INVOICES PAGE - JAVASCRIPT
        ================================================ */
-      // ========================================
-    // CONFIGURATION - GOOGLE SHEETS API
     // ========================================
-    
-    // Get these from localStorage (set during login)
-    const SCRIPT_URL = localStorage.getItem('scriptURL') || '';
-    const USER_EMAIL = localStorage.getItem('userEmail') || '';
-    const USER_HASH = localStorage.getItem('hash') || '';
-    
-    console.log('📊 Google Sheets Config:', {
-      scriptURL: SCRIPT_URL ? 'Set ✓' : 'Missing ❌',
-      userEmail: USER_EMAIL ? 'Set ✓' : 'Missing ❌',
-      userHash: USER_HASH ? 'Set ✓' : 'Missing ❌'
-    });
+// CONFIGURATION - GOOGLE SHEETS API
+// Check both localStorage and sessionStorage
+// ========================================
+
+const SCRIPT_URL = localStorage.getItem('scriptURL') || 
+                   sessionStorage.getItem('scriptURL') || '';
+const USER_EMAIL = localStorage.getItem('userEmail') || 
+                   sessionStorage.getItem('userEmail') || '';
+const USER_HASH = localStorage.getItem('hash') || 
+                  sessionStorage.getItem('hash') || '';
+
+console.log('📊 Google Sheets Config:', {
+  scriptURL: SCRIPT_URL ? 'Set ✓' : 'Missing ❌',
+  userEmail: USER_EMAIL ? 'Set ✓' : 'Missing ❌',
+  userHash: USER_HASH ? 'Set ✓' : 'Missing ❌'
+});
+
+// Debug: Show what we found
+if (!SCRIPT_URL || !USER_EMAIL || !USER_HASH) {
+  console.error('❌ Missing credentials!');
+  console.log('localStorage.scriptURL:', localStorage.getItem('scriptURL'));
+  console.log('localStorage.userEmail:', localStorage.getItem('userEmail'));
+  console.log('localStorage.hash:', localStorage.getItem('hash'));
+  console.log('sessionStorage.scriptURL:', sessionStorage.getItem('scriptURL'));
+  console.log('sessionStorage.userEmail:', sessionStorage.getItem('userEmail'));
+  console.log('sessionStorage.hash:', sessionStorage.getItem('hash'));
+}
+
     // Global variables
     let currentEditingIndex = null;
     let currentViewingIndex = null;
@@ -1321,5 +1336,6 @@ async function shareInvoice(invoiceId) {
 
 </body>
 </html>
+
 
 
