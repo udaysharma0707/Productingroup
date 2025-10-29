@@ -471,13 +471,23 @@
     /* ========================================
        1. PAGE INITIALIZATION
        ======================================== */
-    
-    document.addEventListener('DOMContentLoaded', function() {
-      console.log('📄 Invoices page loaded');
-      loadInvoices();
-      setDefaultDates();
-    });
-    
+ document.addEventListener('DOMContentLoaded', function() {
+  console.log('📄 Invoices page loaded');
+  
+  // Check if invoicesContainer exists before loading
+  const container = document.getElementById('invoicesContainer');
+  if (container) {
+    console.log('✅ invoicesContainer found, loading invoices...');
+    loadInvoices();
+  } else {
+    console.error('❌ ERROR: invoicesContainer element not found in HTML!');
+    console.error('Please make sure <div id="invoicesContainer"></div> exists in the body');
+  }
+  
+  // Set default dates for invoice form
+  setDefaultDates();
+});
+
     
     
 /* ========================================
@@ -1313,6 +1323,7 @@ async function shareInvoice(invoiceId) {
 
 </body>
 </html>
+
 
 
 
