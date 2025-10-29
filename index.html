@@ -9174,9 +9174,27 @@ function navigateTo(page) {
   } else if (page === 'productGroups') {
     navigateToProductGroups();
  } else if (page === 'invoices') {
-    // Navigate to invoices page
-    window.location.href = 'invoices.html';
-  } else {
+  // Ensure credentials are saved before navigating
+  const scriptURL = localStorage.getItem('scriptURL') || SCRIPT_URL;
+  const userEmail = localStorage.getItem('userEmail');
+  const userHash = localStorage.getItem('hash');
+  
+  if (!userEmail || !userHash) {
+    alert('⚠️ Please log in first');
+    return;
+  }
+  
+  // Re-save to ensure they're there
+  localStorage.setItem('scriptURL', scriptURL);
+  localStorage.setItem('userEmail', userEmail);
+  localStorage.setItem('hash', userHash);
+  
+  console.log('✅ Credentials ready for invoices page');
+  
+  // Navigate to invoices page
+  window.location.href = 'invoices.html';
+}
+ else {
     console.error('❌ Unknown page:', page);
   }
 }
@@ -9552,6 +9570,7 @@ function getProductIcon(category) {
 
 </body>
 </html>
+
 
 
 
