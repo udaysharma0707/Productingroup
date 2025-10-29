@@ -1881,10 +1881,11 @@ body.modal-open {
   </div>
   
 // NEW (with safety check):
-<div class="sidebar-item" onclick="if(typeof navigateToAllProducts === 'function') navigateToAllProducts()">
+<div class="sidebar-item" onclick="navigateTo('allProducts')">
   <i class="bi bi-box"></i>
   <span>All Products</span>
 </div>
+
 
 <div class="sidebar-item" onclick="if(typeof navigateToProductGroups === 'function') navigateToProductGroups()">
   <i class="bi bi-collection"></i>
@@ -9130,16 +9131,28 @@ function navigateToHome() {
  * Phase 1: Only handles dashboard (calls navigateToHome)
  * @param {string} page - Page name ('dashboard', 'allProducts', etc.)
  */
+/**
+ * Centralized navigation function
+ * Phase 2: Handles dashboard AND allProducts
+ * @param {string} page - Page name ('dashboard', 'allProducts', etc.)
+ */
 function navigateTo(page) {
   console.log('🔷 navigateTo called with:', page);
   
-  // Phase 1: Only dashboard is migrated
+  // Phase 1: Dashboard
   if (page === 'dashboard') {
     navigateToHome();
-  } else {
-    console.warn('⚠️ Page not migrated to new navigation yet:', page);
+  } 
+  // Phase 2: All Products - NEW!
+  else if (page === 'allProducts') {
+    navigateToAllProducts();
+  } 
+  // Not migrated yet
+  else {
+    console.warn('⚠️ Page not migrated yet:', page);
   }
 }
+
 
 // Navigate to Group Detail - FIXED
 function navigateToGroupDetail(groupId, groupName) {
@@ -9510,6 +9523,7 @@ function getProductIcon(category) {
 
 </body>
 </html>
+
 
 
 
