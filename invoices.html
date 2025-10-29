@@ -500,22 +500,27 @@ async function loadInvoices() {
   
   const container = document.getElementById('invoicesContainer');
   
-  // Show loading state
+  // Show loading
   container.innerHTML = `
     <div class="loading-state">
-      <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Loading...</span>
-      </div>
+      <div class="spinner-border text-primary"></div>
       <p>Loading invoices...</p>
     </div>
   `;
   
   try {
-    // Fetch from Google Sheets (no auth needed)
-    const response = await fetch(`${SCRIPT_URL}?action=getInvoices`);
+    // ✅ POST REQUEST (not GET)
+    const response = await fetch(SCRIPT_URL, {
+      method: 'POST',  // ← CRITICAL!
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        action: 'getInvoices'
+      })
+    });
     
     const data = await response.json();
-    
     console.log('📥 Response:', data);
     
     if (!data.success) {
@@ -523,7 +528,6 @@ async function loadInvoices() {
     }
     
     const invoices = data.invoices || [];
-    
     console.log(`✅ Loaded ${invoices.length} invoices`);
     
     if (invoices.length === 0) {
@@ -537,14 +541,14 @@ async function loadInvoices() {
       return;
     }
     
-    // Display invoices
+    // Display invoices (you need displayInvoices function)
     displayInvoices(invoices);
     
   } catch (error) {
     console.error('❌ Error loading invoices:', error);
     container.innerHTML = `
       <div class="empty-state">
-        <i class="bi bi-exclamation-triangle"></i>
+        <i class="bi bi-exclamation-triangle text-danger"></i>
         <h3>Error Loading Invoices</h3>
         <p>${error.message}</p>
         <button class="btn btn-primary" onclick="loadInvoices()">
@@ -554,6 +558,7 @@ async function loadInvoices() {
     `;
   }
 }
+
 
     
     
@@ -1331,6 +1336,7 @@ function goBack() {
 
 </body>
 </html>
+
 
 
 
