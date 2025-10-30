@@ -9271,8 +9271,12 @@ function getProductIcon(category) {
  * URL Parameter Detection - Navigate from invoices page
  * IMPORTANT: Run AFTER data is loaded and DOM is ready!
  */
+/**
+ * URL Parameter Detection - Navigate from invoices page
+ * IMPORTANT: Clean URL after processing to prevent reload loops!
+ */
 window.addEventListener('DOMContentLoaded', () => {
-  // Wait longer for data to fully load, especially for product groups
+  // Wait longer for data to fully load
   setTimeout(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const page = urlParams.get('page');
@@ -9317,7 +9321,12 @@ window.addEventListener('DOMContentLoaded', () => {
         console.warn('⚠️ Unknown page parameter:', page);
     }
     
-  }, 800);  // ✅ Increased delay to 800ms for better data loading
+    // === ✅ CLEAN URL AFTER NAVIGATION ===
+    // Remove the query parameter so it doesn't persist on reload
+    window.history.replaceState({}, document.title, window.location.pathname);
+    console.log('🧹 URL cleaned - page parameter removed');
+    
+  }, 800);
 });
 
 
@@ -9634,6 +9643,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
