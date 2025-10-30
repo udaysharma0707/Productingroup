@@ -665,48 +665,63 @@ const ENDPOINT = "https://script.google.com/macros/s/AKfycbyDA9VpX_lWRLFhJpo9nUV
     }
 
  // ========== SEND TO SERVER - FIXED FOR JSONP CALLBACK ==========
+// ========== SEND TO SERVER - USING FETCH API (NO JSONP) ==========
 function sendToServerJSONP(formData, clientTs) {
-  var params = [];
+  // Changed to use Fetch API instead of JSONP for better compatibility
   
-  function add(k, v) {
-    if (v === undefined || v === null) v = "";
-    params.push(encodeURIComponent(k) + "=" + encodeURIComponent(String(v)));
+  // Build URL parameters
+  var params = new URLSearchParams();
+  params.append("action", "submitPurchase");
+  params.append("purchasedItem", formData.purchasedItem || "");
+  params.append("purchasedFrom", formData.purchasedFrom || "");
+  params.append("modeOfPayment", formData.modeOfPayment || "");
+  params.append("modeBreakdown", formData.modeBreakdown || "");
+  params.append("paymentPaid", formData.paymentPaid === undefined ? "" : String(formData.paymentPaid));
+  params.append("otherInfo", formData.otherInfo || "");
+  
+  if (formData.submissionId) {
+    params.append("submissionId", formData.submissionId);
+    params.append("clientId", formData.submissionId);
   }
-  
-  // ✅ CRITICAL: Add callback parameter FIRST for JSONP to work
-  var callbackName = "jsonp_cb_" + Date.now() + "_" + Math.floor(Math.random() * 100000);
-  add("callback", callbackName);
-  
-  // ✅ Add action parameter for inventory backend routing
-  add("action", "submitPurchase");
-  
-  // ✅ Add all purchase data
-  add("purchasedItem", formData.purchasedItem || "");
-  add("purchasedFrom", formData.purchasedFrom || "");
-  add("modeOfPayment", formData.modeOfPayment || "");
-  add("modeBreakdown", formData.modeBreakdown || "");
-  add("paymentPaid", formData.paymentPaid === undefined ? "" : String(formData.paymentPaid));
-  add("otherInfo", formData.otherInfo || "");
-  
-  if (formData.submissionId) { 
-    add("submissionId", formData.submissionId); 
-    add("clientId", formData.submissionId); 
-  }
-  if (clientTs) add("clientTs", String(clientTs));
+  if (clientTs) params.append("clientTs", String(clientTs));
 
-  var base = ENDPOINT;
-  var url = base + (base.indexOf('?') === -1 ? '?' : '&') + params.join("&");
+  const url = ENDPOINT + "?" + params.toString();
   
-  if (url.length > 1900) {
-    return Promise.reject(new Error("Payload too large for JSONP"));
-  }
-  
-  console.log('[SEND] Endpoint:', base);
-  console.log('[SEND] Callback:', callbackName);
+  console.log('[SEND] Using Fetch API');
+  console.log('[SEND] Endpoint:', ENDPOINT);
   console.log('[SEND] Action: submitPurchase');
   console.log('[SEND] URL length:', url.length);
   
-  return jsonpRequest(url, JSONP_TIMEOUT_MS);
+  return fetch(url, {
+    method: 'GET',
+    mode: 'no-cors'
+  })
+  .then(response => {
+    console.log('[FETCH] Response received, status:', response.status);
+    return response.text();
+  })
+  .then(text => {
+    console.log('[FETCH] Response text:', text);
+    
+    // Try to parse as JSON
+    try {
+      return JSON.parse(text);
+    } catch (e) {
+      console.log('[FETCH] Not JSON, trying to extract JSON from text');
+      
+      // If response is wrapped in callback, extract JSON
+      const match = text.match(/\((.*)\)/);
+      if (match && match[1]) {
+        return JSON.parse(match[1]);
+      }
+      
+      return { success: false, error: 'Invalid response format' };
+    }
+  })
+  .catch(error => {
+    console.error('[FETCH ERROR]', error);
+    throw error;
+  });
 }
 
     // ========== COLLECT FORM DATA ==========
@@ -1249,6 +1264,7 @@ if (resp && resp.success) {
 
 </body>
 </html>
+
 
 
 
