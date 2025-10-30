@@ -692,37 +692,57 @@ function sendToServerJSONP(formData, clientTs) {
   console.log('[SEND] Action: submitPurchase');
   console.log('[SEND] URL length:', url.length);
   
-  return fetch(url, {
+   return fetch(url, {
     method: 'GET',
     mode: 'no-cors'
   })
   .then(response => {
     console.log('[FETCH] Response received, status:', response.status);
+    console.log('[FETCH] Response type:', response.type);
+    console.log('[FETCH] Response headers:', response.headers.get('content-type'));
     return response.text();
   })
   .then(text => {
-    console.log('[FETCH] Response text:', text);
+    console.log('[FETCH] Raw response text length:', text.length);
+    console.log('[FETCH] First 500 chars:', text.substring(0, 500));
     
-    // Try to parse as JSON
-    try {
-      return JSON.parse(text);
-    } catch (e) {
-      console.log('[FETCH] Not JSON, trying to extract JSON from text');
-      
-      // If response is wrapped in callback, extract JSON
-      const match = text.match(/\((.*)\)/);
-      if (match && match[1]) {
-        return JSON.parse(match[1]);
-      }
-      
-      return { success: false, error: 'Invalid response format' };
+    if (!text || text.trim() === '') {
+      console.log('[FETCH] Empty response');
+      return { success: false, error: 'Empty response from server' };
     }
+    
+    // Try to parse as JSON directly
+    try {
+      const parsed = JSON.parse(text);
+      console.log('[FETCH] Parsed as JSON:', parsed);
+      return parsed;
+    } catch (jsonErr) {
+      console.log('[FETCH] Not valid JSON, error:', jsonErr.message);
+    }
+    
+    // Try to extract JSON from callback wrapper
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      try {
+        const parsed = JSON.parse(jsonMatch[0]);
+        console.log('[FETCH] Extracted JSON from text:', parsed);
+        return parsed;
+      } catch (e) {
+        console.log('[FETCH] Could not parse extracted JSON');
+      }
+    }
+    
+    console.log('[FETCH] Response is not JSON, returning error');
+    return { 
+      success: false, 
+      error: 'Invalid response format: ' + text.substring(0, 100)
+    };
   })
   .catch(error => {
     console.error('[FETCH ERROR]', error);
     throw error;
   });
-}
+
 
     // ========== COLLECT FORM DATA ==========
     function collectFormData() {
@@ -950,168 +970,188 @@ function sendToServerJSONP(formData, clientTs) {
     }
 
     // ========== IMPROVED: MAIN SUBMIT FLOW WITH BETTER VALIDATION ==========
-    async function doSubmitFlow() {
-      try {
-        console.log('[SUBMIT] Starting submission flow...');
-        
-        if (!navigator.onLine) { 
-          alert('❌ You are currently OFFLINE.\n\nPlease reconnect to the internet before submitting.'); 
-          updateStatus(); 
-          return; 
-        }
-        
-        // ===== VALIDATION 1: At least one main category =====
-        const anyMainChecked = Array.from(document.querySelectorAll('.purchased')).some(cb => cb.checked);
-        if (!anyMainChecked) { 
-          alert('❌ VALIDATION ERROR\n\nPlease select at least one purchase category:\n• Floor Tiles\n• Wall Tiles\n• Sanitaryware\n• Accessories\n• Others'); 
-          return; 
-        }
-        console.log('[VALIDATION] ✅ At least one category selected');
-
-        // ===== VALIDATION 2: All selected sub-items have quantities =====
-        const selectedSubboxes = Array.from(document.querySelectorAll('.subitem')).filter(s => s.checked);
-        for (let sb of selectedSubboxes) {
-          const qid = 'q' + sb.id.slice(3);
-          const qEl = document.getElementById(qid);
-          const val = qEl ? (String(qEl.value || "").trim()) : "";
-          if (!val || isNaN(Number(val)) || Number(val) <= 0) {
-            alert('❌ QUANTITY ERROR\n\nFor "' + (sb.value || 'selected item') + '":\nPlease enter a valid quantity (must be > 0)'); 
-            return;
-          }
-        }
-        console.log('[VALIDATION] ✅ All selected items have valid quantities');
-
-        // ===== VALIDATION 3: If "Others" checked =====
-        if (document.getElementById('p_other') && document.getElementById('p_other').checked) {
-          const q = (document.getElementById('q_other') || {}).value || "";
-          const txt = (document.getElementById('purchasedOtherText') || {}).value || "";
-          
-          if (!q || isNaN(Number(q)) || Number(q) <= 0) {
-            alert('❌ OTHERS QUANTITY ERROR\n\nPlease enter a valid quantity (must be > 0)\nOr uncheck "Others"'); 
-            return;
-          }
-          
-          if (txt.trim() === "") {
-            alert('❌ OTHERS NAME ERROR\n\nPlease specify the item name'); 
-            return;
-          }
-        }
-        console.log('[VALIDATION] ✅ Others section valid (if selected)');
-
-        // ===== VALIDATION 4: Vendor selected =====
-        const vendorValue = document.getElementById('purchasedFromSelect').value;
-        const customVendor = document.getElementById('purchasedFrom').value;
-        
-        if (!vendorValue) {
-          alert('❌ VENDOR ERROR\n\nPlease select a vendor from "Purchased from" dropdown'); 
-          return; 
-        }
-        
-        if (vendorValue === 'Other' && !customVendor.trim()) {
-          alert('❌ VENDOR NAME ERROR\n\nYou selected "Other" vendor.\nPlease enter the vendor name in the text field below'); 
-          return; 
-        }
-        console.log('[VALIDATION] ✅ Vendor selected:', vendorValue);
-
-        // ===== VALIDATION 5: Payment mode selected =====
-        const modeChecked = Array.from(document.querySelectorAll('input[name="modeOfPayment"]')).some(m => m.checked);
-        if (!modeChecked) { 
-          alert('❌ PAYMENT MODE ERROR\n\nPlease select at least one payment mode:\n• Cash\n• Online\n• Credit'); 
-          return; 
-        }
-        console.log('[VALIDATION] ✅ Payment mode selected');
-
-        // ===== VALIDATION 6: Payment amount valid =====
-        const payment = (document.getElementById('paymentPaid') || {}).value || "";
-        if (!payment || isNaN(Number(payment)) || Number(payment) <= 0) { 
-          alert('❌ PAYMENT AMOUNT ERROR\n\nPlease enter a valid payment amount (must be > 0 Rs.)'); 
-          return; 
-        }
-        console.log('[VALIDATION] ✅ Payment amount valid:', payment);
-
-        // ===== ALL VALIDATIONS PASSED =====
-        console.log('[VALIDATION] ✅✅✅ ALL VALIDATIONS PASSED ✅✅✅');
-        
-        // Collect form data
-        var formData = collectFormData();
-        
-        if (!formData.purchasedItem || formData.purchasedItem.trim() === "") {
-          alert('❌ NO ITEMS ERROR\n\nNo items were selected. Please select at least one specific item and quantity.');
-          return;
-        }
-
-        if (!formData.submissionId) formData.submissionId = makeSubmissionId();
-        
-        if (activeSubmissions.has(formData.submissionId)) { 
-          showMessage('⏳ Submission already in progress — please wait'); 
-          return; 
-        }
-        
-        activeSubmissions.add(formData.submissionId);
-
-        const submitBtn = document.getElementById('submitBtn');
-        submitBtn.disabled = true;
-        const origLabel = submitBtn.textContent;
-        submitBtn.textContent = '⏳ Saving...';
-        showMessage('📤 Submitting your purchase entry...');
-        
-        console.log('[SUBMIT] Form data collected, sending to server...');
-        console.log('[DATA]', formData);
-
-        (async function(backgroundForm) {
-          try {
-            const clientTs = Date.now();
-            console.log('[NETWORK] Sending JSONP request to endpoint...');
-            
-          const resp = await sendToServerJSONP(backgroundForm, clientTs);
-
-console.log('[RESPONSE]', resp);
-
-if (resp && resp.success) {
-  const serial = (resp.serial !== undefined && resp.serial !== null) ? resp.serial : null;
-  if (serial !== null) {
-    showMessage('✅ Saved to Purchase Orders! Serial: ' + serial);
-    console.log('[SUCCESS] Saved with serial:', serial);
+// ========== IMPROVED: MAIN SUBMIT FLOW WITH BETTER VALIDATION & DEBUGGING ==========
+async function doSubmitFlow() {
+  try {
+    console.log('[SUBMIT] Starting submission flow...');
     
-    // ✅ Log timestamp for verification
-    if (resp.timestamp) {
-      console.log('[TIMESTAMP] Entry saved at:', resp.timestamp);
+    if (!navigator.onLine) { 
+      alert('❌ You are currently OFFLINE.\n\nPlease reconnect to the internet before submitting.'); 
+      updateStatus(); 
+      return; 
     }
-  } else {
-    showMessage('✅ Saved to Purchase Orders!');
-    console.log('[SUCCESS] Saved (serial not returned)');
-  }
+    
+    // ===== VALIDATION 1: At least one main category =====
+    const anyMainChecked = Array.from(document.querySelectorAll('.purchased')).some(cb => cb.checked);
+    if (!anyMainChecked) { 
+      alert('❌ VALIDATION ERROR\n\nPlease select at least one purchase category:\n• Floor Tiles\n• Wall Tiles\n• Sanitaryware\n• Accessories\n• Others'); 
+      return; 
+    }
+    console.log('[VALIDATION] ✅ At least one category selected');
 
-              // Clear form for next entry
-              setTimeout(() => {
-                clearForm();
-              }, 1000);
-              
-            } else if (resp && resp.error) {
-              alert('❌ SERVER REJECTED\n\n' + resp.error);
-              console.error('[ERROR] Server rejected:', resp.error);
-            } else {
-              alert('❌ UNEXPECTED RESPONSE\n\nThe server response was unexpected.\nPlease retry while online.');
-              console.error('[ERROR] Unexpected response:', resp);
-            }
-          } catch (errSend) {
-            console.error('[NETWORK ERROR]', errSend);
-            alert('❌ NETWORK ERROR\n\n' + errSend.message + '\n\nPlease ensure you are online and try again.');
-          } finally {
-            try { activeSubmissions.delete(backgroundForm.submissionId); } catch (e) {}
-            try { submitBtn.disabled = false; submitBtn.textContent = origLabel || '✅ Submit Purchase Entry'; } catch (e) {}
-            updateStatus();
-            console.log('[SUBMIT] Submission flow completed');
-          }
-        })(formData);
-
-      } catch (ex) {
-        console.error('[EXCEPTION]', ex);
-        alert('❌ UNEXPECTED ERROR\n\n' + ex.message + '\n\nPlease try again.');
-        document.getElementById('submitBtn').disabled = false;
-        document.getElementById('submitBtn').textContent = '✅ Submit Purchase Entry';
+    // ===== VALIDATION 2: All selected sub-items have quantities =====
+    const selectedSubboxes = Array.from(document.querySelectorAll('.subitem')).filter(s => s.checked);
+    for (let sb of selectedSubboxes) {
+      const qid = 'q' + sb.id.slice(3);
+      const qEl = document.getElementById(qid);
+      const val = qEl ? (String(qEl.value || "").trim()) : "";
+      if (!val || isNaN(Number(val)) || Number(val) <= 0) {
+        alert('❌ QUANTITY ERROR\n\nFor "' + (sb.value || 'selected item') + '":\nPlease enter a valid quantity (must be > 0)'); 
+        return;
       }
     }
+    console.log('[VALIDATION] ✅ All selected items have valid quantities');
+
+    // ===== VALIDATION 3: If "Others" checked =====
+    if (document.getElementById('p_other') && document.getElementById('p_other').checked) {
+      const q = (document.getElementById('q_other') || {}).value || "";
+      const txt = (document.getElementById('purchasedOtherText') || {}).value || "";
+      
+      if (!q || isNaN(Number(q)) || Number(q) <= 0) {
+        alert('❌ OTHERS QUANTITY ERROR\n\nPlease enter a valid quantity (must be > 0)\nOr uncheck "Others"'); 
+        return;
+      }
+      
+      if (txt.trim() === "") {
+        alert('❌ OTHERS NAME ERROR\n\nPlease specify the item name'); 
+        return;
+      }
+    }
+    console.log('[VALIDATION] ✅ Others section valid (if selected)');
+
+    // ===== VALIDATION 4: Vendor selected =====
+    const vendorValue = document.getElementById('purchasedFromSelect').value;
+    const customVendor = document.getElementById('purchasedFrom').value;
+    
+    if (!vendorValue) {
+      alert('❌ VENDOR ERROR\n\nPlease select a vendor from "Purchased from" dropdown'); 
+      return; 
+    }
+    
+    if (vendorValue === 'Other' && !customVendor.trim()) {
+      alert('❌ VENDOR NAME ERROR\n\nYou selected "Other" vendor.\nPlease enter the vendor name in the text field below'); 
+      return; 
+    }
+    console.log('[VALIDATION] ✅ Vendor selected:', vendorValue);
+
+    // ===== VALIDATION 5: Payment mode selected =====
+    const modeChecked = Array.from(document.querySelectorAll('input[name="modeOfPayment"]')).some(m => m.checked);
+    if (!modeChecked) { 
+      alert('❌ PAYMENT MODE ERROR\n\nPlease select at least one payment mode:\n• Cash\n• Online\n• Credit'); 
+      return; 
+    }
+    console.log('[VALIDATION] ✅ Payment mode selected');
+
+    // ===== VALIDATION 6: Payment amount valid =====
+    const payment = (document.getElementById('paymentPaid') || {}).value || "";
+    if (!payment || isNaN(Number(payment)) || Number(payment) <= 0) { 
+      alert('❌ PAYMENT AMOUNT ERROR\n\nPlease enter a valid payment amount (must be > 0 Rs.)'); 
+      return; 
+    }
+    console.log('[VALIDATION] ✅ Payment amount valid:', payment);
+
+    // ===== ALL VALIDATIONS PASSED =====
+    console.log('[VALIDATION] ✅✅✅ ALL VALIDATIONS PASSED ✅✅✅');
+    
+    // Collect form data
+    var formData = collectFormData();
+    
+    if (!formData.purchasedItem || formData.purchasedItem.trim() === "") {
+      alert('❌ NO ITEMS ERROR\n\nNo items were selected. Please select at least one specific item and quantity.');
+      return;
+    }
+
+    if (!formData.submissionId) formData.submissionId = makeSubmissionId();
+    
+    if (activeSubmissions.has(formData.submissionId)) { 
+      showMessage('⏳ Submission already in progress — please wait'); 
+      return; 
+    }
+    
+    activeSubmissions.add(formData.submissionId);
+
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    const origLabel = submitBtn.textContent;
+    submitBtn.textContent = '⏳ Saving...';
+    showMessage('📤 Submitting your purchase entry...');
+    
+    console.log('[SUBMIT] Form data collected, sending to server...');
+    console.log('[DATA]', formData);
+
+    (async function(backgroundForm) {
+      try {
+        const clientTs = Date.now();
+        console.log('[NETWORK] Sending request to endpoint...');
+        
+        const resp = await sendToServerJSONP(backgroundForm, clientTs);
+
+        console.log('[RESPONSE] Full response object:', resp);
+        console.log('[RESPONSE] Type:', typeof resp);
+        console.log('[RESPONSE] Is object:', resp && typeof resp === 'object');
+        console.log('[RESPONSE] Has success:', resp && 'success' in resp);
+
+        if (resp && resp.success === true) {
+          const serial = (resp.serial !== undefined && resp.serial !== null) ? resp.serial : null;
+          if (serial !== null) {
+            showMessage('✅ Saved to Purchase Orders! Serial: ' + serial);
+            console.log('[SUCCESS] Saved with serial:', serial);
+            
+            // ✅ Log timestamp for verification
+            if (resp.timestamp) {
+              console.log('[TIMESTAMP] Entry saved at:', resp.timestamp);
+            }
+          } else {
+            showMessage('✅ Saved to Purchase Orders!');
+            console.log('[SUCCESS] Saved (serial not returned)');
+          }
+
+          // Clear form for next entry
+          setTimeout(() => {
+            clearForm();
+          }, 1000);
+          
+        } else if (resp && resp.error) {
+          alert('❌ SERVER ERROR\n\n' + resp.error);
+          console.error('[ERROR] Server error:', resp.error);
+          
+        } else if (resp && typeof resp === 'object') {
+          alert('❌ UNEXPECTED RESPONSE FORMAT\n\nResponse: ' + JSON.stringify(resp).substring(0, 200));
+          console.error('[ERROR] Unexpected object response:', resp);
+          
+        } else if (resp) {
+          alert('❌ INVALID RESPONSE\n\nRaw: ' + String(resp).substring(0, 100));
+          console.error('[ERROR] Invalid response type:', resp);
+          
+        } else {
+          alert('❌ NO RESPONSE\n\nServer did not respond properly.');
+          console.error('[ERROR] No response received');
+        }
+        
+      } catch (errSend) {
+        console.error('[NETWORK ERROR]', errSend);
+        console.error('[NETWORK ERROR] Message:', errSend.message);
+        console.error('[NETWORK ERROR] Stack:', errSend.stack);
+        alert('❌ NETWORK ERROR\n\n' + errSend.message + '\n\nPlease ensure you are online and try again.');
+        
+      } finally {
+        try { activeSubmissions.delete(backgroundForm.submissionId); } catch (e) {}
+        try { submitBtn.disabled = false; submitBtn.textContent = origLabel || '✅ Submit Purchase Entry'; } catch (e) {}
+        updateStatus();
+        console.log('[SUBMIT] Submission flow completed');
+      }
+    })(formData);
+
+  } catch (ex) {
+    console.error('[EXCEPTION]', ex);
+    console.error('[EXCEPTION] Message:', ex.message);
+    console.error('[EXCEPTION] Stack:', ex.stack);
+    alert('❌ UNEXPECTED ERROR\n\n' + ex.message + '\n\nPlease try again.');
+    document.getElementById('submitBtn').disabled = false;
+    document.getElementById('submitBtn').textContent = '✅ Submit Purchase Entry';
+  }
+}
+
 
     // ========== DOM BINDINGS - INITIALIZATION ==========
     document.addEventListener('DOMContentLoaded', function() {
@@ -1264,6 +1304,7 @@ if (resp && resp.success) {
 
 </body>
 </html>
+
 
 
 
