@@ -9256,18 +9256,22 @@ function goToAllProducts() {
   window.location.href = 'index.html?view=allProducts';
 }
 
-// URL PARAMETER DETECTION
-window.addEventListener('DOMContentLoaded', () => {
+/**
+ * Check if coming from invoices page
+ */
+window.addEventListener('load', () => {
   const urlParams = new URLSearchParams(window.location.search);
-  const view = urlParams.get('view');
+  const page = urlParams.get('page');
   
-  console.log('🔍 URL view parameter:', view);
-  
-  if (view) {
-    console.log('📍 Navigating to:', view);
-    navigateTo(view);  // ← THIS IS CALLING navigateTo() INSTEAD OF navigateToAllProducts()
+  if (page === 'allProducts') {
+    navigateToAllProducts();
+  } else if (page === 'productGroups') {
+    navigateToProductGroups();
+  } else if (page === 'customers') {
+    navigateToCustomers();
   }
 });
+
 
 
 
@@ -9579,6 +9583,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
