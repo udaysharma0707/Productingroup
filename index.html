@@ -7165,6 +7165,7 @@ function sidebarAction(action) {
 
 
 // Navigate to All Products page - UPDATED FIX
+// Navigate to All Products page - UPDATED FIX
 function navigateToAllProducts() {
   console.log('📦 Navigating to All Products');
   
@@ -7218,15 +7219,33 @@ function navigateToAllProducts() {
     navbar.style.display = 'none';
   }
   
-  // === STEP 5: ✅ RENDER PRODUCTS LIST (Auto-load) ===
+  // === STEP 5: Render products and auto-trigger "ALL" filter ===
   if (typeof renderAllProductsList === 'function') {
     renderAllProductsList();
-    console.log('✅ All products rendered and displaying');
-  } else {
-    console.warn('⚠️ renderAllProductsList function not found');
+    console.log('✅ All Products HTML rendered');
   }
   
-  // === STEP 6: Close sidebar and scroll ===
+  // === STEP 6: ✅ Create synthetic event and call filterByCategory ===
+  setTimeout(() => {
+    // Create a fake event object that filterByCategory() expects
+    const fakeEvent = {
+      target: {
+        textContent: 'All',
+        classList: {
+          add: function() {},
+          remove: function() {}
+        }
+      }
+    };
+    
+    // Call filterByCategory with the fake event
+    if (typeof filterByCategory === 'function') {
+      filterByCategory(fakeEvent);
+      console.log('✅ "ALL" filter applied - products now loading');
+    }
+  }, 100);
+  
+  // === STEP 7: Close sidebar and scroll ===
   if (typeof closeSidebar === 'function') {
     closeSidebar();
   }
@@ -9588,6 +9607,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
