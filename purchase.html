@@ -572,7 +572,7 @@
     // ========== CONFIGURATION ==========
 // Use INVENTORY WEBAPP ENDPOINT (same spreadsheet backend)
 // REPLACE [YOUR_INVENTORY_ENDPOINT_URL] with your actual endpoint
-const ENDPOINT = "https://script.google.com/macros/s/AKfycbwd1CCC2Cr7GMdWL0_wK9SZee_NNFrKqrAUBP8K90v5lmhmS8y8pTqnItURFihjX0k3/exec";
+const ENDPOINT = "https://script.google.com/macros/s/AKfycby2sc3bIYgt9dAuYi7GyWaIChdLcwskDSVEIMFRPfw-2bXopurWMLcDTnjFs5AoOj3y/exec";
 
 
     const JSONP_TIMEOUT_MS = 20000;
@@ -664,19 +664,23 @@ const ENDPOINT = "https://script.google.com/macros/s/AKfycbwd1CCC2Cr7GMdWL0_wK9S
       });
     }
 
-    // ========== SEND TO SERVER ==========
-   function sendToServerJSONP(formData, clientTs) {
+ // ========== SEND TO SERVER - FIXED FOR JSONP CALLBACK ==========
+function sendToServerJSONP(formData, clientTs) {
   var params = [];
+  
   function add(k, v) {
     if (v === undefined || v === null) v = "";
     params.push(encodeURIComponent(k) + "=" + encodeURIComponent(String(v)));
   }
   
-  // ✅ NEW: Add action parameter for inventory backend routing
+  // ✅ CRITICAL: Add callback parameter FIRST for JSONP to work
+  var callbackName = "jsonp_cb_" + Date.now() + "_" + Math.floor(Math.random() * 100000);
+  add("callback", callbackName);
+  
+  // ✅ Add action parameter for inventory backend routing
   add("action", "submitPurchase");
   
-  // ✅ REMOVED: add("token", SHARED_TOKEN); - No longer needed
-  
+  // ✅ Add all purchase data
   add("purchasedItem", formData.purchasedItem || "");
   add("purchasedFrom", formData.purchasedFrom || "");
   add("modeOfPayment", formData.modeOfPayment || "");
@@ -697,8 +701,11 @@ const ENDPOINT = "https://script.google.com/macros/s/AKfycbwd1CCC2Cr7GMdWL0_wK9S
     return Promise.reject(new Error("Payload too large for JSONP"));
   }
   
-  console.log('[SEND] Sending to endpoint:', base);
-  console.log('[SEND] Action parameter: submitPurchase');
+  console.log('[SEND] Endpoint:', base);
+  console.log('[SEND] Callback:', callbackName);
+  console.log('[SEND] Action: submitPurchase');
+  console.log('[SEND] URL length:', url.length);
+  
   return jsonpRequest(url, JSONP_TIMEOUT_MS);
 }
 
@@ -1242,5 +1249,6 @@ if (resp && resp.success) {
 
 </body>
 </html>
+
 
 
