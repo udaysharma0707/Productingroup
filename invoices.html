@@ -804,14 +804,16 @@
     closeSidebar();
   } 
 
-   // Navigate to index.html with query parameter
-  window.location.href = 'index.html?page=allProducts';
-} 
+   
 function goToAllProducts() {
   // Close sidebar
   if (typeof closeSidebar === 'function') {
     closeSidebar();
   }
+  
+  // Navigate to index.html with query parameter
+  window.location.href = 'index.html?page=allProducts';
+}
     /**
  * ==========================================
  * DATE FORMATTING UTILITIES
@@ -2525,6 +2527,7 @@ function goBack() {
 
 </body>
 </html>
+
 
 
 
