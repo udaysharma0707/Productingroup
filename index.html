@@ -9182,17 +9182,17 @@ function navigateTo(page) {
     case 'allProducts':
     case 'allProductsPage':
       pageElement = document.getElementById('allProductsPage');
-      loadAllProducts(); // Load products data
+      loadAllProducts();
       break;
     case 'productGroups':
     case 'productGroupsPage':
       pageElement = document.getElementById('productGroupsPage');
-      loadProductGroups(); // Load groups data
+      loadProductGroups();
       break;
     case 'customers':
     case 'customersPage':
       pageElement = document.getElementById('customersPage');
-      loadCustomers(); // Load customers data
+      loadCustomers();
       break;
     default:
       pageElement = document.getElementById('dashboardPage');
@@ -9200,12 +9200,6 @@ function navigateTo(page) {
   
   if (pageElement) {
     pageElement.classList.add('active');
-    pageElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-  
-  // Update URL hash (without reloading page)
-  if (page !== 'dashboard') {
-    window.history.pushState(null, null, `#${page}`);
   }
 }
 
@@ -9269,31 +9263,6 @@ function getProductIcon(category) {
   };
   return icons[category] || '📦';
 }
-
-/**
- * ==========================================
- * HASH NAVIGATION - Detect which page to show
- * ==========================================
- */
-window.addEventListener('DOMContentLoaded', () => {
-  const hash = window.location.hash.replace('#', '');
-  
-  console.log('Hash detected:', hash);
-  
-  // If there's a hash, navigate to that page
-  if (hash && hash !== '') {
-    navigateTo(hash);
-  }
-});
-
-// Also listen for hash changes (when user clicks back button)
-window.addEventListener('hashchange', () => {
-  const hash = window.location.hash.replace('#', '');
-  if (hash && hash !== '') {
-    navigateTo(hash);
-  }
-});
-
 
 
 
@@ -9605,6 +9574,7 @@ window.addEventListener('hashchange', () => {
 
 </body>
 </html>
+
 
 
 
