@@ -15,57 +15,70 @@ let currentCustomerId = null;
  * ==========================================
  */
 
-// Navigate to Customers Page
+// Navigate to Customers Page - UPDATED FOR INVOICE NAVIGATION
 function navigateToCustomers() {
   console.log('📇 Navigating to Customers');
   
   currentPage = 'customers';
   
-  // Get page elements
+  // === STEP 1: Get page elements ===
   const mainApp = document.getElementById('mainApp');
   const allProductsPage = document.getElementById('allProductsPage');
   const productGroupsPage = document.getElementById('productGroupsPage');
   const customersPage = document.getElementById('customersPage');
   const groupDetailPage = document.getElementById('groupDetailPage');
   
-  // Hide all other pages
-  if (mainApp) mainApp.style.display = 'none';
+  // === STEP 2: Hide all other pages ===
+  if (mainApp) {
+    mainApp.style.display = 'none';
+    mainApp.classList.remove('active');
+  }
+  
   if (allProductsPage) {
     allProductsPage.classList.remove('active');
     allProductsPage.style.display = 'none';
   }
+  
   if (productGroupsPage) {
     productGroupsPage.classList.remove('active');
     productGroupsPage.style.display = 'none';
   }
+  
   if (groupDetailPage) {
     groupDetailPage.classList.remove('active');
     groupDetailPage.style.display = 'none';
   }
   
-  // Show customers page
+  // === STEP 3: Show customers page ===
   if (customersPage) {
     customersPage.classList.add('active');
     customersPage.style.display = 'block';
+    console.log('✅ Customers page displayed');
   } else {
-    console.error('customersPage not found!');
+    console.error('❌ customersPage element not found!');
     return;
   }
   
-  // Hide navbar
-  const navbar = document.querySelector('.navbar');
-  if (navbar) navbar.style.display = 'none';
+  // === STEP 4: Hide the blue navbar ===
+  const navbar = document.querySelector('.navbar.navbar-dark.bg-primary');
+  if (navbar) {
+    navbar.style.display = 'none';
+  }
   
-  // Load customers from backend
-  loadCustomers();
+  // === STEP 5: Load customers from backend ===
+  if (typeof loadCustomers === 'function') {
+    loadCustomers();
+    console.log('✅ Customers data loaded');
+  } else {
+    console.warn('⚠️ loadCustomers function not found');
+  }
   
-  // Close sidebar and scroll to top
+  // === STEP 6: Close sidebar and scroll ===
   if (typeof closeSidebar === 'function') {
     closeSidebar();
   }
-  window.scrollTo({ top: 0, behavior: 'smooth' });
   
-  console.log('✅ Customers page shown');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 /**
@@ -741,4 +754,5 @@ function escapeHtml(text) {
  */
 
 console.log('✅ Customer Management Module Loaded');
+
 
