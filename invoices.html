@@ -814,6 +814,24 @@ function goToAllProducts() {
   // Navigate to index.html with query parameter
   window.location.href = 'index.html?page=allProducts';
 }
+
+    // Navigate to Product Groups page
+function goToProductGroups() {
+  console.log('🔗 goToProductGroups called from invoices');
+  if (typeof closeSidebar === 'function') {
+    closeSidebar();
+  }
+  window.location.href = 'index.html?page=productGroups';
+}
+
+// Navigate to Customers page
+function goToCustomers() {
+  console.log('🔗 goToCustomers called from invoices');
+  if (typeof closeSidebar === 'function') {
+    closeSidebar();
+  }
+  window.location.href = 'index.html?page=customers';
+}
     /**
  * ==========================================
  * DATE FORMATTING UTILITIES
@@ -2527,6 +2545,7 @@ function goBack() {
 
 </body>
 </html>
+
 
 
 
