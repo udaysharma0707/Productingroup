@@ -578,7 +578,7 @@ let selectedFile = null;
     let selectedImage = null;
 
 
-    // Photo upload function (integrated with main submit)
+  // Photo upload function (integrated with main submit)
     async function uploadPhotoToServer() {
         if (!selectedImage) {
             return null; // No photo to upload
@@ -724,64 +724,6 @@ let selectedFile = null;
         script.onerror = function(){ reject(new Error('JSONP load error')); try{ delete window[cbName]; }catch(e){} };
         document.body.appendChild(script);
         setTimeout(() => { try{ delete window[cbName]; }catch(e){} reject(new Error('JSONP timeout')); }, timeoutMs);
-      });
-    }
-
-    // ========== HELPERS ==========
-    function updateStatus() {
-      const s = document.getElementById('status');
-      const offlineNotice = document.getElementById('offlineNotice');
-      const on = navigator.onLine;
-      if (s) s.textContent = on ? 'online' : 'offline';
-      if (s) s.classList.toggle('offline', !on);
-      const msg = document.getElementById('msg');
-      const submitBtn = document.getElementById('submitBtn');
-      if (!offlineNotice) return;
-      if (!on) {
-        offlineNotice.style.display = 'block';
-        if (msg) msg.style.display = 'none';
-        try { if (submitBtn) submitBtn.disabled = true; } catch(e) {}
-      } else {
-        offlineNotice.style.display = 'none';
-        try { if (submitBtn) submitBtn.disabled = false; } catch(e) {}
-      }
-    }
-
-    window.addEventListener('online', () => { updateStatus(); });
-    window.addEventListener('offline', () => { updateStatus(); });
-
-    // ========== JSONP REQUEST ==========
-    function jsonpRequest(url, timeoutMs) {
-      timeoutMs = timeoutMs || JSONP_TIMEOUT_MS;
-      return new Promise(function(resolve, reject) {
-        var cbName = "jsonp_cb_" + Date.now() + "_" + Math.floor(Math.random() * 100000);
-        var timer = null;
-        window[cbName] = function(data) {
-          try { resolve(data); } finally {
-            try { delete window[cbName]; } catch(e) {}
-            var s = document.getElementById(cbName);
-            if (s && s.parentNode) s.parentNode.removeChild(s);
-            if (timer) clearTimeout(timer);
-          }
-        };
-        url = url.replace(/(&|\?)?callback=[^&]*/i, "");
-        var full = url + (url.indexOf('?') === -1 ? '?' : '&') + 'callback=' + encodeURIComponent(cbName);
-        var script = document.createElement('script');
-        script.id = cbName;
-        script.src = full;
-        script.async = true;
-        script.onerror = function() {
-          try { delete window[cbName]; } catch(e) {}
-          if (script.parentNode) script.parentNode.removeChild(script);
-          if (timer) clearTimeout(timer);
-          reject(new Error('JSONP script load error'));
-        };
-        timer = setTimeout(function() {
-          try { delete window[cbName]; } catch(e) {}
-          if (script.parentNode) script.parentNode.removeChild(script);
-          reject(new Error('JSONP timeout'));
-        }, timeoutMs);
-        document.body.appendChild(script);
       });
     }
 
@@ -1182,6 +1124,7 @@ let selectedFile = null;
 
 </body>
 </html>
+
 
 
 
