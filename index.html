@@ -1962,10 +1962,11 @@ body.modal-open {
     <span>Bills</span>
   </div>
   
-  <div class="sidebar-item disabled" onclick="sidebarAction('purchaseOrders')">
-    <i class="bi bi-bag-check"></i>
-    <span>Purchase Orders</span>
-  </div>
+  <div class="sidebar-item" onclick="navigateToPurchaseOrders()">
+  <i class="bi bi-bag-check"></i>
+  <span>Purchase Orders</span>
+</div>
+
   
   <div class="sidebar-item disabled" onclick="sidebarAction('purchaseReceives')">
     <i class="bi bi-inbox"></i>
@@ -9329,6 +9330,14 @@ window.addEventListener('DOMContentLoaded', () => {
   }, 800);
 });
 
+// Navigate to Purchase Orders page
+function navigateToPurchaseOrders() {
+  // Close sidebar
+  closeSidebar();
+  
+  // Redirect to purchase page
+  window.location.href = 'purchase.html';
+}
 
 
 
@@ -9643,6 +9652,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
