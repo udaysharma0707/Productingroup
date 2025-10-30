@@ -9164,56 +9164,86 @@ function navigateToHome() {
  * @param {string} page - Page name ('dashboard', 'allProducts', 'customers', 'productGroups')
  */
 function navigateTo(page) {
-  console.log('Navigating to:', page);
+  console.log('✅ navigateTo() called with:', page);
   
   // Hide all pages
   document.querySelectorAll('.page-view').forEach(p => {
     p.classList.remove('active');
   });
   
-  // Show the requested page
+  // Get the dashboard navbar (blue navbar)
+  const navbar = document.querySelector('.dashboard-navbar');
+  
   let pageElement;
   
   switch(page) {
     case 'dashboard':
+      console.log('→ Loading dashboard');
       pageElement = document.getElementById('dashboardPage');
+      // Show navbar on dashboard
+      if (navbar) {
+        navbar.style.display = 'block';
+      }
       break;
       
-    case 'allProducts':           // ✅ Handle old name
-    case 'allProductsPage':        // ✅ Handle new name
+    case 'allProducts':
+    case 'allProductsPage':
+      console.log('→ Loading allProductsPage');
       pageElement = document.getElementById('allProductsPage');
+      // Hide navbar on All Products page
+      if (navbar) {
+        navbar.style.display = 'none';
+      }
       if (typeof loadAllProducts === 'function') {
         loadAllProducts();
       }
       break;
       
-    case 'productGroups':          // ✅ Handle old name
-    case 'productGroupsPage':      // ✅ Handle new name
+    case 'productGroups':
+    case 'productGroupsPage':
+      console.log('→ Loading productGroupsPage');
       pageElement = document.getElementById('productGroupsPage');
+      // Hide navbar on Product Groups page
+      if (navbar) {
+        navbar.style.display = 'none';
+      }
       if (typeof loadProductGroups === 'function') {
         loadProductGroups();
       }
       break;
       
-    case 'customers':              // ✅ Handle old name
-    case 'customersPage':          // ✅ Handle new name
+    case 'customers':
+    case 'customersPage':
+      console.log('→ Loading customersPage');
       pageElement = document.getElementById('customersPage');
+      // Hide navbar on Customers page
+      if (navbar) {
+        navbar.style.display = 'none';
+      }
       if (typeof loadCustomers === 'function') {
         loadCustomers();
       }
       break;
       
     case 'invoices':
-      // Invoices is a separate page
+      console.log('→ Redirecting to invoices.html');
       window.location.href = 'invoices.html';
       return;
       
     default:
+      console.log('→ Unknown page, loading dashboard');
       pageElement = document.getElementById('dashboardPage');
+      // Show navbar on dashboard
+      if (navbar) {
+        navbar.style.display = 'block';
+      }
   }
   
   if (pageElement) {
     pageElement.classList.add('active');
+    console.log('✅ Page activated:', pageElement.id);
+  } else {
+    console.error('❌ Page element not found for:', page);
   }
 }
 
@@ -9626,6 +9656,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
