@@ -9247,18 +9247,32 @@ function getProductIcon(category) {
 /**
  * Check if coming from invoices page
  */
+/**
+ * Check if coming from invoices page
+ */
 window.addEventListener('load', () => {
   const urlParams = new URLSearchParams(window.location.search);
   const page = urlParams.get('page');
   
   if (page === 'allProducts') {
     navigateToAllProducts();
+    // ✅ ADD THIS - Render products after navigation
+    setTimeout(() => {
+      if (typeof renderAllProductsList === 'function') {
+        renderAllProductsList();
+      }
+      // ✅ Trigger the "ALL" filter by default
+      if (typeof filterByCategory === 'function') {
+        filterByCategory('all');
+      }
+    }, 100);
   } else if (page === 'productGroups') {
     navigateToProductGroups();
   } else if (page === 'customers') {
     navigateToCustomers();
   }
 });
+
 
 
 
@@ -9571,6 +9585,7 @@ window.addEventListener('load', () => {
 
 </body>
 </html>
+
 
 
 
