@@ -2086,17 +2086,17 @@ async function openInvoiceView(invoiceId) {
  * OPEN EDIT INVOICE - SHOWS EXISTING ITEMS
  */
 /**
- * OPEN EDIT INVOICE - Load from allInvoices array
+ * OPEN EDIT INVOICE - Load from window.invoicesCache
  */
 function openEditInvoice(invoiceId) {
   console.log('📝 Opening edit invoice:', invoiceId);
   
   try {
-    // Find invoice in existing allInvoices array
-    const invoice = allInvoices.find(inv => inv.invoiceId === invoiceId);
+    // Find invoice in window.invoicesCache (not allInvoices!)
+    const invoice = window.invoicesCache?.find(inv => inv.invoiceId === invoiceId);
     
     if (!invoice) {
-      console.error('❌ Invoice not found in allInvoices');
+      console.error('❌ Invoice not found in invoicesCache');
       alert('Invoice not found');
       return;
     }
@@ -2111,16 +2111,27 @@ function openEditInvoice(invoiceId) {
     // === POPULATE FORM WITH EXISTING DATA ===
     document.getElementById('invoiceCustomerName').value = invoice.customerName || '';
     document.getElementById('invoiceNumber').value = invoice.invoiceNumber || '';
-    document.getElementById('invoiceDate').value = invoice.invoiceDate || '';
-    document.getElementById('invoiceDueDate').value = invoice.dueDate || '';
+    document.getElementById('invoiceDate').value = formatDateForInput(invoice.invoiceDate) || '';
+    document.getElementById('invoiceDueDate').value = formatDateForInput(invoice.dueDate) || '';
     
     // === POPULATE ITEMS ===
     document.getElementById('invoiceItemsContainer').innerHTML = '';
     invoiceItemCounter = 0;
     
-    if (invoice.items && invoice.items.length > 0) {
-      console.log('📦 Loading', invoice.items.length, 'items');
-      invoice.items.forEach(item => {
+    // Parse items if they're stored as JSON string
+    let items = invoice.items;
+    if (typeof items === 'string') {
+      try {
+        items = JSON.parse(items);
+      } catch (e) {
+        console.error('Error parsing items:', e);
+        items = [];
+      }
+    }
+    
+    if (items && items.length > 0) {
+      console.log('📦 Loading', items.length, 'items');
+      items.forEach(item => {
         addInvoiceItem(item);
       });
     } else {
@@ -2679,6 +2690,7 @@ function goBack() {
 
 </body>
 </html>
+
 
 
 
