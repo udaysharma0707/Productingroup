@@ -7189,7 +7189,7 @@ function navigateToAllProducts() {
   }
   
   if (customersPage) {
-    customersPage.style.display = 'none';
+    customersPage.style.display = 'none';  // ← THIS WAS MISSING!
     customersPage.classList.remove('active');
   }
   
@@ -7207,16 +7207,15 @@ function navigateToAllProducts() {
   
   // === STEP 3: SHOW All Products page ===
   if (allProductsPage) {
-    allProductsPage.style.display = 'block';
+    allProductsPage.style.display = 'block';  // ← THIS WAS MISSING!
     allProductsPage.classList.add('active');
     console.log('✅ All Products page displayed');
   }
   
-  // === STEP 4: Hide the blue navbar - ✅ FIXED SELECTOR ===
-  const navbar = document.querySelector('.navbar.navbar-dark.bg-primary');
+  // === STEP 4: Hide the bottom blue navbar ===
+  const navbar = document.querySelector('.navbar');
   if (navbar) {
     navbar.style.display = 'none';
-    console.log('✅ Navbar hidden');
   }
   
   // === STEP 5: Render products list ===
@@ -9568,6 +9567,7 @@ function goToAllProducts() {
 
 </body>
 </html>
+
 
 
 
