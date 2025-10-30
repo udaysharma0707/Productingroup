@@ -7189,7 +7189,7 @@ function navigateToAllProducts() {
   }
   
   if (customersPage) {
-    customersPage.style.display = 'none';  // ← THIS WAS MISSING!
+    customersPage.style.display = 'none';
     customersPage.classList.remove('active');
   }
   
@@ -7207,20 +7207,22 @@ function navigateToAllProducts() {
   
   // === STEP 3: SHOW All Products page ===
   if (allProductsPage) {
-    allProductsPage.style.display = 'block';  // ← THIS WAS MISSING!
+    allProductsPage.style.display = 'block';
     allProductsPage.classList.add('active');
     console.log('✅ All Products page displayed');
   }
   
   // === STEP 4: Hide the bottom blue navbar ===
-  const navbar = document.querySelector('.navbar');
+  const navbar = document.querySelector('.navbar.navbar-dark.bg-primary');
   if (navbar) {
     navbar.style.display = 'none';
+    console.log('✅ Navbar hidden');
   }
   
   // === STEP 5: Render products list ===
   if (typeof renderAllProductsList === 'function') {
     renderAllProductsList();
+    console.log('✅ Products list rendered');
   }
   
   // === STEP 6: Close sidebar and scroll ===
@@ -7229,7 +7231,16 @@ function navigateToAllProducts() {
   }
   
   window.scrollTo({ top: 0, behavior: 'smooth' });
+  
+  // === STEP 7: ✅ NEW - Apply default "ALL" filter immediately ===
+  setTimeout(() => {
+    if (typeof filterByCategory === 'function') {
+      filterByCategory('all');
+      console.log('✅ Default "ALL" filter applied - products now visible');
+    }
+  }, 50); // Short delay to ensure DOM is ready
 }
+
 
 
 // Navigate to Product Groups page - FIXED
@@ -9585,6 +9596,7 @@ window.addEventListener('load', () => {
 
 </body>
 </html>
+
 
 
 
