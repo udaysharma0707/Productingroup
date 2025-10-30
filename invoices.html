@@ -423,8 +423,17 @@
 </head>
   
 <body>
-  <!-- SIDEBAR MENU - Use existing page IDs -->
+   <!-- HAMBURGER BUTTON (FIXED POSITION - ALWAYS VISIBLE) -->
+<button class="sidebar-toggle-btn" onclick="toggleSidebar()">
+  <i class="bi bi-list"></i>
+</button>
+
+<!-- SIDEBAR OVERLAY -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<!-- SIDEBAR MENU - UPDATED WITH HASH NAVIGATION -->
 <nav class="sidebar-menu" id="sidebarMenu">
+  <!-- Sidebar Header -->
   <div class="sidebar-header">
     <i class="bi bi-boxes" style="font-size: 32px;"></i>
     <h4>Menu</h4>
@@ -439,14 +448,14 @@
   <!-- GENERAL Section -->
   <div class="sidebar-section-title">GENERAL</div>
   
-  <!-- ALL PRODUCTS - Navigate to existing allProductsPage -->
-  <a href="index.html#allProductsPage" class="sidebar-item">
+  <!-- ALL PRODUCTS - Uses hash to navigate to products view -->
+  <a href="index.html#products" class="sidebar-item">
     <i class="bi bi-box"></i>
     <span>All Products</span>
   </a>
   
-  <!-- PRODUCTS IN GROUP - Navigate to existing productGroupsPage -->
-  <a href="index.html#productGroupsPage" class="sidebar-item">
+  <!-- PRODUCTS IN GROUP - Uses hash to navigate to groups view -->
+  <a href="index.html#groups" class="sidebar-item">
     <i class="bi bi-collection"></i>
     <span>Products in Group</span>
   </a>
@@ -454,8 +463,8 @@
   <!-- CUSTOMERS Section -->
   <div class="sidebar-section-title">CUSTOMERS</div>
   
-  <!-- CUSTOMERS - Navigate to existing customersPage -->
-  <a href="index.html#customersPage" class="sidebar-item">
+  <!-- CUSTOMERS - Uses hash to load customers.js view -->
+  <a href="index.html#customers" class="sidebar-item">
     <i class="bi bi-people"></i>
     <span>Customers</span>
   </a>
@@ -463,12 +472,13 @@
   <!-- SALES Section -->
   <div class="sidebar-section-title">SALES</div>
   
-  <!-- INVOICES - Current page -->
+  <!-- INVOICES - Current page (active) -->
   <a href="invoices.html" class="sidebar-item active">
     <i class="bi bi-receipt"></i>
     <span>Invoices</span>
   </a>
   
+  <!-- DISABLED OPTIONS - Coming Soon -->
   <div class="sidebar-item disabled" style="opacity: 0.5; cursor: not-allowed;">
     <i class="bi bi-cash-stack"></i>
     <span>Sales Receipts</span>
@@ -496,6 +506,7 @@
   </div>
 </nav>
 
+ 
 
 <!-- ========================================
      MAIN CONTAINER - INVOICES LIST
@@ -2462,7 +2473,6 @@ function goBack() {
 
 </body>
 </html>
-
 
 
 
