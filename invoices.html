@@ -431,75 +431,81 @@
   <!-- SIDEBAR OVERLAY -->
   <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 
-  <!-- SIDEBAR MENU - SINGLE COMPLETE VERSION -->
-  <nav class="sidebar-menu" id="sidebarMenu">
-    <!-- Sidebar Header -->
-    <div class="sidebar-header">
-      <i class="bi bi-boxes" style="font-size: 32px;"></i>
-      <h4>Menu</h4>
-    </div>
+<!-- SIDEBAR MENU - CORRECTED LINKS -->
+<nav class="sidebar-menu" id="sidebarMenu">
+  <!-- Sidebar Header -->
+  <div class="sidebar-header">
+    <i class="bi bi-boxes" style="font-size: 32px;"></i>
+    <h4>Menu</h4>
+  </div>
 
-    <!-- HOME -->
-    <a href="index.html" class="sidebar-item">
-      <i class="bi bi-house-door"></i>
-      <span>Home</span>
-    </a>
+  <!-- HOME -->
+  <a href="index.html" class="sidebar-item">
+    <i class="bi bi-house-door"></i>
+    <span>Home</span>
+  </a>
 
-    <!-- GENERAL Section -->
-    <div class="sidebar-section-title">GENERAL</div>
-    
-    <a href="index.html" class="sidebar-item">
-      <i class="bi bi-box"></i>
-      <span>All Products</span>
-    </a>
-    
-    <a href="index.html" class="sidebar-item">
-      <i class="bi bi-collection"></i>
-      <span>Products in Group</span>
-    </a>
+  <!-- GENERAL Section -->
+  <div class="sidebar-section-title">GENERAL</div>
+  
+  <!-- ALL PRODUCTS - Goes to homepage (index.html shows products) -->
+  <a href="index.html" class="sidebar-item">
+    <i class="bi bi-box"></i>
+    <span>All Products</span>
+  </a>
+  
+  <!-- PRODUCTS IN GROUP - Goes to homepage (index.html shows product groups) -->
+  <a href="index.html" class="sidebar-item">
+    <i class="bi bi-collection"></i>
+    <span>Products in Group</span>
+  </a>
 
-    <!-- CUSTOMERS Section -->
-    <div class="sidebar-section-title">CUSTOMERS</div>
-    
-    <a href="index.html" class="sidebar-item">
-      <i class="bi bi-people"></i>
-      <span>Customers</span>
-    </a>
+  <!-- CUSTOMERS Section -->
+  <div class="sidebar-section-title">CUSTOMERS</div>
+  
+  <!-- CUSTOMERS - Will go to customers.html when you create it -->
+  <a href="customers.html" class="sidebar-item">
+    <i class="bi bi-people"></i>
+    <span>Customers</span>
+  </a>
 
-    <!-- SALES Section -->
-    <div class="sidebar-section-title">SALES</div>
-    
-    <a href="invoices.html" class="sidebar-item active">
-      <i class="bi bi-receipt"></i>
-      <span>Invoices</span>
-    </a>
-    
-    <div class="sidebar-item disabled">
-      <i class="bi bi-cash-stack"></i>
-      <span>Sales Receipts</span>
-    </div>
-    
-    <div class="sidebar-item disabled">
-      <i class="bi bi-cart-check"></i>
-      <span>Sales Order</span>
-    </div>
+  <!-- SALES Section -->
+  <div class="sidebar-section-title">SALES</div>
+  
+  <!-- INVOICES - Current page (active) -->
+  <a href="invoices.html" class="sidebar-item active">
+    <i class="bi bi-receipt"></i>
+    <span>Invoices</span>
+  </a>
+  
+  <!-- DISABLED OPTIONS - Coming Soon -->
+  <div class="sidebar-item disabled" style="opacity: 0.5; cursor: not-allowed;">
+    <i class="bi bi-cash-stack"></i>
+    <span>Sales Receipts</span>
+  </div>
+  
+  <div class="sidebar-item disabled" style="opacity: 0.5; cursor: not-allowed;">
+    <i class="bi bi-cart-check"></i>
+    <span>Sales Order</span>
+  </div>
 
-    <!-- REPORTS Section -->
-    <div class="sidebar-section-title">REPORTS</div>
-    
-    <div class="sidebar-item disabled">
-      <i class="bi bi-graph-up"></i>
-      <span>Sales Report</span>
-    </div>
+  <!-- REPORTS Section -->
+  <div class="sidebar-section-title">REPORTS</div>
+  
+  <div class="sidebar-item disabled" style="opacity: 0.5; cursor: not-allowed;">
+    <i class="bi bi-graph-up"></i>
+    <span>Sales Report</span>
+  </div>
 
-    <!-- SETTINGS Section -->
-    <div class="sidebar-section-title">SETTINGS</div>
-    
-    <div class="sidebar-item disabled">
-      <i class="bi bi-gear"></i>
-      <span>Settings</span>
-    </div>
-  </nav>
+  <!-- SETTINGS Section -->
+  <div class="sidebar-section-title">SETTINGS</div>
+  
+  <div class="sidebar-item disabled" style="opacity: 0.5; cursor: not-allowed;">
+    <i class="bi bi-gear"></i>
+    <span>Settings</span>
+  </div>
+</nav>
+
 
   <!-- Navigation Bar (Top Header) -->
   <nav class="navbar navbar-expand-lg navbar-dark sticky-top" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding-left: 70px;">
@@ -2509,6 +2515,7 @@ function goBack() {
 
 </body>
 </html>
+
 
 
 
