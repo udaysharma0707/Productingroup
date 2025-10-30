@@ -15,113 +15,30 @@
   
   <style>
 
-/* HAMBURGER BUTTON - ALWAYS VISIBLE */
+/* Hamburger Menu Button */
 .sidebar-toggle-btn {
   position: fixed;
-  top: 15px;
-  left: 15px;
-  width: 50px;
-  height: 50px;
+  top: 20px;
+  left: 20px;
+  width: 44px;
+  height: 44px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border: none;
-  border-radius: 10px;
+  border-radius: 8px;
   color: white;
-  font-size: 24px;
+  font-size: 20px;
   cursor: pointer;
-  z-index: 1100; /* HIGHER than navbar and sidebar */
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  z-index: 1002;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
   transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .sidebar-toggle-btn:hover {
   transform: scale(1.05);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
 }
 
-.sidebar-toggle-btn:active {
-  transform: scale(0.95);
-}
-
-/* SIDEBAR MENU */
-.sidebar-menu {
-  position: fixed;
-  left: -280px;
-  top: 0;
-  width: 280px;
-  height: 100vh;
-  background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
-  box-shadow: 2px 0 15px rgba(0, 0, 0, 0.3);
-  z-index: 1050; /* Below hamburger button */
-  transition: left 0.3s ease;
-  overflow-y: auto;
-}
-
-.sidebar-menu.open {
-  left: 0;
-}
-
-/* SIDEBAR HEADER */
-.sidebar-header {
-  padding: 25px 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  text-align: center;
-  color: white;
-}
-
-.sidebar-header h4 {
-  margin: 10px 0 0 0;
-  font-size: 18px;
-  font-weight: 600;
-}
-
-/* SIDEBAR SECTION TITLE */
-.sidebar-section-title {
-  padding: 15px 20px 8px 20px;
-  font-size: 11px;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.5);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-/* SIDEBAR ITEM */
-.sidebar-item {
-  display: flex;
-  align-items: center;
-  padding: 14px 20px;
-  color: rgba(255, 255, 255, 0.9);
-  text-decoration: none;
-  transition: all 0.2s ease;
-  cursor: pointer;
-}
-
-.sidebar-item:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
-}
-
-.sidebar-item i {
-  font-size: 18px;
-  margin-right: 15px;
-  width: 20px;
-  text-align: center;
-}
-
-.sidebar-item span {
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.sidebar-item.active {
-  background: rgba(255, 255, 255, 0.15);
-  color: white;
-  border-left: 4px solid #4CAF50;
-}
-
-/* SIDEBAR OVERLAY */
+/* Overlay */
 .sidebar-overlay {
   position: fixed;
   top: 0;
@@ -129,7 +46,7 @@
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
-  z-index: 1040; /* Below sidebar */
+  z-index: 1000;
   display: none;
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -140,79 +57,23 @@
   opacity: 1;
 }
 
-    /* SIDEBAR MENU - Copy from homepage */
-.sidebar-menu {
-  position: fixed;
-  left: -280px;
-  top: 0;
-  width: 280px;
-  height: 100vh;
-  background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
-  box-shadow: 2px 0 15px rgba(0, 0, 0, 0.2);
-  z-index: 1001;
-  transition: left 0.3s ease;
-  overflow-y: auto;
+/* Scrollbar for sidebar */
+.sidebar-menu::-webkit-scrollbar {
+  width: 6px;
 }
 
-.sidebar-menu.open {
-  left: 0;
+.sidebar-menu::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
 }
 
-.sidebar-header {
-  padding: 25px 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  text-align: center;
-  color: white;
+.sidebar-menu::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
 }
 
-.sidebar-header h4 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 600;
+.sidebar-menu::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
-
-.sidebar-section-title {
-  padding: 15px 20px 8px 20px;
-  font-size: 11px;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.5);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.sidebar-item {
-  display: flex;
-  align-items: center;
-  padding: 14px 20px;
-  color: rgba(255, 255, 255, 0.9);
-  text-decoration: none;
-  transition: all 0.2s ease;
-  cursor: pointer;
-}
-
-.sidebar-item:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
-}
-
-.sidebar-item i {
-  font-size: 18px;
-  margin-right: 15px;
-  width: 20px;
-  text-align: center;
-}
-
-.sidebar-item span {
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.sidebar-item.active {
-  background: rgba(255, 255, 255, 0.15);
-  color: white;
-  border-left: 4px solid #4CAF50;
-}
-
 
 
     /* ================================================
@@ -2549,6 +2410,7 @@ function goBack() {
 
 </body>
 </html>
+
 
 
 
