@@ -7230,29 +7230,9 @@ function navigateToAllProducts() {
     closeSidebar();
   }
   
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+   window.scrollTo({ top: 0, behavior: 'smooth' });
   
-  // === STEP 7: ✅ FIXED - Click the "ALL" button to display products ===
-  setTimeout(() => {
-    // Search for the "All" filter button
-    const buttons = document.querySelectorAll('button');
-    let allButton = null;
-    
-    for (let btn of buttons) {
-      if (btn.textContent.trim() === 'All') {
-        allButton = btn;
-        break;
-      }
-    }
-    
-    // Click it to trigger the filter and display products
-    if (allButton) {
-      allButton.click();
-      console.log('✅ ALL filter button clicked - products now displaying');
-    } else {
-      console.warn('⚠️ ALL button not found');
-    }
-  }, 200);
+  // That's it! User can click ALL/TILES/SANITARYWARE buttons to load products
 }
 
 
@@ -9608,6 +9588,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
