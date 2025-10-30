@@ -9272,32 +9272,29 @@ function getProductIcon(category) {
 
 /**
  * Check if coming from invoices page
+ * IMPORTANT: Run AFTER data is loaded!
  */
-/**
- * Check if coming from invoices page
- */
-window.addEventListener('load', () => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const page = urlParams.get('page');
-  
-  if (page === 'allProducts') {
-    navigateToAllProducts();
-    // ✅ ADD THIS - Render products after navigation
-    setTimeout(() => {
-      if (typeof renderAllProductsList === 'function') {
-        renderAllProductsList();
-      }
-      // ✅ Trigger the "ALL" filter by default
-      if (typeof filterByCategory === 'function') {
-        filterByCategory('all');
-      }
-    }, 100);
-  } else if (page === 'productGroups') {
-    navigateToProductGroups();
-  } else if (page === 'customers') {
-    navigateToCustomers();
-  }
+window.addEventListener('DOMContentLoaded', () => {
+  // Small delay to ensure all data is loaded
+  setTimeout(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const page = urlParams.get('page');
+    
+    console.log('🔍 URL page parameter:', page);
+    
+    if (page === 'allProducts') {
+      console.log('📍 Detected: Coming from invoices to All Products');
+      navigateToAllProducts();
+    } else if (page === 'productGroups') {
+      console.log('📍 Detected: Coming from invoices to Product Groups');
+      navigateToProductGroups();
+    } else if (page === 'customers') {
+      console.log('📍 Detected: Coming from invoices to Customers');
+      navigateToCustomers();
+    }
+  }, 500);  // ✅ Wait 500ms for data to load
 });
+
 
 
 
@@ -9611,6 +9608,7 @@ window.addEventListener('load', () => {
 
 </body>
 </html>
+
 
 
 
