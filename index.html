@@ -9244,6 +9244,43 @@ function getProductIcon(category) {
 }
 
 
+/**
+ * ==========================================
+ * NAVIGATION FUNCTIONS - Go to different pages
+ * ==========================================
+ */
+
+function goToAllProducts() {
+  // Close sidebar first
+  closeSidebar();
+  
+  // Navigate to index.html and show All Products page
+  window.location.href = 'index.html?view=allProducts';
+}
+/**
+ * ==========================================
+ * URL PARAMETER DETECTION - Show correct view on page load
+ * ==========================================
+ */
+
+// Run when page loads
+window.addEventListener('DOMContentLoaded', () => {
+  // Get URL parameters
+  const urlParams = new URLSearchParams(window.location.search);
+  const view = urlParams.get('view');
+  
+  console.log('View parameter:', view);
+  
+  // Navigate to the requested view
+  if (view === 'allProducts') {
+    navigateTo('allProductsPage');
+  } else if (view === 'productGroups') {
+    navigateTo('productGroupsPage');
+  } else if (view === 'customers') {
+    navigateTo('customersPage');
+  }
+  // If no view parameter, show default (dashboard)
+});
 
 
 
@@ -9555,6 +9592,7 @@ function getProductIcon(category) {
 
 </body>
 </html>
+
 
 
 
