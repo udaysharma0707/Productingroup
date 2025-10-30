@@ -2085,20 +2085,24 @@ async function openInvoiceView(invoiceId) {
 /**
  * OPEN EDIT INVOICE - SHOWS EXISTING ITEMS
  */
-async function openEditInvoice(invoiceId) {
+/**
+ * OPEN EDIT INVOICE - Load from allInvoices array
+ */
+function openEditInvoice(invoiceId) {
   console.log('📝 Opening edit invoice:', invoiceId);
   
   try {
-    // Fetch invoice from Google Sheets
-    const url = SCRIPT_URL + '?action=getInvoice&invoiceId=' + encodeURIComponent(invoiceId);
-    const response = await fetch(url);
-    const data = await response.json();
+    // Find invoice in existing allInvoices array
+    const invoice = allInvoices.find(inv => inv.invoiceId === invoiceId);
     
-    if (!data.success || !data.invoice) {
-      throw new Error(data.error || 'Invoice not found');
+    if (!invoice) {
+      console.error('❌ Invoice not found in allInvoices');
+      alert('Invoice not found');
+      return;
     }
     
-    const invoice = data.invoice;
+    console.log('✅ Found invoice:', invoice);
+    
     currentEditingIndex = invoiceId;
     
     // === UPDATE MODAL TITLE ===
@@ -2110,7 +2114,7 @@ async function openEditInvoice(invoiceId) {
     document.getElementById('invoiceDate').value = invoice.invoiceDate || '';
     document.getElementById('invoiceDueDate').value = invoice.dueDate || '';
     
-    // === POPULATE ITEMS (THIS IS THE KEY!) ===
+    // === POPULATE ITEMS ===
     document.getElementById('invoiceItemsContainer').innerHTML = '';
     invoiceItemCounter = 0;
     
@@ -2131,7 +2135,7 @@ async function openEditInvoice(invoiceId) {
     const modal = new bootstrap.Modal(document.getElementById('invoiceModal'));
     modal.show();
     
-    console.log('✅ Edit invoice modal opened with items');
+    console.log('✅ Edit invoice modal opened successfully');
     
   } catch (error) {
     console.error('❌ Error opening edit invoice:', error);
@@ -2675,6 +2679,7 @@ function goBack() {
 
 </body>
 </html>
+
 
 
 
