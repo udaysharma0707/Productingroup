@@ -448,12 +448,11 @@
   <!-- GENERAL Section -->
   <div class="sidebar-section-title">GENERAL</div>
   
- <!-- IN INVOICES.HTML SIDEBAR -->
-<a href="index.html?view=allProducts" class="sidebar-item">
+<!-- All Products -->
+<div class="sidebar-item" onclick="goToAllProducts()">
   <i class="bi bi-box"></i>
   <span>All Products</span>
-</a>
-
+</div>
   
   <!-- PRODUCTS IN GROUP - Goes to homepage (index.html shows product groups) -->
   <a href="index.html" class="sidebar-item">
@@ -804,6 +803,15 @@
     alert(action.replace(/([A-Z])/g, ' $1').trim() + ' feature coming soon!');
     closeSidebar();
   } 
+
+   // Navigate to index.html with query parameter
+  window.location.href = 'index.html?page=allProducts';
+} 
+function goToAllProducts() {
+  // Close sidebar
+  if (typeof closeSidebar === 'function') {
+    closeSidebar();
+  }
     /**
  * ==========================================
  * DATE FORMATTING UTILITIES
@@ -2517,6 +2525,7 @@ function goBack() {
 
 </body>
 </html>
+
 
 
 
