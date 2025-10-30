@@ -570,8 +570,11 @@
     }
 
     // ========== CONFIGURATION ==========
-    const ENDPOINT = "https://script.google.com/macros/s/AKfycbxGdUsCQD_zM_2z_JFv9ueFonRANoeZHsJJ7kYDM89W3a9PPg7FLejrqiooSmCbyFBL_g/exec";
-    const SHARED_TOKEN = "shopSecret2025";
+// Use INVENTORY WEBAPP ENDPOINT (same spreadsheet backend)
+// REPLACE [YOUR_INVENTORY_ENDPOINT_URL] with your actual endpoint
+const ENDPOINT = "https://script.google.com/macros/s/AKfycbwd1CCC2Cr7GMdWL0_wK9SZee_NNFrKqrAUBP8K90v5lmhmS8y8pTqnItURFihjX0k3/exec";
+
+
     const JSONP_TIMEOUT_MS = 20000;
     const activeSubmissions = new Set();
 
@@ -662,38 +665,42 @@
     }
 
     // ========== SEND TO SERVER ==========
-    function sendToServerJSONP(formData, clientTs) {
-      var params = [];
-      
-      function add(k, v) {
-        if (v === undefined || v === null) v = "";
-        params.push(encodeURIComponent(k) + "=" + encodeURIComponent(String(v)));
-      }
-      
-      add("token", SHARED_TOKEN);
-      add("purchasedItem", formData.purchasedItem || "");
-      add("purchasedFrom", formData.purchasedFrom || "");
-      add("modeOfPayment", formData.modeOfPayment || "");
-      add("modeBreakdown", formData.modeBreakdown || "");
-      add("paymentPaid", formData.paymentPaid === undefined ? "" : String(formData.paymentPaid));
-      add("otherInfo", formData.otherInfo || "");
-      
-      if (formData.submissionId) { 
-        add("submissionId", formData.submissionId); 
-        add("clientId", formData.submissionId); 
-      }
-      if (clientTs) add("clientTs", String(clientTs));
+   function sendToServerJSONP(formData, clientTs) {
+  var params = [];
+  function add(k, v) {
+    if (v === undefined || v === null) v = "";
+    params.push(encodeURIComponent(k) + "=" + encodeURIComponent(String(v)));
+  }
+  
+  // ✅ NEW: Add action parameter for inventory backend routing
+  add("action", "submitPurchase");
+  
+  // ✅ REMOVED: add("token", SHARED_TOKEN); - No longer needed
+  
+  add("purchasedItem", formData.purchasedItem || "");
+  add("purchasedFrom", formData.purchasedFrom || "");
+  add("modeOfPayment", formData.modeOfPayment || "");
+  add("modeBreakdown", formData.modeBreakdown || "");
+  add("paymentPaid", formData.paymentPaid === undefined ? "" : String(formData.paymentPaid));
+  add("otherInfo", formData.otherInfo || "");
+  
+  if (formData.submissionId) { 
+    add("submissionId", formData.submissionId); 
+    add("clientId", formData.submissionId); 
+  }
+  if (clientTs) add("clientTs", String(clientTs));
 
-      var base = ENDPOINT;
-      var url = base + (base.indexOf('?') === -1 ? '?' : '&') + params.join("&");
-      
-      if (url.length > 1900) {
-        return Promise.reject(new Error("Payload too large for JSONP"));
-      }
-      
-      console.log('[SEND] Sending to endpoint:', base);
-      return jsonpRequest(url, JSONP_TIMEOUT_MS);
-    }
+  var base = ENDPOINT;
+  var url = base + (base.indexOf('?') === -1 ? '?' : '&') + params.join("&");
+  
+  if (url.length > 1900) {
+    return Promise.reject(new Error("Payload too large for JSONP"));
+  }
+  
+  console.log('[SEND] Sending to endpoint:', base);
+  console.log('[SEND] Action parameter: submitPurchase');
+  return jsonpRequest(url, JSONP_TIMEOUT_MS);
+}
 
     // ========== COLLECT FORM DATA ==========
     function collectFormData() {
@@ -1034,20 +1041,25 @@
             const clientTs = Date.now();
             console.log('[NETWORK] Sending JSONP request to endpoint...');
             
-            const resp = await sendToServerJSONP(backgroundForm, clientTs);
-            
-            console.log('[RESPONSE]', resp);
-            
-            if (resp && resp.success) {
-              const serial = (resp.serial !== undefined && resp.serial !== null) ? resp.serial : null;
-              if (serial !== null) {
-                showMessage('✅ Saved Successfully! Serial: ' + serial);
-                console.log('[SUCCESS] Saved with serial:', serial);
-              } else {
-                showMessage('✅ Saved Successfully!');
-                console.log('[SUCCESS] Saved (serial not returned)');
-              }
-              
+          const resp = await sendToServerJSONP(backgroundForm, clientTs);
+
+console.log('[RESPONSE]', resp);
+
+if (resp && resp.success) {
+  const serial = (resp.serial !== undefined && resp.serial !== null) ? resp.serial : null;
+  if (serial !== null) {
+    showMessage('✅ Saved to Purchase Orders! Serial: ' + serial);
+    console.log('[SUCCESS] Saved with serial:', serial);
+    
+    // ✅ Log timestamp for verification
+    if (resp.timestamp) {
+      console.log('[TIMESTAMP] Entry saved at:', resp.timestamp);
+    }
+  } else {
+    showMessage('✅ Saved to Purchase Orders!');
+    console.log('[SUCCESS] Saved (serial not returned)');
+  }
+
               // Clear form for next entry
               setTimeout(() => {
                 clearForm();
@@ -1230,4 +1242,5 @@
 
 </body>
 </html>
+
 
