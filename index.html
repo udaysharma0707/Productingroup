@@ -7212,17 +7212,18 @@ function navigateToAllProducts() {
     console.log('✅ All Products page displayed');
   }
   
-  // === STEP 4: Hide the bottom blue navbar ===
+  // === STEP 4: Hide the blue navbar ===
   const navbar = document.querySelector('.navbar.navbar-dark.bg-primary');
   if (navbar) {
     navbar.style.display = 'none';
-    console.log('✅ Navbar hidden');
   }
   
-  // === STEP 5: Render products list (displays ALL by default) ===
+  // === STEP 5: ✅ RENDER PRODUCTS LIST (Auto-load) ===
   if (typeof renderAllProductsList === 'function') {
     renderAllProductsList();
-    console.log('✅ All products rendered');
+    console.log('✅ All products rendered and displaying');
+  } else {
+    console.warn('⚠️ renderAllProductsList function not found');
   }
   
   // === STEP 6: Close sidebar and scroll ===
@@ -7230,10 +7231,9 @@ function navigateToAllProducts() {
     closeSidebar();
   }
   
-   window.scrollTo({ top: 0, behavior: 'smooth' });
-  
-  // That's it! User can click ALL/TILES/SANITARYWARE buttons to load products
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+
 
 
 
@@ -9588,6 +9588,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
