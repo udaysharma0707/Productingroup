@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Purchase Entry - Tile & Sanitaryware Inventory</title>
+  
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #f5f5f5;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    /* NAVBAR */
+    .navbar {
+      background-color: #007bff !important;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .navbar-title {
+      color: white;
+      font-size: 20px;
+      font-weight: bold;
+      margin: 0;
+      text-align: center;
+      flex: 1;
+    }
+
+    .back-button {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      padding: 5px 10px;
+      transition: opacity 0.2s;
+    }
+
+    .back-button:hover {
+      opacity: 0.8;
+    }
+
+    /* MAIN CONTENT */
+    .main-container {
+      padding: 20px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    /* FORM SECTION */
+    .form-section {
+      background: white;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 15px;
+      border-bottom: 2px solid #007bff;
+      padding-bottom: 10px;
+    }
+
+    /* STATUS */
+    #status {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 8px 12px;
+      background: #28a745;
+      color: white;
+      border-radius: 4px;
+      font-size: 12px;
+      z-index: 999;
+    }
+
+    #status.offline {
+      background: #dc3545;
+    }
+
+    /* OFFLINE NOTICE */
+    #offlineNotice {
+      background: #dc3545;
+      color: white;
+      padding: 15px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    /* MESSAGE */
+    #msg {
+      background: #28a745;
+      color: white;
+      padding: 12px;
+      border-radius: 4px;
+      margin-bottom: 15px;
+      display: none;
+    }
+
+    /* INPUTS */
+    input[type="text"],
+    input[type="number"],
+    input[type="file"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    input:disabled {
+      background-color: #e9ecef;
+      cursor: not-allowed;
+    }
+
+    /* CHECKBOXES & RADIO */
+    .checkbox-group,
+    .radio-group {
+      margin: 10px 0;
+    }
+
+    .checkbox-item,
+    .radio-item {
+      margin: 10px 0;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    input[type="checkbox"],
+    input[type="radio"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+
+    .item-label {
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .qty-input {
+      width: 120px;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-left: 10px;
+    }
+
+    .unit-select {
+      width: 120px;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-left: 10px;
+      display: none;
+    }
+
+    /* SUBLIST (nested items) */
+    .sublist {
+      margin-left: 30px;
+      margin-top: 10px;
+      border-left: 2px solid #ddd;
+      padding-left: 15px;
+      display: none;
+    }
+
+    .sublist.show {
+      display: block;
+    }
+
+    /* BUTTONS */
+    .button-group {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .btn-submit {
+      background-color: #28a745;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      transition: background-color 0.2s;
+    }
+
+    .btn-submit:hover:not(:disabled) {
+      background-color: #218838;
+    }
+
+    .btn-submit:disabled {
+      background-color: #6c757d;
+      cursor: not-allowed;
+    }
+
+    .btn-clear {
+      background-color: #6c757d;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.2s;
+    }
+
+    .btn-clear:hover {
+      background-color: #5a6268;
+    }
+
+    /* PHOTO PREVIEW */
+    #photoPreview {
+      display: none;
+      max-width: 100%;
+      max-height: 300px;
+      margin-top: 15px;
+      border-radius: 4px;
+    }
+
+    /* MODE ROW (for payment modes) */
+    .mode-row {
+      background: #f9f9f9;
+      padding: 10px;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .mode-amount {
+      width: 150px !important;
+      margin: 0 !important;
+    }
+
+    /* MOBILE RESPONSIVE */
+    @media (max-width: 768px) {
+      .main-container {
+        padding: 15px;
+      }
+
+      .form-section {
+        padding: 15px;
+      }
+
+      .navbar {
+        padding: 12px 15px;
+      }
+
+      .navbar-title {
+        font-size: 16px;
+      }
+
+      .back-button {
+        font-size: 20px;
+      }
+
+      input[type="text"],
+      input[type="number"],
+      input[type="file"],
+      select,
+      textarea {
+        font-size: 16px; /* Prevent iOS zoom */
+      }
+
+      .checkbox-item,
+      .mode-row {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .qty-input,
+      .unit-select,
+      .mode-amount {
+        width: 100% !important;
+        margin-left: 0 !important;
+      }
+
+      #status {
+        top: 15px;
+        right: 15px;
+        font-size: 11px;
+      }
+    }
+  </style>
+
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <button class="back-button" onclick="goBackHome()" title="Back to Home">← Back</button>
+    <h1 class="navbar-title">📦 Purchase Entry</h1>
+    <div style="width: 50px;"></div> <!-- Spacer for centering -->
+  </nav>
+
+  <!-- STATUS INDICATOR -->
+  <div id="status" style="background-color: #28a745;">online</div>
+
+  <!-- MAIN CONTENT -->
+  <div class="main-container">
+
+    <!-- Offline Notice -->
+    <div id="offlineNotice" style="display: none;">
+      ⚠️ You are currently offline. Your data cannot be saved until you reconnect to the internet.
+    </div>
+
+    <!-- Status Message -->
+    <div id="msg" style="display: none;"></div>
+
+    <!-- FORM START -->
+    <form id="purchaseForm">
+
+      <!-- SECTION 1: PHOTO UPLOAD -->
+      <div class="form-section">
+        <div class="section-title">📸 Photo Upload (Optional)</div>
+        <input type="file" id="billPhoto" accept="image/*">
+        <img id="photoPreview">
+      </div>
+
+      <!-- SECTION 2: WHAT WAS PURCHASED -->
+      <div class="form-section">
+        <div class="section-title">1. Purchased what (check items and enter quantity)</div>
+        
+        <!-- Floor Tiles -->
+        <div class="checkbox-group">
+          <div class="checkbox-item">
+            <input type="checkbox" id="p_floor" class="purchased">
+            <label class="item-label" for="p_floor">Floor Tiles</label>
+          </div>
+          <div id="sublist_floor" class="sublist">
+            <div class="checkbox-item">
+              <input type="checkbox" id="sub_floor_vitrified" class="subitem">
+              <label class="item-label" for="sub_floor_vitrified">Vitrified tiles</label>
+              <input type="number" id="q_floor_vitrified" class="qty-input" placeholder="Qty" disabled>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="sub_floor_ceramic" class="subitem">
+              <label class="item-label" for="sub_floor_ceramic">Ceramic tiles</label>
+              <input type="number" id="q_floor_ceramic" class="qty-input" placeholder="Qty" disabled>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="sub_floor_porcelain" class="subitem">
+              <label class="item-label" for="sub_floor_porcelain">Porcelain tiles</label>
+              <input type="number" id="q_floor_porcelain" class="qty-input" placeholder="Qty" disabled>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="sub_floor_marble" class="subitem">
+              <label class="item-label" for="sub_floor_marble">Marble finish tiles</label>
+              <input type="number" id="q_floor_marble" class="qty-input" placeholder="Qty" disabled>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="sub_floor_granite" class="subitem">
+              <label class="item-label" for="sub_floor_granite">Granite finish tiles</label>
+              <input type="number" id="q_floor_granite" class="qty-input" placeholder="Qty" disabled>
+            </div>
+          </div>
+        </div>
+
+        <!-- Wall Tiles -->
+        <div class="checkbox-group">
+          <div class="checkbox-item">
+            <input type="checkbox" id="p_wall" class="purchased">
+            <label class="item-label" for="p_wall">Wall Tiles</label>
+          </div>
+          <div id="sublist_wall" class="sublist">
+            <div class="checkbox-item">
+              <input type="checkbox" id="sub_wall_kitchen" class="subitem">
+              <label class="item-label" for="sub_wall_kitchen">Kitchen wall tiles (backsplash)</label>
+              <input type="number" id="q_wall_kitchen" class="qty-input" placeholder="Qty" disabled>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="sub_wall_bath" class="subitem">
+              <label class="item-label" for="sub_wall_bath">Bathroom wall tiles</label>
+              <input type="number" id="q_wall_bath" class="qty-input" placeholder="Qty" disabled>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="sub_wall_decor" class="subitem">
+              <label class="item-label" for="sub_wall_decor">Decorative wall tiles</label>
+              <input type="number" id="q_wall_decor" class="qty-input" placeholder="Qty" disabled>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sanitaryware -->
+        <div class="checkbox-group">
+          <div class="checkbox-item">
+            <input type="checkbox" id="p_san" class="purchased">
+            <label class="item-label" for="p_san">Sanitaryware</label>
+          </div>
+          <div id="sublist_san" class="sublist">
+            <div class="checkbox-item">
+              <input type="checkbox" id="sub_san_wash" class="subitem">
+              <label class="item-label" for="sub_san_wash">Washbasins</label>
+              <input type="number" id="q_san_wash" class="qty-input" placeholder="Qty" disabled>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="sub_san_wc" class="subitem">
+              <label class="item-label" for="sub_san_wc">WC</label>
+              <input type="number" id="q_san_wc" class="qty-input" placeholder="Qty" disabled>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="sub_san_urinal" class="subitem">
+              <label class="item-label" for="sub_san_urinal">Urinals</label>
+              <input type="number" id="q_san_urinal" class="qty-input" placeholder="Qty" disabled>
+            </div>
+          </div>
+        </div>
+
+        <!-- Accessories -->
+        <div class="checkbox-group">
+          <div class="checkbox-item">
+            <input type="checkbox" id="p_acc" class="purchased">
+            <label class="item-label" for="p_acc">Accessories</label>
+          </div>
+          <div id="sublist_acc" class="sublist">
+            <div class="checkbox-item">
+              <input type="checkbox" id="sub_acc_grout" class="subitem">
+              <label class="item-label" for="sub_acc_grout">Tile grout & adhesives</label>
+              <input type="number" id="q_acc_grout" class="qty-input" placeholder="Qty" disabled>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="sub_acc_spacers" class="subitem">
+              <label class="item-label" for="sub_acc_spacers">Spacers</label>
+              <input type="number" id="q_acc_spacers" class="qty-input" placeholder="Qty" disabled>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="sub_acc_sealants" class="subitem">
+              <label class="item-label" for="sub_acc_sealants">Sealants</label>
+              <input type="number" id="q_acc_sealants" class="qty-input" placeholder="Qty" disabled>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="sub_acc_chem" class="subitem">
+              <label class="item-label" for="sub_acc_chem">Chemicals</label>
+              <input type="number" id="q_acc_chem" class="qty-input" placeholder="Qty" disabled>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="sub_acc_skirting" class="subitem">
+              <label class="item-label" for="sub_acc_skirting">Skirting & border tiles</label>
+              <input type="number" id="q_acc_skirting" class="qty-input" placeholder="Qty" disabled>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="sub_acc_mosaic" class="subitem">
+              <label class="item-label" for="sub_acc_mosaic">Mosaic tiles</label>
+              <input type="number" id="q_acc_mosaic" class="qty-input" placeholder="Qty" disabled>
+            </div>
+          </div>
+        </div>
+
+        <!-- Others -->
+        <div class="checkbox-group">
+          <div class="checkbox-item">
+            <input type="checkbox" id="p_other" class="purchased">
+            <label class="item-label" for="p_other">Others</label>
+            <input type="text" id="purchasedOtherText" placeholder="Item name" style="width: 200px; margin: 0;">
+            <input type="number" id="q_other" class="qty-input" placeholder="Qty" disabled>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 3: PURCHASED FROM (VENDOR) -->
+      <div class="form-section">
+        <div class="section-title">2. Purchased from (Vendor)</div>
+        <select id="purchasedFromSelect">
+          <option value="">-- Select Vendor --</option>
+          <option value="Delhi Tiles Company">Delhi Tiles Company</option>
+          <option value="Haryana tiles and marbles">Haryana tiles and marbles</option>
+          <option value="Mumbai Marble Company">Mumbai Marble Company</option>
+          <option value="Raju fruits">Raju fruits</option>
+          <option value="Other">Other (please specify below)</option>
+        </select>
+        <input type="text" id="purchasedFrom" placeholder="Vendor name (if Other selected)" style="display: none;">
+      </div>
+
+      <!-- SECTION 4: MODE OF PAYMENT -->
+      <div class="form-section">
+        <div class="section-title">3. Mode of payment (check modes and enter amounts)</div>
+        
+        <div class="mode-row">
+          <div style="flex: 1; min-width: 150px;">
+            <input type="checkbox" id="mode_cash" name="modeOfPayment" value="Cash">
+            <label class="item-label" for="mode_cash">Cash</label>
+          </div>
+          <input type="number" id="amt_mode_cash" class="mode-amount" placeholder="Amount (₹)" style="display: none;">
+        </div>
+
+        <div class="mode-row">
+          <div style="flex: 1; min-width: 150px;">
+            <input type="checkbox" id="mode_online" name="modeOfPayment" value="Online">
+            <label class="item-label" for="mode_online">Online</label>
+          </div>
+          <input type="number" id="amt_mode_online" class="mode-amount" placeholder="Amount (₹)" style="display: none;">
+        </div>
+
+        <div class="mode-row">
+          <div style="flex: 1; min-width: 150px;">
+            <input type="checkbox" id="mode_credit" name="modeOfPayment" value="Credit">
+            <label class="item-label" for="mode_credit">Credit</label>
+          </div>
+          <input type="number" id="amt_mode_credit" class="mode-amount" placeholder="Amount (₹)" style="display: none;">
+        </div>
+      </div>
+
+      <!-- SECTION 5: PAYMENT PAID AMOUNT -->
+      <div class="form-section">
+        <div class="section-title">4. Total Payment Paid</div>
+        <input type="number" id="paymentPaid" placeholder="Total amount paid in Rs." readonly>
+        <small style="color: #666; display: block; margin-top: 5px;">Auto-calculates from payment modes above</small>
+      </div>
+
+      <!-- SECTION 6: ADDITIONAL INFO -->
+      <div class="form-section">
+        <div class="section-title">5. Any other information</div>
+        <textarea id="otherInfo" placeholder="Optional notes or additional information..."></textarea>
+      </div>
+
+      <!-- ACTION BUTTONS -->
+      <div class="form-section">
+        <div class="button-group">
+          <button type="button" class="btn-submit" id="submitBtn">✅ Submit Purchase Entry</button>
+          <button type="button" class="btn-clear" id="clearBtn">🗑️ Clear Form</button>
+        </div>
+      </div>
+
+    </form>
+
+  </div>
+
+  <!-- SCRIPTS -->
+  <script>
+    // ========== NAVIGATION ==========
+    function goBackHome() {
+      window.location.href = 'index.html';
+    }
+
+    // ========== CONFIGURATION ==========
+    const ENDPOINT = "https://script.google.com/macros/s/AKfycbxGdUsCQD_zM_2z_JFv9ueFonRANoeZHsJJ7kYDM89W3a9PPg7FLejrqiooSmCbyFBL_g/exec";
+    const SHARED_TOKEN = "shopSecret2025";
+    const JSONP_TIMEOUT_MS = 20000;
+    const activeSubmissions = new Set();
+
+    // ========== HELPERS ==========
+    function updateStatus() {
+      const s = document.getElementById('status');
+      const offlineNotice = document.getElementById('offlineNotice');
+      const on = navigator.onLine;
+      if (s) s.textContent = on ? 'online' : 'offline';
+      if (s) s.classList.toggle('offline', !on);
+      const msg = document.getElementById('msg');
+      const submitBtn = document.getElementById('submitBtn');
+      if (!offlineNotice) return;
+      if (!on) {
+        offlineNotice.style.display = 'block';
+        if (msg) msg.style.display = 'none';
+        try { if (submitBtn) submitBtn.disabled = true; } catch(e) {}
+      } else {
+        offlineNotice.style.display = 'none';
+        try { if (submitBtn) submitBtn.disabled = false; } catch(e) {}
+      }
+    }
+
+    window.addEventListener('online', () => { updateStatus(); });
+    window.addEventListener('offline', () => { updateStatus(); });
+
+    // ========== JSONP REQUEST ==========
+    function jsonpRequest(url, timeoutMs) {
+      timeoutMs = timeoutMs || JSONP_TIMEOUT_MS;
+      return new Promise(function(resolve, reject) {
+        var cbName = "jsonp_cb_" + Date.now() + "_" + Math.floor(Math.random() * 100000);
+        var timer = null;
+        window[cbName] = function(data) {
+          try { resolve(data); } finally {
+            try { delete window[cbName]; } catch(e) {}
+            var s = document.getElementById(cbName);
+            if (s && s.parentNode) s.parentNode.removeChild(s);
+            if (timer) clearTimeout(timer);
+          }
+        };
+        url = url.replace(/(&|\?)?callback=[^&]*/i, "");
+        var full = url + (url.indexOf('?') === -1 ? '?' : '&') + 'callback=' + encodeURIComponent(cbName);
+        var script = document.createElement('script');
+        script.id = cbName;
+        script.src = full;
+        script.async = true;
+        script.onerror = function() {
+          try { delete window[cbName]; } catch(e) {}
+          if (script.parentNode) script.parentNode.removeChild(script);
+          if (timer) clearTimeout(timer);
+          reject(new Error('JSONP script load error'));
+        };
+        timer = setTimeout(function() {
+          try { delete window[cbName]; } catch(e) {}
+          if (script.parentNode) script.parentNode.removeChild(script);
+          reject(new Error('JSONP timeout'));
+        }, timeoutMs);
+        document.body.appendChild(script);
+      });
+    }
+
+    // ========== SEND TO SERVER ==========
+    function sendToServerJSONP(formData, clientTs) {
+      var params = [];
+      function add(k, v) {
+        if (v === undefined || v === null) v = "";
+        params.push(encodeURIComponent(k) + "=" + encodeURIComponent(String(v)));
+      }
+      add("token", SHARED_TOKEN);
+      add("purchasedItem", formData.purchasedItem || "");
+      add("purchasedFrom", formData.purchasedFrom || "");
+      add("modeOfPayment", formData.modeOfPayment || "");
+      add("modeBreakdown", formData.modeBreakdown || "");
+      add("paymentPaid", formData.paymentPaid === undefined ? "" : String(formData.paymentPaid));
+      add("otherInfo", formData.otherInfo || "");
+      if (formData.submissionId) { add("submissionId", formData.submissionId); add("clientId", formData.submissionId); }
+      if (clientTs) add("clientTs", String(clientTs));
+
+      var base = ENDPOINT;
+      var url = base + (base.indexOf('?') === -1 ? '?' : '&') + params.join("&");
+      if (url.length > 1900) return Promise.reject(new Error("Payload too large for JSONP"));
+      return jsonpRequest(url, JSONP_TIMEOUT_MS);
+    }
+
+    // ========== COLLECT FORM DATA ==========
+    function collectFormData() {
+      const selectedParts = [];
+
+      // Floor
+      if (document.getElementById('p_floor') && document.getElementById('p_floor').checked) {
+        if (document.getElementById('sub_floor_vitrified').checked) {
+          const q = (document.getElementById('q_floor_vitrified').value || "").trim();
+          if (q) selectedParts.push(q + " Vitrified tiles");
+        }
+        if (document.getElementById('sub_floor_ceramic').checked) {
+          const q = (document.getElementById('q_floor_ceramic').value || "").trim();
+          if (q) selectedParts.push(q + " Ceramic tiles");
+        }
+        if (document.getElementById('sub_floor_porcelain').checked) {
+          const q = (document.getElementById('q_floor_porcelain').value || "").trim();
+          if (q) selectedParts.push(q + " Porcelain tiles");
+        }
+        if (document.getElementById('sub_floor_marble').checked) {
+          const q = (document.getElementById('q_floor_marble').value || "").trim();
+          if (q) selectedParts.push(q + " Marble finish tiles");
+        }
+        if (document.getElementById('sub_floor_granite').checked) {
+          const q = (document.getElementById('q_floor_granite').value || "").trim();
+          if (q) selectedParts.push(q + " Granite finish tiles");
+        }
+      }
+
+      // Wall
+      if (document.getElementById('p_wall') && document.getElementById('p_wall').checked) {
+        if (document.getElementById('sub_wall_kitchen').checked) {
+          const q = (document.getElementById('q_wall_kitchen').value || "").trim();
+          if (q) selectedParts.push(q + " Kitchen wall tiles (backsplash)");
+        }
+        if (document.getElementById('sub_wall_bath').checked) {
+          const q = (document.getElementById('q_wall_bath').value || "").trim();
+          if (q) selectedParts.push(q + " Bathroom wall tiles");
+        }
+        if (document.getElementById('sub_wall_decor').checked) {
+          const q = (document.getElementById('q_wall_decor').value || "").trim();
+          if (q) selectedParts.push(q + " Decorative wall tiles");
+        }
+      }
+
+      // Sanitaryware
+      if (document.getElementById('p_san') && document.getElementById('p_san').checked) {
+        if (document.getElementById('sub_san_wash').checked) {
+          const q = (document.getElementById('q_san_wash').value || "").trim();
+          if (q) selectedParts.push(q + " Washbasins");
+        }
+        if (document.getElementById('sub_san_wc').checked) {
+          const q = (document.getElementById('q_san_wc').value || "").trim();
+          if (q) selectedParts.push(q + " WC");
+        }
+        if (document.getElementById('sub_san_urinal').checked) {
+          const q = (document.getElementById('q_san_urinal').value || "").trim();
+          if (q) selectedParts.push(q + " Urinals");
+        }
+      }
+
+      // Accessories
+      if (document.getElementById('p_acc') && document.getElementById('p_acc').checked) {
+        if (document.getElementById('sub_acc_grout').checked) {
+          const q = (document.getElementById('q_acc_grout').value || "").trim();
+          if (q) selectedParts.push(q + " Tile grout & adhesives");
+        }
+        if (document.getElementById('sub_acc_spacers').checked) {
+          const q = (document.getElementById('q_acc_spacers').value || "").trim();
+          if (q) selectedParts.push(q + " Spacers");
+        }
+        if (document.getElementById('sub_acc_sealants').checked) {
+          const q = (document.getElementById('q_acc_sealants').value || "").trim();
+          if (q) selectedParts.push(q + " Sealants");
+        }
+        if (document.getElementById('sub_acc_chem').checked) {
+          const q = (document.getElementById('q_acc_chem').value || "").trim();
+          if (q) selectedParts.push(q + " Chemicals");
+        }
+        if (document.getElementById('sub_acc_skirting').checked) {
+          const q = (document.getElementById('q_acc_skirting').value || "").trim();
+          if (q) selectedParts.push(q + " Skirting & border tiles");
+        }
+        if (document.getElementById('sub_acc_mosaic').checked) {
+          const q = (document.getElementById('q_acc_mosaic').value || "").trim();
+          if (q) selectedParts.push(q + " Mosaic tiles");
+        }
+      }
+
+      // Others
+      if (document.getElementById('p_other') && document.getElementById('p_other').checked) {
+        const otherTxt = (document.getElementById('purchasedOtherText') || {}).value || "";
+        const otherQty = (document.getElementById('q_other') || {}).value || "";
+        const label = otherTxt.trim() !== "" ? otherTxt.trim() : "Others";
+        if (otherQty !== "") {
+          selectedParts.push(otherQty + " " + label);
+        } else {
+          selectedParts.push(label);
+        }
+      }
+
+      // Mode of payment
+      const rawModeEls = Array.from(document.querySelectorAll('input[name="modeOfPayment"]'));
+      const rawSelected = rawModeEls.filter(cb => cb.checked).map(m => m.value).filter(Boolean);
+      const modeStr = rawSelected.join(", ");
+
+      // Mode breakdown
+      const breakdownParts = [];
+      if (document.getElementById('mode_cash').checked) {
+        const amt = (document.getElementById('amt_mode_cash').value || "0");
+        breakdownParts.push('Cash ₹' + amt);
+      }
+      if (document.getElementById('mode_online').checked) {
+        const amt = (document.getElementById('amt_mode_online').value || "0");
+        breakdownParts.push('Online ₹' + amt);
+      }
+      if (document.getElementById('mode_credit').checked) {
+        const amt = (document.getElementById('amt_mode_credit').value || "0");
+        breakdownParts.push('Credit ₹' + amt);
+      }
+      const modeBreakdown = breakdownParts.join(", ");
+
+      return {
+        purchasedItem: selectedParts.join("\n"),
+        purchasedFrom: (document.getElementById('purchasedFromSelect').value === 'Other')
+          ? ((document.getElementById('purchasedFrom').value || '').trim())
+          : ((document.getElementById('purchasedFromSelect').value || '').trim()),
+        modeOfPayment: modeStr,
+        modeBreakdown: modeBreakdown,
+        paymentPaid: (document.getElementById('paymentPaid').value || ''),
+        otherInfo: (document.getElementById('otherInfo').value || '').trim()
+      };
+    }
+
+    // ========== SHOW MESSAGE ==========
+    function showMessage(text) {
+      var m = document.getElementById('msg');
+      if (!m) { console.log('[UI]', text); return; }
+      m.textContent = text;
+      m.style.display = 'block';
+      setTimeout(() => { if (m && navigator.onLine) m.style.display = 'none'; }, 4000);
+    }
+
+    // ========== CLEAR FORM ==========
+    function clearForm() {
+      try {
+        document.querySelectorAll('.purchased').forEach(ch => { ch.checked = false; });
+        document.querySelectorAll('.subitem').forEach(ch => { ch.checked = false; });
+        document.querySelectorAll('.qty-input').forEach(q => { q.value = ''; q.disabled = true; });
+        document.querySelectorAll('.sublist').forEach(s => s.classList.remove('show'));
+        document.getElementById('purchasedOtherText').value = '';
+        document.getElementById('purchasedFrom').value = '';
+        document.getElementById('purchasedFromSelect').selectedIndex = 0;
+        document.querySelectorAll('input[name="modeOfPayment"]').forEach(el => { el.checked = false; });
+        ['amt_mode_cash', 'amt_mode_online', 'amt_mode_credit'].forEach(id => {
+          const e = document.getElementById(id);
+          if (e) { e.value = ''; e.style.display = 'none'; }
+        });
+        document.getElementById('paymentPaid').value = '';
+        document.getElementById('otherInfo').value = '';
+        document.getElementById('billPhoto').value = '';
+        document.getElementById('photoPreview').style.display = 'none';
+      } catch (e) { console.warn('clearForm error', e); }
+    }
+
+    // ========== MAKE SUBMISSION ID ==========
+    function makeSubmissionId() { return "s_" + Date.now() + "_" + Math.floor(Math.random() * 1000000); }
+
+    // ========== RECOMPUTE PAYMENT FROM MODES ==========
+    function recomputePaymentFromModes() {
+      try {
+        let sum = 0;
+        if (document.getElementById('mode_cash').checked) {
+          const v = document.getElementById('amt_mode_cash').value;
+          if (v) sum += Number(v);
+        }
+        if (document.getElementById('mode_online').checked) {
+          const v = document.getElementById('amt_mode_online').value;
+          if (v) sum += Number(v);
+        }
+        if (document.getElementById('mode_credit').checked) {
+          const v = document.getElementById('amt_mode_credit').value;
+          if (v) sum += Number(v);
+        }
+        const payEl = document.getElementById('paymentPaid');
+        if (payEl) {
+          payEl.value = sum ? Number(sum.toFixed(2)) : '';
+        }
+      } catch (e) { console.warn('recomputePaymentFromModes err', e); }
+    }
+
+    // ========== MAIN SUBMIT FLOW ==========
+    async function doSubmitFlow() {
+      try {
+        if (!navigator.onLine) { alert('Connect to internet. Your entry cannot be saved while offline.'); updateStatus(); return; }
+        const anyMainChecked = Array.from(document.querySelectorAll('.purchased')).some(cb => cb.checked);
+        if (!anyMainChecked) { alert('Please select at least one purchased category.'); return; }
+
+        const selectedSubboxes = Array.from(document.querySelectorAll('.subitem')).filter(s => s.checked);
+        for (let sb of selectedSubboxes) {
+          const qid = 'q' + sb.id.slice(3);
+          const qEl = document.getElementById(qid);
+          const val = qEl ? (String(qEl.value || "").trim()) : "";
+          if (!val || isNaN(Number(val)) || Number(val) <= 0) {
+            alert('Please enter a valid quantity (>0) for: ' + (sb.value || 'selected item'));
+            return;
+          }
+        }
+
+        if (document.getElementById('p_other') && document.getElementById('p_other').checked) {
+          const q = (document.getElementById('q_other') || {}).value || "";
+          if (!q || isNaN(Number(q)) || Number(q) <= 0) {
+            alert('Please enter a valid quantity (>0) for Others or uncheck Others.');
+            return;
+          }
+        }
+
+        const payment = (document.getElementById('paymentPaid') || {}).value || "";
+        const modeChecked = Array.from(document.querySelectorAll('input[name="modeOfPayment"]')).some(m => m.checked);
+        if (!modeChecked) { alert('Please select a mode of payment.'); return; }
+        if (!payment || isNaN(Number(payment))) { alert('Please enter a valid payment amount.'); return; }
+
+        var formData = collectFormData();
+        if (!formData.purchasedItem || formData.purchasedItem.trim() === "") {
+          alert('No sub-item selected. Please select at least one specific item and quantity.');
+          return;
+        }
+
+        if (!formData.submissionId) formData.submissionId = makeSubmissionId();
+        if (activeSubmissions.has(formData.submissionId)) { showMessage('Submission in progress — please wait'); return; }
+        activeSubmissions.add(formData.submissionId);
+
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = true;
+        const origLabel = submitBtn.textContent;
+        submitBtn.textContent = 'Saving...';
+        showMessage('Submitting — please wait...');
+        clearForm();
+
+        (async function(backgroundForm) {
+          try {
+            const clientTs = Date.now();
+            const resp = await sendToServerJSONP(backgroundForm, clientTs);
+            if (resp && resp.success) {
+              const serial = (resp.serial !== undefined && resp.serial !== null) ? resp.serial : null;
+              if (serial !== null) {
+                showMessage('Saved — Serial: ' + serial);
+              } else {
+                showMessage('Saved successfully!');
+              }
+            } else if (resp && resp.error) {
+              alert('Server rejected submission: ' + resp.error);
+            } else {
+              alert('Unexpected server response. Please retry while online.');
+            }
+          } catch (errSend) {
+            console.error('send failed', errSend);
+            alert('Network error occurred. Please ensure you are online and try again.');
+          } finally {
+            try { activeSubmissions.delete(backgroundForm.submissionId); } catch (e) {}
+            try { submitBtn.disabled = false; submitBtn.textContent = origLabel || 'Submit'; } catch (e) {}
+            updateStatus();
+          }
+        })(formData);
+
+      } catch (ex) {
+        console.error('submit handler exception', ex);
+        alert('Unexpected error. Try again.');
+        document.getElementById('submitBtn').disabled = false;
+        document.getElementById('submitBtn').textContent = 'Submit';
+      }
+    }
+
+    // ========== DOM BINDINGS ==========
+    document.addEventListener('DOMContentLoaded', function() {
+      updateStatus();
+      const submitBtn = document.getElementById('submitBtn');
+      const clearBtn = document.getElementById('clearBtn');
+
+      if (submitBtn && !navigator.onLine) try { submitBtn.disabled = true; } catch (e) {}
+
+      if (!submitBtn) { console.warn('[INIT] submitBtn not found in DOM'); return; }
+      try { submitBtn.setAttribute('type', 'button'); } catch (e) {}
+
+      // Photo preview
+      document.getElementById('billPhoto').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(event) {
+            document.getElementById('photoPreview').src = event.target.result;
+            document.getElementById('photoPreview').style.display = 'block';
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+
+      // Purchase category toggle
+      document.getElementById('p_floor').addEventListener('change', function() {
+        document.getElementById('sublist_floor').classList.toggle('show', this.checked);
+      });
+      document.getElementById('p_wall').addEventListener('change', function() {
+        document.getElementById('sublist_wall').classList.toggle('show', this.checked);
+      });
+      document.getElementById('p_san').addEventListener('change', function() {
+        document.getElementById('sublist_san').classList.toggle('show', this.checked);
+      });
+      document.getElementById('p_acc').addEventListener('change', function() {
+        document.getElementById('sublist_acc').classList.toggle('show', this.checked);
+      });
+
+      // Sub-item qty enable/disable
+      document.querySelectorAll('.subitem').forEach(cb => {
+        cb.addEventListener('change', function() {
+          const qid = 'q' + this.id.slice(3);
+          const qEl = document.getElementById(qid);
+          if (qEl) qEl.disabled = !this.checked;
+        });
+      });
+
+      // Others qty enable/disable
+      document.getElementById('p_other').addEventListener('change', function() {
+        const qEl = document.getElementById('q_other');
+        if (qEl) qEl.disabled = !this.checked;
+      });
+
+      // Vendor select change
+      document.getElementById('purchasedFromSelect').addEventListener('change', function() {
+        const customInput = document.getElementById('purchasedFrom');
+        customInput.style.display = this.value === 'Other' ? 'block' : 'none';
+      });
+
+      // Mode checkboxes toggle amount inputs
+      ['mode_cash', 'mode_online', 'mode_credit'].forEach(id => {
+        document.getElementById(id).addEventListener('change', function() {
+          const amtId = 'amt_' + this.id;
+          const amtEl = document.getElementById(amtId);
+          if (amtEl) {
+            amtEl.style.display = this.checked ? 'block' : 'none';
+            if (!this.checked) amtEl.value = '';
+          }
+          recomputePaymentFromModes();
+        });
+      });
+
+      // Mode amount inputs recompute total
+      ['amt_mode_cash', 'amt_mode_online', 'amt_mode_credit'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.addEventListener('input', recomputePaymentFromModes);
+        }
+      });
+
+      // Submit & Clear buttons
+      submitBtn.addEventListener('click', doSubmitFlow);
+      if (clearBtn) {
+        clearBtn.addEventListener('click', function() {
+          clearForm();
+          showMessage('Form cleared');
+        });
+      }
+
+      // Cleanup
+      if ('serviceWorker' in navigator) {
+        try { navigator.serviceWorker.getRegistrations().then(function(regs) { regs.forEach(r => { r.unregister().catch(() => {}); }); }).catch(() => {}); } catch (e) { }
+      }
+      if ('caches' in window) {
+        try { caches.keys().then(keys => { keys.forEach(k => caches.delete(k)); }).catch(() => {}); } catch (e) { }
+      }
+    });
+
+  </script>
+
+</body>
+</html>
