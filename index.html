@@ -9164,22 +9164,56 @@ function navigateToHome() {
  * @param {string} page - Page name ('dashboard', 'allProducts', 'customers', 'productGroups')
  */
 function navigateTo(page) {
-  console.log('🔷 navigateTo called with:', page);
+  console.log('Navigating to:', page);
   
-  if (page === 'dashboard') {
-    navigateToHome();
-  } else if (page === 'allProducts') {
-    navigateToAllProducts();
-  } else if (page === 'customers') {
-    navigateToCustomers();
-  } else if (page === 'productGroups') {
-    navigateToProductGroups();
-  } else if (page === 'invoices') {
-    // Navigate to invoices page (no credential check needed)
-    console.log('📄 Navigating to invoices page...');
-    window.location.href = 'invoices.html';
-  } else {
-    console.error('❌ Unknown page:', page);
+  // Hide all pages
+  document.querySelectorAll('.page-view').forEach(p => {
+    p.classList.remove('active');
+  });
+  
+  // Show the requested page
+  let pageElement;
+  
+  switch(page) {
+    case 'dashboard':
+      pageElement = document.getElementById('dashboardPage');
+      break;
+      
+    case 'allProducts':           // ✅ Handle old name
+    case 'allProductsPage':        // ✅ Handle new name
+      pageElement = document.getElementById('allProductsPage');
+      if (typeof loadAllProducts === 'function') {
+        loadAllProducts();
+      }
+      break;
+      
+    case 'productGroups':          // ✅ Handle old name
+    case 'productGroupsPage':      // ✅ Handle new name
+      pageElement = document.getElementById('productGroupsPage');
+      if (typeof loadProductGroups === 'function') {
+        loadProductGroups();
+      }
+      break;
+      
+    case 'customers':              // ✅ Handle old name
+    case 'customersPage':          // ✅ Handle new name
+      pageElement = document.getElementById('customersPage');
+      if (typeof loadCustomers === 'function') {
+        loadCustomers();
+      }
+      break;
+      
+    case 'invoices':
+      // Invoices is a separate page
+      window.location.href = 'invoices.html';
+      return;
+      
+    default:
+      pageElement = document.getElementById('dashboardPage');
+  }
+  
+  if (pageElement) {
+    pageElement.classList.add('active');
   }
 }
 
@@ -9592,6 +9626,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
