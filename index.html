@@ -7219,10 +7219,10 @@ function navigateToAllProducts() {
     console.log('✅ Navbar hidden');
   }
   
-  // === STEP 5: Render products list ===
+  // === STEP 5: Render products list (displays ALL by default) ===
   if (typeof renderAllProductsList === 'function') {
     renderAllProductsList();
-    console.log('✅ Products list rendered');
+    console.log('✅ All products rendered');
   }
   
   // === STEP 6: Close sidebar and scroll ===
@@ -7232,14 +7232,9 @@ function navigateToAllProducts() {
   
   window.scrollTo({ top: 0, behavior: 'smooth' });
   
-  // === STEP 7: ✅ NEW - Apply default "ALL" filter immediately ===
-  setTimeout(() => {
-    if (typeof filterByCategory === 'function') {
-      filterByCategory('all');
-      console.log('✅ Default "ALL" filter applied - products now visible');
-    }
-  }, 50); // Short delay to ensure DOM is ready
+  // ✅ That's it! renderAllProductsList() shows all products by default
 }
+
 
 
 
@@ -9596,6 +9591,7 @@ window.addEventListener('load', () => {
 
 </body>
 </html>
+
 
 
 
