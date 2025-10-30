@@ -1,4 +1,3 @@
-30102025 index.html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7190,7 +7189,7 @@ function navigateToAllProducts() {
   }
   
   if (customersPage) {
-    customersPage.style.display = 'none';  // ← THIS WAS MISSING!
+    customersPage.style.display = 'none';
     customersPage.classList.remove('active');
   }
   
@@ -7208,15 +7207,16 @@ function navigateToAllProducts() {
   
   // === STEP 3: SHOW All Products page ===
   if (allProductsPage) {
-    allProductsPage.style.display = 'block';  // ← THIS WAS MISSING!
+    allProductsPage.style.display = 'block';
     allProductsPage.classList.add('active');
     console.log('✅ All Products page displayed');
   }
   
-  // === STEP 4: Hide the bottom blue navbar ===
-  const navbar = document.querySelector('.navbar');
+  // === STEP 4: Hide the blue navbar - ✅ FIXED SELECTOR ===
+  const navbar = document.querySelector('.navbar.navbar-dark.bg-primary');
   if (navbar) {
     navbar.style.display = 'none';
+    console.log('✅ Navbar hidden');
   }
   
   // === STEP 5: Render products list ===
@@ -9591,6 +9591,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
