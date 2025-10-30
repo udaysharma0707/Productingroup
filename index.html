@@ -7257,43 +7257,7 @@ function navigateToAllProducts() {
 
 
 
-// Navigate to Product Groups page - FIXED
-function navigateToProductGroups() {
-  console.log('📁 Navigating to Product Groups');
-  
-  currentPage = 'productGroups';
-  
-  const mainApp = document.getElementById('mainApp');
-  const allProductsPage = document.getElementById('allProductsPage');
-  const productGroupsPage = document.getElementById('productGroupsPage');
-  const groupDetailPage = document.getElementById('groupDetailPage');
-  
-  // HIDE the main dashboard
-  if (mainApp) {
-    mainApp.style.display = 'none';
-  }
-  
-  // ✅ HIDE THE BLUE NAVBAR
-  const navbar = document.querySelector('.navbar');
-  if (navbar) {
-    navbar.style.display = 'none';
-  }
-  
-  // SHOW Product Groups page
-  if (productGroupsPage) {
-    productGroupsPage.classList.add('active');
-  }
-  
-  if (allProductsPage) allProductsPage.classList.remove('active');
-  if (groupDetailPage) groupDetailPage.classList.remove('active');
-  
-  if (typeof syncProductGroups === 'function') {
-    syncProductGroups();
-  }
-  
-  closeSidebar();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
+
 
 
 
@@ -7310,25 +7274,49 @@ let attributeRowCounter = 0;
  * ==========================================
  */
 
-// Navigate to Product Groups List Page
+// Navigate to Product Groups List Page - UPDATED FOR INVOICE NAVIGATION
 function navigateToProductGroups() {
   console.log('📁 Navigating to Product Groups');
   
-  // Hide navbar
-  const navbar = document.querySelector('.navbar');
+  currentPage = 'productGroups';
+  
+  // === STEP 1: Hide navbar ===
+  const navbar = document.querySelector('.navbar.navbar-dark.bg-primary');
   if (navbar) navbar.style.display = 'none';
   
-  // Hide main app
+  // === STEP 2: Hide main app ===
   const mainApp = document.getElementById('mainApp');
   if (mainApp) mainApp.style.display = 'none';
   
-  // Build full-screen page
+  // === STEP 3: Hide other pages ===
+  const allProductsPage = document.getElementById('allProductsPage');
+  const customersPage = document.getElementById('customersPage');
+  const groupDetailPage = document.getElementById('groupDetailPage');
+  
+  if (allProductsPage) {
+    allProductsPage.style.display = 'none';
+    allProductsPage.classList.remove('active');
+  }
+  if (customersPage) {
+    customersPage.style.display = 'none';
+    customersPage.classList.remove('active');
+  }
+  if (groupDetailPage) {
+    groupDetailPage.style.display = 'none';
+    groupDetailPage.classList.remove('active');
+  }
+  
+  // === STEP 4: Remove old container if exists ===
+  const oldContainer = document.getElementById('productGroupsPageContainer');
+  if (oldContainer) oldContainer.remove();
+  
+  // === STEP 5: Build full-screen page ===
   document.body.innerHTML += `
     <div id="productGroupsPageContainer" style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #f8f9fa; z-index: 99999; overflow-y: auto;">
       
       <!-- Header -->
       <div class="modal-header-mobile">
-        <button onclick="location.reload()" style="background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer;">
+        <button onclick="navigateToHome()" style="background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer;">
           ← Back to Home
         </button>
         <h3>Products in Group</h3>
@@ -7371,9 +7359,18 @@ function navigateToProductGroups() {
     </div>
   `;
   
-  // Load data
+  // === STEP 6: Close sidebar ===
+  if (typeof closeSidebar === 'function') {
+    closeSidebar();
+  }
+  
+  // === STEP 7: Load data ===
   loadProductGroups();
+  
+  // === STEP 8: Scroll to top ===
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+
 
 
 // Navigate to Group Variants (Detail Page)
@@ -9270,29 +9267,58 @@ function getProductIcon(category) {
 
 
 /**
- * Check if coming from invoices page
- * IMPORTANT: Run AFTER data is loaded!
+ * URL Parameter Detection - Navigate from invoices page
+ * IMPORTANT: Run AFTER data is loaded and DOM is ready!
  */
 window.addEventListener('DOMContentLoaded', () => {
-  // Small delay to ensure all data is loaded
+  // Wait longer for data to fully load, especially for product groups
   setTimeout(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const page = urlParams.get('page');
     
-    console.log('🔍 URL page parameter:', page);
-    
-    if (page === 'allProducts') {
-      console.log('📍 Detected: Coming from invoices to All Products');
-      navigateToAllProducts();
-    } else if (page === 'productGroups') {
-      console.log('📍 Detected: Coming from invoices to Product Groups');
-      navigateToProductGroups();
-    } else if (page === 'customers') {
-      console.log('📍 Detected: Coming from invoices to Customers');
-      navigateToCustomers();
+    if (!page) {
+      console.log('✅ No page parameter - Normal page load');
+      return;
     }
-  }, 500);  // ✅ Wait 500ms for data to load
+    
+    console.log('🔍 URL page parameter detected:', page);
+    
+    // Route to appropriate page based on parameter
+    switch(page) {
+      case 'allProducts':
+        console.log('📍 Routing: Invoices → All Products');
+        if (typeof navigateToAllProducts === 'function') {
+          navigateToAllProducts();
+        } else {
+          console.error('❌ navigateToAllProducts function not found');
+        }
+        break;
+        
+      case 'productGroups':
+        console.log('📍 Routing: Invoices → Product Groups');
+        if (typeof navigateToProductGroups === 'function') {
+          navigateToProductGroups();
+        } else {
+          console.error('❌ navigateToProductGroups function not found');
+        }
+        break;
+        
+      case 'customers':
+        console.log('📍 Routing: Invoices → Customers');
+        if (typeof navigateToCustomers === 'function') {
+          navigateToCustomers();
+        } else {
+          console.error('❌ navigateToCustomers function not found');
+        }
+        break;
+        
+      default:
+        console.warn('⚠️ Unknown page parameter:', page);
+    }
+    
+  }, 800);  // ✅ Increased delay to 800ms for better data loading
 });
+
 
 
 
@@ -9607,6 +9633,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
